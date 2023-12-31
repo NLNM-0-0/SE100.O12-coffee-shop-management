@@ -2,6 +2,7 @@ package jwt
 
 import (
 	"backend/component/tokenprovider"
+	"github.com/golang-jwt/jwt/v4"
 	"time"
 )
 
