@@ -1,0 +1,26 @@
+package suppliermodel
+
+import "backend/common"
+
+type SupplierUpdateDebt struct {
+	Id        *string `json:"id" gorm:"-"`
+	Amount    *int    `json:"amount" gorm:"-"`
+	CreatedBy string  `json:"-" gorm:"-"`
+}
+
+func (*SupplierUpdateDebt) TableName() string {
+	return common.TableSupplier
+}
+
+func (data *SupplierUpdateDebt) Validate() *common.AppError {
+	if !common.ValidateId(data.Id) {
+		return ErrSupplierDebtIdInvalid
+	}
+	if data.Amount == nil {
+		return ErrSupplierDebtPayNotExist
+	}
+	if *data.Amount == 0 {
+		return ErrSupplierDebtPayIsInvalid
+	}
+	return nil
+}
