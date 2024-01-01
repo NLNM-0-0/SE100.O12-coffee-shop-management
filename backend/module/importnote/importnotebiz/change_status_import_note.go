@@ -31,6 +31,7 @@ type ChangeStatusImportNoteRepo interface {
 	) ([]importnotedetailmodel.ImportNoteDetail, error)
 	HandleIngredient(
 		ctx context.Context,
+		importNoteId string,
 		ingredientTotalAmountNeedUpdate map[string]int) error
 }
 
@@ -91,7 +92,7 @@ func (biz *changeStatusImportNoteRepo) ChangeStatusImportNote(
 
 		mapIngredientAmount := getMapIngredientTotalAmountNeedUpdated(importNoteDetails)
 		if err := biz.repo.HandleIngredient(
-			ctx, mapIngredientAmount); err != nil {
+			ctx, importNoteId, mapIngredientAmount); err != nil {
 			return err
 		}
 	}

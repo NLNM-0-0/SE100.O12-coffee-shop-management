@@ -5,12 +5,13 @@ import (
 )
 
 type UserCreate struct {
-	Id       string `json:"-" gorm:"column:id;"`
-	Name     string `json:"name" gorm:"column:name;"`
-	Email    string `json:"email" gorm:"column:email;"`
-	Password string `json:"-" gorm:"column:password;"`
-	Salt     string `json:"-" gorm:"column:salt;"`
-	RoleId   string `json:"roleId" gorm:"column:roleId;"`
+	Id       *string `json:"id" gorm:"column:id;"`
+	Name     string  `json:"name" gorm:"column:name;"`
+	Email    string  `json:"email" gorm:"column:email;"`
+	Password string  `json:"-" gorm:"column:password;"`
+	Salt     string  `json:"-" gorm:"column:salt;"`
+	Image    string  `json:"image" gorm:"column:image;"`
+	RoleId   string  `json:"roleId" gorm:"column:roleId;"`
 }
 
 func (*UserCreate) TableName() string {
@@ -18,6 +19,9 @@ func (*UserCreate) TableName() string {
 }
 
 func (data *UserCreate) Validate() error {
+	if !common.ValidateId(data.Id) {
+		return ErrUserIdInvalid
+	}
 	if common.ValidateEmptyString(data.Name) {
 		return ErrUserNameEmpty
 	}
@@ -26,6 +30,9 @@ func (data *UserCreate) Validate() error {
 	}
 	if !common.ValidateNotNilId(&data.RoleId) {
 		return ErrUserRoleInvalid
+	}
+	if !common.ValidateUrl(data.Image) {
+		return ErrUserImageInvalid
 	}
 	return nil
 }

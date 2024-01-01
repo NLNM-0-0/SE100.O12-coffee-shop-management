@@ -14,6 +14,7 @@ type User struct {
 	Salt     string         `json:"-" gorm:"column:salt;"`
 	RoleId   string         `json:"-" gorm:"column:roleId;"`
 	Role     rolemodel.Role `json:"role" gorm:"foreignkey:roleId"`
+	Image    string         `json:"image" gorm:"column:image;"`
 	IsActive bool           `json:"isActive" gorm:"column:isActive;"`
 }
 
@@ -52,6 +53,11 @@ var (
 		errors.New("name of user is empty"),
 		"Tên của người dùng đang trống",
 		"ErrUserNameEmpty",
+	)
+	ErrUserImageInvalid = common.NewCustomError(
+		errors.New("image of user is empty"),
+		"Ảnh của người dùng không hợp lệ",
+		"ErrUserImageInvalid",
 	)
 	ErrUserEmailInvalid = common.NewCustomError(
 		errors.New("email is invalid"),

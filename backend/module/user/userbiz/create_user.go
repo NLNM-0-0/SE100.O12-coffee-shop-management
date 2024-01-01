@@ -60,7 +60,7 @@ func (biz *createUserBiz) CreateUser(
 }
 
 func handleUserId(gen generator.IdGenerator, data *usermodel.UserCreate) error {
-	id, err := gen.GenerateId()
+	id, err := gen.IdProcess(data.Id)
 	if err != nil {
 		return err
 	}

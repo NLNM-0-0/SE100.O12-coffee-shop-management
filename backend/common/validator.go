@@ -2,6 +2,7 @@ package common
 
 import (
 	"net/mail"
+	"net/url"
 	"regexp"
 )
 
@@ -19,6 +20,20 @@ func ValidatePhone(s string) bool {
 	regex := regexp.MustCompile(pattern)
 
 	return regex.MatchString(s)
+}
+
+func ValidateUrl(s string) bool {
+	u, err := url.ParseRequestURI(s)
+
+	if err != nil || u.Scheme == "" {
+		return false
+	}
+
+	if u.Host == "" {
+		return false
+	}
+
+	return true
 }
 
 func ValidateEmail(s string) bool {

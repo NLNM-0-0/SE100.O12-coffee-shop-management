@@ -4,6 +4,7 @@ import (
 	"backend/module/exportnote/exportnotemodel"
 	"backend/module/exportnotedetail/exportnotedetailmodel"
 	"backend/module/ingredient/ingredientmodel"
+	"backend/module/stockchangehistory/stockchangehistorymodel"
 	"context"
 )
 
@@ -33,21 +34,29 @@ type UpdateIngredientStore interface {
 		moreKeys ...string,
 	) (*ingredientmodel.Ingredient, error)
 }
+type StockChangeHistoryStore interface {
+	CreateLisStockChangeHistory(
+		ctx context.Context,
+		data []stockchangehistorymodel.StockChangeHistory) error
+}
 
 type createExportNoteRepo struct {
-	exportNoteStore       CreateExportNoteStore
-	exportNoteDetailStore CreateExportNoteDetailStore
-	ingredientStore       UpdateIngredientStore
+	exportNoteStore         CreateExportNoteStore
+	exportNoteDetailStore   CreateExportNoteDetailStore
+	ingredientStore         UpdateIngredientStore
+	stockChangeHistoryStore StockChangeHistoryStore
 }
 
 func NewCreateExportNoteRepo(
 	exportNoteStore CreateExportNoteStore,
 	exportNoteDetailStore CreateExportNoteDetailStore,
-	ingredientStore UpdateIngredientStore) *createExportNoteRepo {
+	ingredientStore UpdateIngredientStore,
+	stockChangeHistoryStore StockChangeHistoryStore) *createExportNoteRepo {
 	return &createExportNoteRepo{
-		exportNoteStore:       exportNoteStore,
-		exportNoteDetailStore: exportNoteDetailStore,
-		ingredientStore:       ingredientStore,
+		exportNoteStore:         exportNoteStore,
+		exportNoteDetailStore:   exportNoteDetailStore,
+		ingredientStore:         ingredientStore,
+		stockChangeHistoryStore: stockChangeHistoryStore,
 	}
 }
 
@@ -70,6 +79,9 @@ func (repo *createExportNoteRepo) HandleIngredientTotalAmount(
 	ctx context.Context,
 	exportNoteId string,
 	ingredientTotalAmountNeedUpdate map[string]int) error {
+
+	var history []stockchangehistorymodel.StockChangeHistory
+
 	for key, value := range ingredientTotalAmountNeedUpdate {
 		ingredient, errGetIngredient := repo.ingredientStore.FindIngredient(
 			ctx, map[string]interface{}{"id": key})
@@ -89,6 +101,22 @@ func (repo *createExportNoteRepo) HandleIngredientTotalAmount(
 		); err != nil {
 			return err
 		}
+
+		typeChange := stockchangehistorymodel.Export
+		stockChangeHistory := stockchangehistorymodel.StockChangeHistory{
+			Id:           exportNoteId,
+			IngredientId: ingredient.Id,
+			Amount:       -value,
+			AmountLeft:   amountLeft,
+			Type:         &typeChange,
+		}
+		history = append(history, stockChangeHistory)
 	}
+
+	if err := repo.stockChangeHistoryStore.CreateLisStockChangeHistory(
+		ctx, history); err != nil {
+		return err
+	}
+
 	return nil
 }

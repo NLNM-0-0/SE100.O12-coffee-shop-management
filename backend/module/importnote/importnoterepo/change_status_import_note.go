@@ -5,6 +5,7 @@ import (
 	"backend/module/importnote/importnotemodel"
 	"backend/module/importnotedetail/importnotedetailmodel"
 	"backend/module/ingredient/ingredientmodel"
+	"backend/module/stockchangehistory/stockchangehistorymodel"
 	"backend/module/supplier/suppliermodel"
 	"backend/module/supplierdebt/supplierdebtmodel"
 	"context"
@@ -31,6 +32,10 @@ type GetImportNoteDetailStore interface {
 }
 
 type UpdateAmountIngredientStore interface {
+	FindIngredient(
+		ctx context.Context,
+		conditions map[string]interface{},
+		moreKeys ...string) (*ingredientmodel.Ingredient, error)
 	UpdateAmountIngredient(
 		ctx context.Context,
 		id string,
@@ -57,12 +62,19 @@ type CreateSupplierDebtStore interface {
 	) error
 }
 
+type StockChangeHistoryStore interface {
+	CreateLisStockChangeHistory(
+		ctx context.Context,
+		data []stockchangehistorymodel.StockChangeHistory) error
+}
+
 type changeStatusImportNoteRepo struct {
-	importNoteStore       ChangeStatusImportNoteStore
-	importNoteDetailStore GetImportNoteDetailStore
-	ingredientStore       UpdateAmountIngredientStore
-	supplierStore         UpdateDebtOfSupplierStore
-	supplierDebtStore     CreateSupplierDebtStore
+	importNoteStore         ChangeStatusImportNoteStore
+	importNoteDetailStore   GetImportNoteDetailStore
+	ingredientStore         UpdateAmountIngredientStore
+	supplierStore           UpdateDebtOfSupplierStore
+	supplierDebtStore       CreateSupplierDebtStore
+	stockChangeHistoryStore StockChangeHistoryStore
 }
 
 func NewChangeStatusImportNoteRepo(
@@ -70,13 +82,15 @@ func NewChangeStatusImportNoteRepo(
 	importNoteDetailStore GetImportNoteDetailStore,
 	ingredientStore UpdateAmountIngredientStore,
 	supplierStore UpdateDebtOfSupplierStore,
-	supplierDebtStore CreateSupplierDebtStore) *changeStatusImportNoteRepo {
+	supplierDebtStore CreateSupplierDebtStore,
+	stockChangeHistoryStore StockChangeHistoryStore) *changeStatusImportNoteRepo {
 	return &changeStatusImportNoteRepo{
-		importNoteStore:       importNoteStore,
-		importNoteDetailStore: importNoteDetailStore,
-		ingredientStore:       ingredientStore,
-		supplierStore:         supplierStore,
-		supplierDebtStore:     supplierDebtStore,
+		importNoteStore:         importNoteStore,
+		importNoteDetailStore:   importNoteDetailStore,
+		ingredientStore:         ingredientStore,
+		supplierStore:           supplierStore,
+		supplierDebtStore:       supplierDebtStore,
+		stockChangeHistoryStore: stockChangeHistoryStore,
 	}
 }
 
@@ -112,13 +126,13 @@ func (repo *changeStatusImportNoteRepo) CreateSupplierDebt(
 	}
 
 	amountBorrow := importNote.TotalPrice
-	amountLeft := supplier.Debt - amountBorrow
+	amountLeft := supplier.Debt + amountBorrow
 
 	debtType := enum.Debt
 	supplierDebtCreate := supplierdebtmodel.SupplierDebtCreate{
 		Id:         supplierDebtId,
 		SupplierId: importNote.SupplierId,
-		Amount:     -amountBorrow,
+		Amount:     amountBorrow,
 		AmountLeft: amountLeft,
 		DebtType:   &debtType,
 		CreatedBy:  importNote.ClosedBy,
@@ -135,9 +149,11 @@ func (repo *changeStatusImportNoteRepo) CreateSupplierDebt(
 func (repo *changeStatusImportNoteRepo) UpdateDebtSupplier(
 	ctx context.Context,
 	importNote *importnotemodel.ImportNoteUpdate) error {
-	amount := -importNote.TotalPrice
+	amount := importNote.TotalPrice
 	supplierUpdateDebt := suppliermodel.SupplierUpdateDebt{
-		Amount: &amount,
+		Id:        &importNote.Id,
+		Amount:    &amount,
+		CreatedBy: importNote.ClosedBy,
 	}
 	if err := repo.supplierStore.UpdateSupplierDebt(
 		ctx, importNote.SupplierId, &supplierUpdateDebt,
@@ -161,14 +177,38 @@ func (repo *changeStatusImportNoteRepo) FindListImportNoteDetail(
 
 func (repo *changeStatusImportNoteRepo) HandleIngredient(
 	ctx context.Context,
+	importNoteId string,
 	ingredientTotalAmountNeedUpdate map[string]int) error {
+	var history []stockchangehistorymodel.StockChangeHistory
 	for key, value := range ingredientTotalAmountNeedUpdate {
+		ingredient, errFindIngredient := repo.ingredientStore.FindIngredient(
+			ctx, map[string]interface{}{"id": key})
+		if errFindIngredient != nil {
+			return errFindIngredient
+		}
+
 		ingredientUpdate := ingredientmodel.IngredientUpdateAmount{Amount: value}
 		if err := repo.ingredientStore.UpdateAmountIngredient(
 			ctx, key, &ingredientUpdate,
 		); err != nil {
 			return err
 		}
+
+		typeChange := stockchangehistorymodel.Import
+		stockChangeHistory := stockchangehistorymodel.StockChangeHistory{
+			Id:           importNoteId,
+			IngredientId: key,
+			Amount:       value,
+			AmountLeft:   value + ingredient.Amount,
+			Type:         &typeChange,
+		}
+		history = append(history, stockChangeHistory)
 	}
+
+	if err := repo.stockChangeHistoryStore.CreateLisStockChangeHistory(
+		ctx, history); err != nil {
+		return err
+	}
+
 	return nil
 }

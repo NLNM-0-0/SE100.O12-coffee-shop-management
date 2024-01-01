@@ -10,6 +10,7 @@ import (
 	"backend/module/importnote/importnotestore"
 	"backend/module/importnotedetail/importnotedetailstore"
 	"backend/module/ingredient/ingredientstore"
+	"backend/module/stockchangehistory/stockchangehistorystore"
 	"backend/module/supplier/supplierstore"
 	"backend/module/supplierdebt/supplierdebtstore"
 	"errors"
@@ -40,6 +41,7 @@ func ChangeStatusImportNote(appCtx appctx.AppContext) gin.HandlerFunc {
 		ingredientStore := ingredientstore.NewSQLStore(db)
 		supplierStore := supplierstore.NewSQLStore(db)
 		supplierDebtStore := supplierdebtstore.NewSQLStore(db)
+		stockChangeHistoryStore := stockchangehistorystore.NewSQLStore(db)
 
 		repo := importnoterepo.NewChangeStatusImportNoteRepo(
 			importNoteStore,
@@ -47,6 +49,7 @@ func ChangeStatusImportNote(appCtx appctx.AppContext) gin.HandlerFunc {
 			ingredientStore,
 			supplierStore,
 			supplierDebtStore,
+			stockChangeHistoryStore,
 		)
 
 		business := importnotebiz.NewChangeStatusImportNoteBiz(repo, requester)
