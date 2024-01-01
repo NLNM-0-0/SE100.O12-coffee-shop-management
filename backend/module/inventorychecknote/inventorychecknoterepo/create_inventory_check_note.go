@@ -4,6 +4,7 @@ import (
 	"backend/module/ingredient/ingredientmodel"
 	"backend/module/inventorychecknote/inventorychecknotemodel"
 	"backend/module/inventorychecknotedetail/inventorychecknotedetailmodel"
+	"backend/module/stockchangehistory/stockchangehistorymodel"
 	"context"
 )
 
@@ -32,20 +33,29 @@ type UpdateIngredientStore interface {
 		moreKeys ...string) (*ingredientmodel.Ingredient, error)
 }
 
+type StockChangeHistoryStore interface {
+	CreateLisStockChangeHistory(
+		ctx context.Context,
+		data []stockchangehistorymodel.StockChangeHistory) error
+}
+
 type createInventoryCheckNoteRepo struct {
 	inventoryCheckNoteStore       CreateInventoryCheckNoteStore
 	inventoryCheckNoteDetailStore CreateInventoryCheckNoteDetailStore
 	ingredientStore               UpdateIngredientStore
+	stockChangeHistoryStore       StockChangeHistoryStore
 }
 
 func NewCreateInventoryCheckNoteRepo(
 	inventoryCheckNoteStore CreateInventoryCheckNoteStore,
 	inventoryCheckNoteDetailStore CreateInventoryCheckNoteDetailStore,
-	ingredientStore UpdateIngredientStore) *createInventoryCheckNoteRepo {
+	ingredientStore UpdateIngredientStore,
+	stockChangeHistoryStore StockChangeHistoryStore) *createInventoryCheckNoteRepo {
 	return &createInventoryCheckNoteRepo{
 		inventoryCheckNoteStore:       inventoryCheckNoteStore,
 		inventoryCheckNoteDetailStore: inventoryCheckNoteDetailStore,
 		ingredientStore:               ingredientStore,
+		stockChangeHistoryStore:       stockChangeHistoryStore,
 	}
 }
 
@@ -70,6 +80,7 @@ func (repo *createInventoryCheckNoteRepo) HandleIngredientAmount(
 	amountDiff := 0
 	amountAfter := 0
 
+	var history []stockchangehistorymodel.StockChangeHistory
 	for i, value := range data.Details {
 		ingredient, errGetIngredient := repo.ingredientStore.FindIngredient(
 			ctx, map[string]interface{}{"id": value.IngredientId})
@@ -92,6 +103,21 @@ func (repo *createInventoryCheckNoteRepo) HandleIngredientAmount(
 		); err != nil {
 			return err
 		}
+
+		typeChange := stockchangehistorymodel.Modify
+		stockChangeHistory := stockchangehistorymodel.StockChangeHistory{
+			Id:           *data.Id,
+			IngredientId: data.Details[i].IngredientId,
+			Amount:       value.Difference,
+			AmountLeft:   value.Difference + ingredient.Amount,
+			Type:         &typeChange,
+		}
+		history = append(history, stockChangeHistory)
+	}
+
+	if err := repo.stockChangeHistoryStore.CreateLisStockChangeHistory(
+		ctx, history); err != nil {
+		return err
 	}
 
 	data.AmountDifferent = amountDiff

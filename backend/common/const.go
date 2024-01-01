@@ -1,6 +1,7 @@
 package common
 
 const (
+	TableImage                    string = "Image"
 	TableUser                     string = "MUser"
 	TableCategory                 string = "Category"
 	TableCategoryFood             string = "CategoryFood"
@@ -25,6 +26,11 @@ const (
 	TableFeature                  string = "Feature"
 	TableRoleFeature              string = "RoleFeature"
 	TableShopGeneral              string = "ShopGeneral"
+	TableStockChangeHistory       string = "StockChangeHistory"
+	TableSupplierDebtReport       string = "SupplierDebtReport"
+	TableSupplierDebtReportDetail string = "SupplierDebtReportDetail"
+	TableStockReport              string = "StockReport"
+	TableStockReportDetail        string = "StockReportDetail"
 )
 
 const MaxLengthIdCanGenerate = 12
@@ -62,6 +68,9 @@ const (
 	UserViewFeatureCode                 = "USE_VIEW"
 	UserUpdateInfoFeatureCode           = "USE_UP_INFO"
 	UserUpdateStatusFeatureCode         = "USE_UP_STATE"
+	SupplierDebtReportViewFeatureCode   = "REPORT_VIEW_SUPPLIER"
+	StockReportViewFeatureCode          = "REPORT_VIEW_STOCK"
+	SaleReportViewFeatureCode           = "REPORT_VIEW_SALE"
 )
 
 const RoleAdminId = "admin"

@@ -24,6 +24,8 @@ type PaySupplierStoreRepo interface {
 		supplierId string,
 		data *suppliermodel.SupplierUpdateDebt,
 	) error
+	GetAllImportNoteId(
+		ctx context.Context) ([]string, error)
 }
 
 type paySupplierBiz struct {
@@ -61,12 +63,17 @@ func (biz *paySupplierBiz) PaySupplier(
 	if errGetDebt != nil {
 		return nil, errGetDebt
 	}
-	if *debtCurrent+*data.Amount > 0 {
+	if *debtCurrent-*data.Amount < 0 {
 		return nil, suppliermodel.ErrSupplierInitDebtInvalid
 	}
 
+	importNoteIds, errGetImportNoteIds := biz.repo.GetAllImportNoteId(ctx)
+	if errGetImportNoteIds != nil {
+		return nil, errGetImportNoteIds
+	}
+
 	supplierDebtCreate, errGetSupplierDebtCreate := getSupplierDebtCreate(
-		biz.gen, supplierId, *debtCurrent, data,
+		biz.gen, supplierId, *debtCurrent, data, importNoteIds,
 	)
 	if errGetSupplierDebtCreate != nil {
 		return nil, errGetSupplierDebtCreate
@@ -95,23 +102,52 @@ func validateSupplierUpdateDebt(data *suppliermodel.SupplierUpdateDebt) error {
 	return nil
 }
 
+func stringInSlice(list []string, a string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
+}
+
 func getSupplierDebtCreate(
 	gen generator.IdGenerator,
 	supplierId string,
 	currentDebt int,
 	data *suppliermodel.SupplierUpdateDebt,
+	importNoteIds []string,
 ) (*supplierdebtmodel.SupplierDebtCreate, error) {
-	amountPay := *data.Amount
+	amountPay := -*data.Amount
 	amountLeft := currentDebt + amountPay
 
-	id, errGenerateId := gen.IdProcess(data.Id)
-	if errGenerateId != nil {
-		return nil, errGenerateId
+	if data.Id != nil {
+		id, errGenerateId := gen.IdProcess(data.Id)
+		if errGenerateId != nil {
+			return nil, errGenerateId
+		}
+		if stringInSlice(importNoteIds, *id) {
+			return nil, suppliermodel.ErrSupplierDebtIdExistedInImportNote
+		}
+		data.Id = id
+	} else {
+		id, errGenerateId := gen.GenerateId()
+		if errGenerateId != nil {
+			return nil, errGenerateId
+		}
+		for stringInSlice(importNoteIds, id) {
+			id, errGenerateId = gen.GenerateId()
+			if errGenerateId != nil {
+				return nil, errGenerateId
+			}
+		}
+
+		data.Id = &id
 	}
 
 	debtType := enum.Pay
 	supplierDebtCreate := supplierdebtmodel.SupplierDebtCreate{
-		Id:         *id,
+		Id:         *data.Id,
 		SupplierId: supplierId,
 		Amount:     amountPay,
 		AmountLeft: amountLeft,

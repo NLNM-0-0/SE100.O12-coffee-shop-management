@@ -13,10 +13,17 @@ import (
 	"backend/module/invoice/invoicetransport/gininvoice"
 	"backend/module/product/producttransport/ginproduct"
 	"backend/module/role/roletransport/ginrole"
+	"backend/module/salereport/salereporttransport/ginsalereport"
 	"backend/module/shopgeneral/shopgeneraltransport/ginshopgeneral"
+	ginstockreports "backend/module/stockreport/stockreporttransport/ginstockreport"
 	"backend/module/supplier/suppliertransport/ginsupplier"
+	"backend/module/supplierdebtreport/supplierdebtreporttransport/ginsupplierdebtreport"
+	"backend/module/upload/uploadtransport/ginupload"
 	"backend/module/user/usertransport/ginuser"
+	cloud "cloud.google.com/go/storage"
+	"context"
 	"fmt"
+	"google.golang.org/api/option"
 	"log"
 	"net/http"
 	"time"
@@ -28,11 +35,10 @@ import (
 )
 
 type appConfig struct {
-	Port string
-	Env  string
-
+	Port      string
+	Env       string
+	Bucket    string
 	DBConnStr string
-
 	SecretKey string
 }
 
@@ -52,7 +58,15 @@ func main() {
 		db = db.Debug()
 	}
 
-	appCtx := appctx.NewAppContext(db, cfg.SecretKey)
+	ctx := context.Background()
+	sa := option.WithCredentialsFile("serviceAccountKey.json")
+
+	storage, errGetStorage := cloud.NewClient(ctx, sa)
+	if errGetStorage != nil {
+		log.Fatalln(err)
+	}
+
+	appCtx := appctx.NewAppContext(db, storage, cfg.SecretKey, cfg.Bucket)
 
 	r := gin.Default()
 	r.Use(CORSMiddleware())
@@ -73,6 +87,13 @@ func main() {
 		ginshopgeneral.SetupRoutes(v1, appCtx)
 		ginsupplier.SetupRoutes(v1, appCtx)
 		ginuser.SetupRoutes(v1, appCtx)
+		ginupload.SetupRoutes(v1, appCtx)
+		report := v1.Group("/reports")
+		{
+			ginstockreports.SetupRoutes(report, appCtx)
+			ginsupplierdebtreport.SetupRoutes(report, appCtx)
+			ginsalereport.SetupRoutes(report, appCtx)
+		}
 	}
 
 	if err := r.Run(fmt.Sprintf(":%s", cfg.Port)); err != nil {
@@ -91,6 +112,7 @@ func loadConfig() (*appConfig, error) {
 		Env:       env["ENVIRONMENT"],
 		DBConnStr: env["DB_CONNECTION_STR"],
 		SecretKey: env["SECRET_KEY"],
+		Bucket:    env["BUCKET"],
 	}, nil
 }
 

@@ -11,6 +11,7 @@ import (
 	"backend/module/inventorychecknote/inventorychecknoterepo"
 	"backend/module/inventorychecknote/inventorychecknotestore"
 	"backend/module/inventorychecknotedetail/inventorychecknotedetailstore"
+	"backend/module/stockchangehistory/stockchangehistorystore"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -31,11 +32,13 @@ func CreateInventoryCheckNote(appCtx appctx.AppContext) gin.HandlerFunc {
 		inventoryCheckNoteStore := inventorychecknotestore.NewSQLStore(db)
 		inventoryCheckNoteDetailStore := inventorychecknotedetailstore.NewSQLStore(db)
 		ingredientStore := ingredientstore.NewSQLStore(db)
+		stockChangeHistoryStore := stockchangehistorystore.NewSQLStore(db)
 
 		repo := inventorychecknoterepo.NewCreateInventoryCheckNoteRepo(
 			inventoryCheckNoteStore,
 			inventoryCheckNoteDetailStore,
 			ingredientStore,
+			stockChangeHistoryStore,
 		)
 
 		gen := generator.NewShortIdGenerator()

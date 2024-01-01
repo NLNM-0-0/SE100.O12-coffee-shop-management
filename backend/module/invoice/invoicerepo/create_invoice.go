@@ -8,6 +8,7 @@ import (
 	"backend/module/product/productmodel"
 	"backend/module/shopgeneral/shopgeneralmodel"
 	"backend/module/sizefood/sizefoodmodel"
+	"backend/module/stockchangehistory/stockchangehistorymodel"
 	"context"
 )
 
@@ -78,15 +79,22 @@ type ShopGeneralStore interface {
 	) (*shopgeneralmodel.ShopGeneral, error)
 }
 
+type StockChangeHistoryStore interface {
+	CreateLisStockChangeHistory(
+		ctx context.Context,
+		data []stockchangehistorymodel.StockChangeHistory) error
+}
+
 type createInvoiceRepo struct {
-	invoiceStore       InvoiceStore
-	invoiceDetailStore InvoiceDetailStore
-	customerStore      CustomerStore
-	sizeFoodStore      SizeFoodStore
-	foodStore          FoodStore
-	toppingStore       ToppingStore
-	ingredientStore    IngredientStore
-	shopGeneralStore   ShopGeneralStore
+	invoiceStore            InvoiceStore
+	invoiceDetailStore      InvoiceDetailStore
+	customerStore           CustomerStore
+	sizeFoodStore           SizeFoodStore
+	foodStore               FoodStore
+	toppingStore            ToppingStore
+	ingredientStore         IngredientStore
+	shopGeneralStore        ShopGeneralStore
+	stockChangeHistoryStore StockChangeHistoryStore
 }
 
 func NewCreateInvoiceRepo(
@@ -342,6 +350,7 @@ func (repo *createInvoiceRepo) HandleIngredientTotalAmount(
 	ctx context.Context,
 	invoiceId string,
 	ingredientTotalAmountNeedUpdate map[string]int) error {
+	var history []stockchangehistorymodel.StockChangeHistory
 	for key, value := range ingredientTotalAmountNeedUpdate {
 		ingredient, errGetIngredient := repo.ingredientStore.FindIngredient(
 			ctx, map[string]interface{}{"id": key})
@@ -360,6 +369,22 @@ func (repo *createInvoiceRepo) HandleIngredientTotalAmount(
 		); err != nil {
 			return err
 		}
+
+		typeChange := stockchangehistorymodel.Sell
+		stockChangeHistory := stockchangehistorymodel.StockChangeHistory{
+			Id:           invoiceId,
+			IngredientId: ingredient.Id,
+			Amount:       -ingredient.Amount,
+			AmountLeft:   amountLeft,
+			Type:         &typeChange,
+		}
+		history = append(history, stockChangeHistory)
 	}
+
+	if err := repo.stockChangeHistoryStore.CreateLisStockChangeHistory(
+		ctx, history); err != nil {
+		return err
+	}
+
 	return nil
 }

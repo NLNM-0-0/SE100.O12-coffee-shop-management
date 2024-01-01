@@ -1,6 +1,7 @@
 package supplierrepo
 
 import (
+	"backend/module/importnote/importnotemodel"
 	"backend/module/supplier/suppliermodel"
 	"backend/module/supplierdebt/supplierdebtmodel"
 	"context"
@@ -24,17 +25,25 @@ type CreateSupplierDebtStore interface {
 		data *supplierdebtmodel.SupplierDebtCreate) error
 }
 
+type GetAllIdImportNoteStore interface {
+	GetAllIdImportNote(
+		ctx context.Context) ([]importnotemodel.ImportNoteId, error)
+}
+
 type paySupplierRepo struct {
 	supplierStore     PaySupplierStore
 	supplierDebtStore CreateSupplierDebtStore
+	importNoteStore   GetAllIdImportNoteStore
 }
 
 func NewPaySupplierRepo(
 	supplierStore PaySupplierStore,
-	supplierDebtStore CreateSupplierDebtStore) *paySupplierRepo {
+	supplierDebtStore CreateSupplierDebtStore,
+	importNoteStore GetAllIdImportNoteStore) *paySupplierRepo {
 	return &paySupplierRepo{
 		supplierStore:     supplierStore,
 		supplierDebtStore: supplierDebtStore,
+		importNoteStore:   importNoteStore,
 	}
 }
 
@@ -68,4 +77,19 @@ func (repo *paySupplierRepo) UpdateDebtSupplier(
 		return err
 	}
 	return nil
+}
+
+func (repo *paySupplierRepo) GetAllImportNoteId(
+	ctx context.Context) ([]string, error) {
+	result, err := repo.importNoteStore.GetAllIdImportNote(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var listId []string
+	for _, v := range result {
+		listId = append(listId, v.Id)
+	}
+
+	return listId, nil
 }
