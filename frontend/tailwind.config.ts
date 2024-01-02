@@ -15,7 +15,11 @@ module.exports = {
         "2xl": "1400px",
       },
     },
+
     extend: {
+      screens: {
+        lgr: "1152px",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -59,6 +63,7 @@ module.exports = {
 
         "light-orange": "hsl(var(--light-orange))",
       },
+
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
