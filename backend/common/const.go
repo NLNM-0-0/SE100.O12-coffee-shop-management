@@ -31,6 +31,7 @@ const (
 	TableSupplierDebtReportDetail string = "SupplierDebtReportDetail"
 	TableStockReport              string = "StockReport"
 	TableStockReportDetail        string = "StockReportDetail"
+	TableUnits                    string = "Unit"
 )
 
 const MaxLengthIdCanGenerate = 12

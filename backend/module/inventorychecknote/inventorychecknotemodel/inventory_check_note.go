@@ -9,13 +9,11 @@ import (
 )
 
 type InventoryCheckNote struct {
-	Id                string                                                   `json:"id" gorm:"column:id;"`
-	AmountDifferent   int                                                      `json:"amountDifferent" gorm:"column:amountDifferent;"`
-	AmountAfterAdjust int                                                      `json:"amountAfterAdjust" gorm:"column:amountAfterAdjust;" `
-	CreatedBy         string                                                   `json:"-" gorm:"column:createdBy;"`
-	CreatedByUser     usermodel.SimpleUser                                     `json:"createdBy" gorm:"foreignKey:CreatedBy;references:Id"`
-	CreatedAt         *time.Time                                               `json:"createdAt" gorm:"column:createdAt;"`
-	Details           []inventorychecknotedetailmodel.InventoryCheckNoteDetail `json:"details,omitempty"`
+	Id            string                                                   `json:"id" gorm:"column:id;"`
+	CreatedBy     string                                                   `json:"-" gorm:"column:createdBy;"`
+	CreatedByUser usermodel.SimpleUser                                     `json:"createdBy" gorm:"foreignKey:CreatedBy;references:Id"`
+	CreatedAt     *time.Time                                               `json:"createdAt" gorm:"column:createdAt;"`
+	Details       []inventorychecknotedetailmodel.InventoryCheckNoteDetail `json:"details,omitempty"`
 }
 
 func (*InventoryCheckNote) TableName() string {
@@ -42,6 +40,9 @@ var (
 		errors.New("the amount after modification is invalid"),
 		"Lượng sau khi điều chỉnh không hợp lệ",
 		"ErrInventoryCheckNoteModifyAmountIsInvalid",
+	)
+	ErrInventoryCheckNoteNoteIdDuplicate = common.ErrDuplicateKey(
+		errors.New("Phiếu kiểm kho đã tồn tại"),
 	)
 	ErrInventoryCheckNoteCreateNoPermission = common.ErrNoPermission(
 		errors.New("Bạn không có quyền tạo phiếu kiểm kho mới"),

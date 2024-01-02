@@ -2,13 +2,14 @@ package ingredientmodel
 
 import (
 	"backend/common"
-	"backend/common/enum"
+	"backend/module/unittype/unittypemodel"
 )
 
 type SimpleIngredient struct {
-	Id          string            `json:"id" gorm:"column:id;"`
-	Name        string            `json:"name" gorm:"column:name;"`
-	MeasureType *enum.MeasureType `json:"measureType" gorm:"column:measureType;"`
+	Id         string                 `json:"id" gorm:"column:id;"`
+	Name       string                 `json:"name" gorm:"column:name;"`
+	UnitTypeId string                 `json:"-" gorm:"column:unitTypeId;"`
+	UnitType   unittypemodel.UnitType `json:"unitType,omitempty"`
 }
 
 func (*SimpleIngredient) TableName() string {

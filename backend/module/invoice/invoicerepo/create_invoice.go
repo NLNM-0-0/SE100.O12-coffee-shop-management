@@ -207,7 +207,7 @@ func (repo *createInvoiceRepo) HandleData(
 		mapFood[detail.FoodId][detail.SizeId]++
 	}
 
-	mapIngredient := make(map[string]int)
+	mapIngredient := make(map[string]float32)
 
 	for keyFood, mapSize := range mapFood {
 		for keySize, value := range mapSize {
@@ -235,7 +235,7 @@ func (repo *createInvoiceRepo) HandleData(
 
 			for _, recipeDetail := range sizeFood.Recipe.Details {
 				mapIngredient[recipeDetail.IngredientId] +=
-					recipeDetail.AmountNeed * value
+					recipeDetail.AmountNeed * float32(value)
 			}
 		}
 	}
@@ -256,7 +256,7 @@ func (repo *createInvoiceRepo) HandleData(
 		mapToppingPrice[key] = topping.Cost
 
 		for _, recipeDetail := range topping.Recipe.Details {
-			mapIngredient[recipeDetail.IngredientId] += recipeDetail.AmountNeed * value
+			mapIngredient[recipeDetail.IngredientId] += recipeDetail.AmountNeed * float32(value)
 		}
 	}
 
@@ -349,7 +349,7 @@ func (repo *createInvoiceRepo) createInvoiceDetails(
 func (repo *createInvoiceRepo) HandleIngredientTotalAmount(
 	ctx context.Context,
 	invoiceId string,
-	ingredientTotalAmountNeedUpdate map[string]int) error {
+	ingredientTotalAmountNeedUpdate map[string]float32) error {
 	var history []stockchangehistorymodel.StockChangeHistory
 	for key, value := range ingredientTotalAmountNeedUpdate {
 		ingredient, errGetIngredient := repo.ingredientStore.FindIngredient(

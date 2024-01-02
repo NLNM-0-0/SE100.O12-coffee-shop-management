@@ -5,6 +5,7 @@ import (
 	"backend/module/exportnotedetail/exportnotedetailmodel"
 	"backend/module/ingredient/ingredientmodel"
 	"backend/module/stockchangehistory/stockchangehistorymodel"
+	"backend/module/unittype/unittypemodel"
 	"context"
 )
 
@@ -40,23 +41,32 @@ type StockChangeHistoryStore interface {
 		data []stockchangehistorymodel.StockChangeHistory) error
 }
 
+type ListUnitTypeStore interface {
+	ListUnitType(
+		ctx context.Context,
+		condition map[string]interface{}) ([]unittypemodel.UnitType, error)
+}
+
 type createExportNoteRepo struct {
 	exportNoteStore         CreateExportNoteStore
 	exportNoteDetailStore   CreateExportNoteDetailStore
 	ingredientStore         UpdateIngredientStore
 	stockChangeHistoryStore StockChangeHistoryStore
+	unitTypeStore           ListUnitTypeStore
 }
 
 func NewCreateExportNoteRepo(
 	exportNoteStore CreateExportNoteStore,
 	exportNoteDetailStore CreateExportNoteDetailStore,
 	ingredientStore UpdateIngredientStore,
-	stockChangeHistoryStore StockChangeHistoryStore) *createExportNoteRepo {
+	stockChangeHistoryStore StockChangeHistoryStore,
+	unitTypeStore ListUnitTypeStore) *createExportNoteRepo {
 	return &createExportNoteRepo{
 		exportNoteStore:         exportNoteStore,
 		exportNoteDetailStore:   exportNoteDetailStore,
 		ingredientStore:         ingredientStore,
 		stockChangeHistoryStore: stockChangeHistoryStore,
+		unitTypeStore:           unitTypeStore,
 	}
 }
 
@@ -78,26 +88,20 @@ func (repo *createExportNoteRepo) HandleExportNote(
 func (repo *createExportNoteRepo) HandleIngredientTotalAmount(
 	ctx context.Context,
 	exportNoteId string,
-	ingredientTotalAmountNeedUpdate map[string]int) error {
+	data *exportnotemodel.ExportNoteCreate) error {
 
 	var history []stockchangehistorymodel.StockChangeHistory
 
-	for key, value := range ingredientTotalAmountNeedUpdate {
-		ingredient, errGetIngredient := repo.ingredientStore.FindIngredient(
-			ctx, map[string]interface{}{"id": key})
-		if errGetIngredient != nil {
-			return errGetIngredient
-		}
+	for _, v := range data.ExportNoteDetails {
+		ingredientUpdate := ingredientmodel.IngredientUpdateAmount{Amount: -v.AmountExportByDefaultUnitType}
 
-		ingredientUpdate := ingredientmodel.IngredientUpdateAmount{Amount: -value}
-
-		amountLeft := ingredient.Amount - value
+		amountLeft := v.Ingredient.Amount - v.AmountExportByDefaultUnitType
 		if amountLeft < 0 {
 			return exportnotemodel.ErrExportNoteAmountExportIsOverTheStock
 		}
 
 		if err := repo.ingredientStore.UpdateAmountIngredient(
-			ctx, key, &ingredientUpdate,
+			ctx, v.IngredientId, &ingredientUpdate,
 		); err != nil {
 			return err
 		}
@@ -105,8 +109,8 @@ func (repo *createExportNoteRepo) HandleIngredientTotalAmount(
 		typeChange := stockchangehistorymodel.Export
 		stockChangeHistory := stockchangehistorymodel.StockChangeHistory{
 			Id:           exportNoteId,
-			IngredientId: ingredient.Id,
-			Amount:       -value,
+			IngredientId: v.IngredientId,
+			Amount:       -v.AmountExportByDefaultUnitType,
 			AmountLeft:   amountLeft,
 			Type:         &typeChange,
 		}
@@ -118,5 +122,37 @@ func (repo *createExportNoteRepo) HandleIngredientTotalAmount(
 		return err
 	}
 
+	return nil
+}
+
+func (repo *createExportNoteRepo) ChangeUnitOfIngredient(
+	ctx context.Context,
+	data *exportnotemodel.ExportNoteCreate) error {
+	units, errListUnit := repo.unitTypeStore.ListUnitType(ctx, map[string]interface{}{})
+	if errListUnit != nil {
+		return errListUnit
+	}
+
+	var mapUnit map[string]unittypemodel.UnitType
+	for _, v := range units {
+		mapUnit[v.Id] = v
+	}
+
+	for i, v := range data.ExportNoteDetails {
+		ingredient, errGetIngredient := repo.ingredientStore.FindIngredient(
+			ctx, map[string]interface{}{"id": v.IngredientId})
+		if errGetIngredient != nil {
+			return errGetIngredient
+		}
+
+		if mapUnit[v.UnitTypeId].MeasureType != mapUnit[ingredient.UnitTypeId].MeasureType {
+			return exportnotemodel.ErrExportNoteMeasureTypeIsNotCorrect
+		}
+
+		data.ExportNoteDetails[i].Ingredient = ingredient
+		data.ExportNoteDetails[i].AmountExportByDefaultUnitType =
+			v.AmountExport * float32(mapUnit[ingredient.UnitTypeId].Value) / float32(mapUnit[v.UnitTypeId].Value)
+		data.ExportNoteDetails[i].UnitTypeName = mapUnit[v.UnitTypeId].Name
+	}
 	return nil
 }

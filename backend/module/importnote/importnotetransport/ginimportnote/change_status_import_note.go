@@ -13,6 +13,7 @@ import (
 	"backend/module/stockchangehistory/stockchangehistorystore"
 	"backend/module/supplier/supplierstore"
 	"backend/module/supplierdebt/supplierdebtstore"
+	"backend/module/unittype/unittypestore"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -42,6 +43,7 @@ func ChangeStatusImportNote(appCtx appctx.AppContext) gin.HandlerFunc {
 		supplierStore := supplierstore.NewSQLStore(db)
 		supplierDebtStore := supplierdebtstore.NewSQLStore(db)
 		stockChangeHistoryStore := stockchangehistorystore.NewSQLStore(db)
+		unitTypeStore := unittypestore.NewSQLStore(db)
 
 		repo := importnoterepo.NewChangeStatusImportNoteRepo(
 			importNoteStore,
@@ -50,6 +52,7 @@ func ChangeStatusImportNote(appCtx appctx.AppContext) gin.HandlerFunc {
 			supplierStore,
 			supplierDebtStore,
 			stockChangeHistoryStore,
+			unitTypeStore,
 		)
 
 		business := importnotebiz.NewChangeStatusImportNoteBiz(repo, requester)

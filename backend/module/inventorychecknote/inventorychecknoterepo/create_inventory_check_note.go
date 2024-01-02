@@ -77,9 +77,6 @@ func (repo *createInventoryCheckNoteRepo) HandleInventoryCheckNote(
 func (repo *createInventoryCheckNoteRepo) HandleIngredientAmount(
 	ctx context.Context,
 	data *inventorychecknotemodel.InventoryCheckNoteCreate) error {
-	amountDiff := 0
-	amountAfter := 0
-
 	var history []stockchangehistorymodel.StockChangeHistory
 	for i, value := range data.Details {
 		ingredient, errGetIngredient := repo.ingredientStore.FindIngredient(
@@ -90,8 +87,6 @@ func (repo *createInventoryCheckNoteRepo) HandleIngredientAmount(
 
 		data.Details[i].Initial = ingredient.Amount
 		data.Details[i].Final = ingredient.Amount + value.Difference
-		amountDiff += value.Difference
-		amountAfter += data.Details[i].Final
 
 		if data.Details[i].Final < 0 {
 			return inventorychecknotemodel.ErrInventoryCheckNoteModifyAmountIsInvalid
@@ -119,8 +114,5 @@ func (repo *createInventoryCheckNoteRepo) HandleIngredientAmount(
 		ctx, history); err != nil {
 		return err
 	}
-
-	data.AmountDifferent = amountDiff
-	data.AmountAfterAdjust = amountAfter
 	return nil
 }

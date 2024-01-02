@@ -11,6 +11,7 @@ type ExportNoteDetail struct {
 	IngredientId string                           `json:"-" gorm:"column:ingredientId;"`
 	Ingredient   ingredientmodel.SimpleIngredient `json:"ingredient" gorm:"foreignKey:IngredientId;references:Id"`
 	AmountExport int                              `json:"amountExport" gorm:"column:amountExport;"`
+	UnitTypeName string                           `json:"unitTypeName" gorm:"column:unitTypeName;"`
 }
 
 func (*ExportNoteDetail) TableName() string {

@@ -10,9 +10,9 @@ type InventoryCheckNoteDetail struct {
 	InventoryCheckNoteId string                           `json:"inventoryCheckNoteId" gorm:"column:inventoryCheckNoteId;"`
 	IngredientId         string                           `json:"-" gorm:"column:ingredientId;"`
 	Ingredient           ingredientmodel.SimpleIngredient `json:"ingredient"`
-	Initial              int                              `json:"initial" gorm:"column:initial;"`
-	Difference           int                              `json:"difference" gorm:"column:difference;"`
-	Final                int                              `json:"difference" gorm:"column:final;"`
+	Initial              float32                          `json:"initial" gorm:"column:initial;"`
+	Difference           float32                          `json:"difference" gorm:"column:difference;"`
+	Final                float32                          `json:"final" gorm:"column:final;"`
 }
 
 func (*InventoryCheckNoteDetail) TableName() string {

@@ -7,12 +7,15 @@ import (
 )
 
 type ImportNoteDetail struct {
-	ImportNoteId string                           `json:"importNoteId" gorm:"column:importNoteId;"`
-	IngredientId string                           `json:"-" gorm:"column:ingredientId;"`
-	Ingredient   ingredientmodel.SimpleIngredient `json:"ingredient" gorm:"foreignKey:IngredientId;references:Id"`
-	Price        float32                          `json:"price" gorm:"column:price"`
-	TotalUnit    float32                          `json:"totalUnit" gorm:"column:totalUnit"`
-	AmountImport int                              `json:"amountImport" gorm:"column:amountImport"`
+	ImportNoteId                  string                           `json:"importNoteId" gorm:"column:importNoteId;"`
+	IngredientId                  string                           `json:"-" gorm:"column:ingredientId;"`
+	Ingredient                    ingredientmodel.SimpleIngredient `json:"ingredient" gorm:"foreignKey:IngredientId;references:Id"`
+	TempIngredient                *ingredientmodel.Ingredient      `json:"-" gorm:"-"`
+	Price                         int                              `json:"price" gorm:"column:price"`
+	TotalUnit                     int                              `json:"totalUnit" gorm:"column:totalUnit"`
+	AmountImport                  float32                          `json:"amountImport" gorm:"column:amountImport"`
+	AmountImportByDefaultUnitType float32                          `json:"-" gorm:"-"`
+	UnitTypeName                  string                           `json:"unitTypeName" gorm:"column:unitTypeName;"`
 }
 
 func (*ImportNoteDetail) TableName() string {

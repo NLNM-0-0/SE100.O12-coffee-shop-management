@@ -2,16 +2,17 @@ package ingredientmodel
 
 import (
 	"backend/common"
-	"backend/common/enum"
+	"backend/module/unittype/unittypemodel"
 	"errors"
 )
 
 type Ingredient struct {
-	Id          string            `json:"id" gorm:"column:id;"`
-	Name        string            `json:"name" gorm:"column:name;"`
-	Amount      int               `json:"amount" gorm:"column:amount;"`
-	MeasureType *enum.MeasureType `json:"measureType" gorm:"column:measureType;"`
-	Price       float32           `json:"price" gorm:"column:price;"`
+	Id         string                 `json:"id" gorm:"column:id;"`
+	Name       string                 `json:"name" gorm:"column:name;"`
+	Amount     float32                `json:"amount" gorm:"column:amount;"`
+	UnitTypeId string                 `json:"-" gorm:"column:unitTypeId;"`
+	UnitType   unittypemodel.UnitType `json:"unitType"`
+	Price      int                    `json:"price" gorm:"column:price;"`
 }
 
 func (*Ingredient) TableName() string {
@@ -34,10 +35,10 @@ var (
 		"Giá của nguyên vật liệu đang là số âm",
 		"ErrIngredientPriceIsNegativeNumber",
 	)
-	ErrIngredientMeasureTypeEmpty = common.NewCustomError(
-		errors.New("measure type of ingredient is empty"),
-		"Loại đo lường của nguyên vật liệu đang trống",
-		"ErrIngredientMeasureTypeEmpty",
+	ErrIngredientUnitTypeInvalid = common.NewCustomError(
+		errors.New("unit type of ingredient is invalid"),
+		"Đơn vị đo lường của nguyên vật liệu không hợp lệ",
+		"ErrIngredientUnitTypeInvalid",
 	)
 	ErrIngredientIdDuplicate = common.ErrDuplicateKey(
 		errors.New("Nguyên vật liệu đã tồn tại"),

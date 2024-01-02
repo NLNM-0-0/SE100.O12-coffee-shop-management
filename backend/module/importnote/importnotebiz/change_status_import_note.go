@@ -32,7 +32,10 @@ type ChangeStatusImportNoteRepo interface {
 	HandleIngredient(
 		ctx context.Context,
 		importNoteId string,
-		ingredientTotalAmountNeedUpdate map[string]int) error
+		details []importnotedetailmodel.ImportNoteDetail) error
+	ChangeUnitOfIngredient(
+		ctx context.Context,
+		details []importnotedetailmodel.ImportNoteDetail) error
 }
 
 type changeStatusImportNoteRepo struct {
@@ -90,9 +93,12 @@ func (biz *changeStatusImportNoteRepo) ChangeStatusImportNote(
 			return errGetImportNoteDetails
 		}
 
-		mapIngredientAmount := getMapIngredientTotalAmountNeedUpdated(importNoteDetails)
+		if err := biz.repo.ChangeUnitOfIngredient(ctx, importNoteDetails); err != nil {
+			return err
+		}
+
 		if err := biz.repo.HandleIngredient(
-			ctx, importNoteId, mapIngredientAmount); err != nil {
+			ctx, importNoteId, importNoteDetails); err != nil {
 			return err
 		}
 	}
@@ -100,13 +106,4 @@ func (biz *changeStatusImportNoteRepo) ChangeStatusImportNote(
 		return err
 	}
 	return nil
-}
-
-func getMapIngredientTotalAmountNeedUpdated(
-	importNoteDetails []importnotedetailmodel.ImportNoteDetail) map[string]int {
-	result := make(map[string]int)
-	for _, v := range importNoteDetails {
-		result[v.IngredientId] += v.AmountImport
-	}
-	return result
 }

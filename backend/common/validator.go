@@ -69,6 +69,10 @@ func ValidateNotPositiveNumberInt(number int) bool {
 	return number <= 0
 }
 
+func ValidateNotPositiveNumberFloat(number float32) bool {
+	return number <= 0
+}
+
 func ValidatePassword(pass *string) bool {
 	return pass != nil && len(*pass) >= 6
 }

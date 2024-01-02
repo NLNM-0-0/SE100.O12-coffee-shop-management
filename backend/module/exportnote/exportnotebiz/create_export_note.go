@@ -16,7 +16,11 @@ type CreateExportNoteRepo interface {
 	HandleIngredientTotalAmount(
 		ctx context.Context,
 		exportNoteId string,
-		ingredientTotalAmountNeedUpdate map[string]int,
+		data *exportnotemodel.ExportNoteCreate,
+	) error
+	ChangeUnitOfIngredient(
+		ctx context.Context,
+		data *exportnotemodel.ExportNoteCreate,
 	) error
 }
 
@@ -52,13 +56,16 @@ func (biz *createExportNoteBiz) CreateExportNote(
 		return err
 	}
 
+	if err := biz.repo.ChangeUnitOfIngredient(ctx, data); err != nil {
+		return err
+	}
+
 	if err := biz.repo.HandleExportNote(ctx, data); err != nil {
 		return err
 	}
 
-	mapIngredient := getMapIngredientExist(data)
 	if err := biz.repo.HandleIngredientTotalAmount(
-		ctx, *data.Id, mapIngredient); err != nil {
+		ctx, *data.Id, data); err != nil {
 		return err
 	}
 
@@ -79,13 +86,4 @@ func handleExportNoteId(
 	}
 
 	return nil
-}
-
-func getMapIngredientExist(data *exportnotemodel.ExportNoteCreate) map[string]int {
-	mapIngredientExist := make(map[string]int)
-	for _, v := range data.ExportNoteDetails {
-		mapIngredientExist[v.IngredientId] += v.AmountExport
-	}
-
-	return mapIngredientExist
 }

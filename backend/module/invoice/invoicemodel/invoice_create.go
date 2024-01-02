@@ -15,7 +15,7 @@ type InvoiceCreate struct {
 	AmountPriceUsePoint int                                      `json:"-" gorm:"column:amountPriceUsePoint"`
 	CreatedBy           string                                   `json:"-" gorm:"column:createdBy;"`
 	InvoiceDetails      []invoicedetailmodel.InvoiceDetailCreate `json:"details" gorm:"-"`
-	MapIngredient       map[string]int                           `json:"-" gorm:"-"`
+	MapIngredient       map[string]float32                       `json:"-" gorm:"-"`
 	ShopName            string                                   `json:"-" gorm:"-"`
 	ShopPhone           string                                   `json:"-" gorm:"-"`
 	ShopAddress         string                                   `json:"-" gorm:"-"`

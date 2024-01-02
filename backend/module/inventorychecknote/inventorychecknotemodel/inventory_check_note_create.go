@@ -6,11 +6,9 @@ import (
 )
 
 type InventoryCheckNoteCreate struct {
-	Id                *string                                                        `json:"id" gorm:"column:id;" example:""`
-	AmountDifferent   int                                                            `json:"-" gorm:"column:amountDifferent;"`
-	AmountAfterAdjust int                                                            `json:"-" gorm:"column:amountAfterAdjust;"`
-	CreatedBy         string                                                         `json:"-" gorm:"column:createdBy;"`
-	Details           []inventorychecknotedetailmodel.InventoryCheckNoteDetailCreate `json:"details" gorm:"-"`
+	Id        *string                                                        `json:"id" gorm:"column:id;" example:""`
+	CreatedBy string                                                         `json:"-" gorm:"column:createdBy;"`
+	Details   []inventorychecknotedetailmodel.InventoryCheckNoteDetailCreate `json:"details" gorm:"-"`
 }
 
 func (*InventoryCheckNoteCreate) TableName() string {

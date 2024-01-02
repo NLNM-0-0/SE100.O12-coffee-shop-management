@@ -11,7 +11,7 @@ import (
 	"backend/module/importnote/importnotestore"
 	"backend/module/importnotedetail/importnotedetailstore"
 	"backend/module/ingredient/ingredientstore"
-	"backend/module/supplier/supplierstore"
+	"backend/module/unittype/unittypestore"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -32,13 +32,13 @@ func CreateImportNote(appCtx appctx.AppContext) gin.HandlerFunc {
 		importNoteStore := importnotestore.NewSQLStore(db)
 		importNoteDetailStore := importnotedetailstore.NewSQLStore(db)
 		ingredientStore := ingredientstore.NewSQLStore(db)
-		supplierStore := supplierstore.NewSQLStore(db)
+		unitTypeStore := unittypestore.NewSQLStore(db)
 
 		repo := importnoterepo.NewCreateImportNoteRepo(
 			importNoteStore,
 			importNoteDetailStore,
 			ingredientStore,
-			supplierStore,
+			unitTypeStore,
 		)
 
 		gen := generator.NewShortIdGenerator()
