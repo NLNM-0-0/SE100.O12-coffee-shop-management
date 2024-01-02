@@ -15,7 +15,8 @@ import (
 
 type FindIngredientStore interface {
 	GetAllSimpleIngredient(
-		ctx context.Context) ([]ingredientmodel.SimpleIngredient, error)
+		ctx context.Context,
+		moreKeys ...string) ([]ingredientmodel.SimpleIngredient, error)
 }
 
 type FindStockChangeHistoryStore interface {
@@ -96,7 +97,7 @@ func (biz *findStockReportBiz) FindStockReport(
 		}
 	}
 
-	allIngredient, err := biz.ingredientStore.GetAllSimpleIngredient(ctx)
+	allIngredient, err := biz.ingredientStore.GetAllSimpleIngredient(ctx, "UnitType")
 	if err != nil {
 		return nil, err
 	}
@@ -127,10 +128,10 @@ func (biz *findStockReportBiz) FindStockReport(
 			return nil, err
 		}
 
-		sellAmount := 0
-		importAmount := 0
-		exportAmount := 0
-		modifyAmount := 0
+		sellAmount := float32(0)
+		importAmount := float32(0)
+		exportAmount := float32(0)
+		modifyAmount := float32(0)
 		for _, change := range stockChange {
 			if *change.Type == stockchangehistorymodel.Sell {
 				sellAmount += change.Amount
@@ -143,7 +144,7 @@ func (biz *findStockReportBiz) FindStockReport(
 			}
 		}
 
-		initial := 0
+		initial := float32(0)
 		if nearly, err :=
 			biz.stockChangeHistoryStore.GetNearlyStockChangeHistory(
 				ctx, ingredient.Id, timeFrom,
@@ -185,8 +186,10 @@ func (biz *findStockReportBiz) FindStockReport(
 				ReportId:     reportId,
 				IngredientId: ingredient.Id,
 				Ingredient: ingredientmodel.SimpleIngredient{
-					Id:   ingredient.Id,
-					Name: ingredient.Name,
+					Id:         ingredient.Id,
+					Name:       ingredient.Name,
+					UnitTypeId: ingredient.UnitTypeId,
+					UnitType:   ingredient.UnitType,
 				},
 				Initial: initial,
 				Sell:    sellAmount,

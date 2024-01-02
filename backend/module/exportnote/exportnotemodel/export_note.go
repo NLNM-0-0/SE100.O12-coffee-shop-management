@@ -47,6 +47,14 @@ var (
 		"Lượng muốn xuất vượt quá lượng trong kho",
 		"ErrExportNoteAmountExportIsOverTheStock",
 	)
+	ErrExportNoteMeasureTypeIsNotCorrect = common.NewCustomError(
+		errors.New("measure type is not correct"),
+		"Loại đo lường không hợp lệ",
+		"ErrExportNoteMeasureTypeIsNotCorrect",
+	)
+	ErrExportNoteIdDuplicate = common.ErrDuplicateKey(
+		errors.New("Phiếu xuất đã tồn tại"),
+	)
 	ErrExportNoteCreateNoPermission = common.ErrNoPermission(
 		errors.New("Bạn không có quyền tạo phiếu xuất"),
 	)

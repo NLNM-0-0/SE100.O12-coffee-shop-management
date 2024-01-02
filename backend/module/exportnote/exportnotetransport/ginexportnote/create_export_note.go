@@ -12,6 +12,7 @@ import (
 	"backend/module/exportnotedetail/exportnotedetailstore"
 	"backend/module/ingredient/ingredientstore"
 	"backend/module/stockchangehistory/stockchangehistorystore"
+	"backend/module/unittype/unittypestore"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -33,12 +34,13 @@ func CreateExportNote(appCtx appctx.AppContext) gin.HandlerFunc {
 		exportNoteDetailStore := exportnotedetailstore.NewSQLStore(db)
 		ingredientStore := ingredientstore.NewSQLStore(db)
 		stockChangeHistoryStore := stockchangehistorystore.NewSQLStore(db)
-
+		unitTypeStore := unittypestore.NewSQLStore(db)
 		repo := exportnoterepo.NewCreateExportNoteRepo(
 			exportNoteStore,
 			exportNoteDetailStore,
 			ingredientStore,
 			stockChangeHistoryStore,
+			unitTypeStore,
 		)
 
 		gen := generator.NewShortIdGenerator()

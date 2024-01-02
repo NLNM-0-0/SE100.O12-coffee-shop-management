@@ -4,6 +4,7 @@ import (
 	"backend/common"
 	"backend/module/inventorychecknotedetail/inventorychecknotedetailmodel"
 	"context"
+	"gorm.io/gorm"
 )
 
 func (s *sqlStore) ListInventoryCheckNoteDetail(
@@ -17,7 +18,9 @@ func (s *sqlStore) ListInventoryCheckNoteDetail(
 	db = db.Where("inventoryCheckNoteId = ?", inventoryCheckNoteId)
 
 	if err := db.
-		Preload("Ingredient").
+		Preload("Ingredient.UnitType", func(db *gorm.DB) *gorm.DB {
+			return db.Order("Ingredient.name")
+		}).
 		Find(&result).Error; err != nil {
 		return nil, common.ErrDB(err)
 	}

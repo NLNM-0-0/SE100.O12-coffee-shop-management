@@ -2,14 +2,13 @@ package ingredientmodel
 
 import (
 	"backend/common"
-	"backend/common/enum"
 )
 
 type IngredientCreate struct {
-	Id          *string           `json:"id" gorm:"column:id;"`
-	Name        string            `json:"name" gorm:"column:name;"`
-	MeasureType *enum.MeasureType `json:"measureType" gorm:"column:measureType;"`
-	Price       float32           `json:"price" gorm:"column:price;"`
+	Id         *string `json:"id" gorm:"column:id;"`
+	Name       string  `json:"name" gorm:"column:name;"`
+	UnitTypeId string  `json:"-" gorm:"column:unitTypeId;"`
+	Price      int     `json:"price" gorm:"column:price;"`
 }
 
 func (*IngredientCreate) TableName() string {
@@ -23,15 +22,11 @@ func (data *IngredientCreate) Validate() *common.AppError {
 	if common.ValidateEmptyString(data.Name) {
 		return ErrIngredientNameEmpty
 	}
-	if data.MeasureType == nil {
-		return ErrIngredientMeasureTypeEmpty
+	if !common.ValidateNotNilId(&data.UnitTypeId) {
+		return ErrIngredientUnitTypeInvalid
 	}
-	if common.ValidateNegativeNumberFloat(data.Price) {
+	if common.ValidateNegativeNumberInt(data.Price) {
 		return ErrIngredientPriceIsNegativeNumber
 	}
 	return nil
-}
-
-func (data *IngredientCreate) Round() {
-	common.CustomRound(&data.Price)
 }

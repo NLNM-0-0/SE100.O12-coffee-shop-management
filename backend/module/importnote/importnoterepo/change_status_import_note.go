@@ -8,6 +8,7 @@ import (
 	"backend/module/stockchangehistory/stockchangehistorymodel"
 	"backend/module/supplier/suppliermodel"
 	"backend/module/supplierdebt/supplierdebtmodel"
+	"backend/module/unittype/unittypemodel"
 	"context"
 )
 
@@ -75,6 +76,7 @@ type changeStatusImportNoteRepo struct {
 	supplierStore           UpdateDebtOfSupplierStore
 	supplierDebtStore       CreateSupplierDebtStore
 	stockChangeHistoryStore StockChangeHistoryStore
+	unitTypeStore           ListUnitTypeStore
 }
 
 func NewChangeStatusImportNoteRepo(
@@ -83,7 +85,8 @@ func NewChangeStatusImportNoteRepo(
 	ingredientStore UpdateAmountIngredientStore,
 	supplierStore UpdateDebtOfSupplierStore,
 	supplierDebtStore CreateSupplierDebtStore,
-	stockChangeHistoryStore StockChangeHistoryStore) *changeStatusImportNoteRepo {
+	stockChangeHistoryStore StockChangeHistoryStore,
+	unitTypeStore ListUnitTypeStore) *changeStatusImportNoteRepo {
 	return &changeStatusImportNoteRepo{
 		importNoteStore:         importNoteStore,
 		importNoteDetailStore:   importNoteDetailStore,
@@ -91,6 +94,7 @@ func NewChangeStatusImportNoteRepo(
 		supplierStore:           supplierStore,
 		supplierDebtStore:       supplierDebtStore,
 		stockChangeHistoryStore: stockChangeHistoryStore,
+		unitTypeStore:           unitTypeStore,
 	}
 }
 
@@ -178,18 +182,13 @@ func (repo *changeStatusImportNoteRepo) FindListImportNoteDetail(
 func (repo *changeStatusImportNoteRepo) HandleIngredient(
 	ctx context.Context,
 	importNoteId string,
-	ingredientTotalAmountNeedUpdate map[string]int) error {
+	details []importnotedetailmodel.ImportNoteDetail) error {
 	var history []stockchangehistorymodel.StockChangeHistory
-	for key, value := range ingredientTotalAmountNeedUpdate {
-		ingredient, errFindIngredient := repo.ingredientStore.FindIngredient(
-			ctx, map[string]interface{}{"id": key})
-		if errFindIngredient != nil {
-			return errFindIngredient
-		}
+	for _, v := range details {
+		ingredientUpdate := ingredientmodel.IngredientUpdateAmount{Amount: v.AmountImportByDefaultUnitType}
 
-		ingredientUpdate := ingredientmodel.IngredientUpdateAmount{Amount: value}
 		if err := repo.ingredientStore.UpdateAmountIngredient(
-			ctx, key, &ingredientUpdate,
+			ctx, v.IngredientId, &ingredientUpdate,
 		); err != nil {
 			return err
 		}
@@ -197,9 +196,9 @@ func (repo *changeStatusImportNoteRepo) HandleIngredient(
 		typeChange := stockchangehistorymodel.Import
 		stockChangeHistory := stockchangehistorymodel.StockChangeHistory{
 			Id:           importNoteId,
-			IngredientId: key,
-			Amount:       value,
-			AmountLeft:   value + ingredient.Amount,
+			IngredientId: v.IngredientId,
+			Amount:       v.AmountImportByDefaultUnitType,
+			AmountLeft:   v.AmountImportByDefaultUnitType + v.TempIngredient.Amount,
 			Type:         &typeChange,
 		}
 		history = append(history, stockChangeHistory)
@@ -210,5 +209,40 @@ func (repo *changeStatusImportNoteRepo) HandleIngredient(
 		return err
 	}
 
+	return nil
+}
+
+func (repo *changeStatusImportNoteRepo) ChangeUnitOfIngredient(
+	ctx context.Context,
+	details []importnotedetailmodel.ImportNoteDetail) error {
+	units, errListUnit := repo.unitTypeStore.ListUnitType(ctx, map[string]interface{}{})
+	if errListUnit != nil {
+		return errListUnit
+	}
+
+	var mapUnit map[string]unittypemodel.UnitType
+	var mapUnitName map[string]unittypemodel.UnitType
+	for _, v := range units {
+		mapUnit[v.Id] = v
+		mapUnitName[v.Name] = v
+	}
+
+	for i, v := range details {
+		ingredient, errGetIngredient := repo.ingredientStore.FindIngredient(
+			ctx, map[string]interface{}{"id": v.IngredientId})
+		if errGetIngredient != nil {
+			return errGetIngredient
+		}
+
+		if mapUnitName[v.UnitTypeName].MeasureType != mapUnit[ingredient.UnitTypeId].MeasureType {
+			return importnotemodel.ErrImportNoteMeasureTypeIsNotCorrect
+		}
+
+		details[i].TempIngredient = ingredient
+		details[i].AmountImportByDefaultUnitType =
+			v.AmountImport *
+				float32(mapUnit[ingredient.UnitTypeId].Value) /
+				float32(mapUnitName[v.UnitTypeName].Value)
+	}
 	return nil
 }

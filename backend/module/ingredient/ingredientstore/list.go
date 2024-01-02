@@ -11,7 +11,8 @@ func (s *sqlStore) ListIngredient(
 	ctx context.Context,
 	filter *ingredientmodel.Filter,
 	propertiesContainSearchKey []string,
-	paging *common.Paging) ([]ingredientmodel.Ingredient, error) {
+	paging *common.Paging,
+	moreKeys ...string) ([]ingredientmodel.Ingredient, error) {
 	var result []ingredientmodel.Ingredient
 	db := s.db
 
@@ -24,6 +25,10 @@ func (s *sqlStore) ListIngredient(
 		return nil, errPaging
 	}
 	db = dbTemp
+
+	for i := range moreKeys {
+		db = db.Preload(moreKeys[i])
+	}
 
 	if err := db.
 		Order("name").

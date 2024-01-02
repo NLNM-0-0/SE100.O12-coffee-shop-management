@@ -64,6 +64,14 @@ var (
 		"Phiếu nhập đã đóng",
 		"ErrImportNoteClosed",
 	)
+	ErrImportNoteMeasureTypeIsNotCorrect = common.NewCustomError(
+		errors.New("measure type is not correct"),
+		"Loại đo lường không hợp lệ",
+		"ErrImportNoteMeasureTypeIsNotCorrect",
+	)
+	ErrImportNoteIdDuplicate = common.ErrDuplicateKey(
+		errors.New("Phiếu nhập đã tồn tại"),
+	)
 	ErrImportNoteCreateNoPermission = common.ErrNoPermission(
 		errors.New("Bạn không có quyền tạo phiếu nhập mới"),
 	)

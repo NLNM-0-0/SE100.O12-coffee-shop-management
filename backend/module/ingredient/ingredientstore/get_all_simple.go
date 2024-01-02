@@ -7,11 +7,16 @@ import (
 )
 
 func (s *sqlStore) GetAllSimpleIngredient(
-	ctx context.Context) ([]ingredientmodel.SimpleIngredient, error) {
+	ctx context.Context,
+	moreKeys ...string) ([]ingredientmodel.SimpleIngredient, error) {
 	var result []ingredientmodel.SimpleIngredient
 	db := s.db
 
 	db = db.Table(common.TableIngredient)
+
+	for i := range moreKeys {
+		db = db.Preload(moreKeys[i])
+	}
 
 	if err := db.
 		Order("name").

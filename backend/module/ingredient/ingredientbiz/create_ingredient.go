@@ -43,8 +43,6 @@ func (biz *createIngredientBiz) CreateIngredient(
 		return err
 	}
 
-	data.Round()
-
 	idAddress, err := biz.gen.IdProcess(data.Id)
 	if err != nil {
 		return err

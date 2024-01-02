@@ -13,6 +13,7 @@ type ListIngredientStore interface {
 		filter *ingredientmodel.Filter,
 		propertiesContainSearchKey []string,
 		paging *common.Paging,
+		moreKeys ...string,
 	) ([]ingredientmodel.Ingredient, error)
 }
 
@@ -40,6 +41,7 @@ func (biz *listIngredientBiz) ListIngredient(
 		filter,
 		[]string{"id", "name"},
 		paging,
+		"UnitType",
 	)
 	if err != nil {
 		return nil, err

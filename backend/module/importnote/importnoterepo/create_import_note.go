@@ -1,10 +1,11 @@
 package importnoterepo
 
 import (
+	"backend/common"
 	"backend/module/importnote/importnotemodel"
 	"backend/module/importnotedetail/importnotedetailmodel"
 	"backend/module/ingredient/ingredientmodel"
-	"backend/module/supplier/suppliermodel"
+	"backend/module/unittype/unittypemodel"
 	"context"
 )
 
@@ -35,31 +36,29 @@ type UpdatePriceIngredientStore interface {
 	) error
 }
 
-type CheckSupplierStore interface {
-	FindSupplier(
+type ListUnitTypeStore interface {
+	ListUnitType(
 		ctx context.Context,
-		conditions map[string]interface{},
-		moreKeys ...string,
-	) (*suppliermodel.Supplier, error)
+		condition map[string]interface{}) ([]unittypemodel.UnitType, error)
 }
 
 type createImportNoteRepo struct {
 	importNoteStore       CreateImportNoteStore
 	importNoteDetailStore CreateImportNoteDetailStore
 	ingredientStore       UpdatePriceIngredientStore
-	supplierStore         CheckSupplierStore
+	unitTypeStore         ListUnitTypeStore
 }
 
 func NewCreateImportNoteRepo(
 	importNoteStore CreateImportNoteStore,
 	importNoteDetailStore CreateImportNoteDetailStore,
 	updatePriceIngredientStore UpdatePriceIngredientStore,
-	supplierStore CheckSupplierStore) *createImportNoteRepo {
+	unitTypeStore ListUnitTypeStore) *createImportNoteRepo {
 	return &createImportNoteRepo{
 		importNoteStore:       importNoteStore,
 		importNoteDetailStore: importNoteDetailStore,
 		ingredientStore:       updatePriceIngredientStore,
-		supplierStore:         supplierStore,
+		unitTypeStore:         unitTypeStore,
 	}
 }
 
@@ -80,7 +79,7 @@ func (repo *createImportNoteRepo) HandleCreateImportNote(
 func (repo *createImportNoteRepo) UpdatePriceIngredient(
 	ctx context.Context,
 	ingredientId string,
-	price float32) error {
+	price int) error {
 	ingredientUpdatePrice := ingredientmodel.IngredientUpdatePrice{
 		Price: &price,
 	}
@@ -89,6 +88,38 @@ func (repo *createImportNoteRepo) UpdatePriceIngredient(
 		ctx, ingredientId, &ingredientUpdatePrice,
 	); err != nil {
 		return err
+	}
+	return nil
+}
+
+func (repo *createImportNoteRepo) ChangeUnitOfIngredient(
+	ctx context.Context,
+	data *importnotemodel.ImportNoteCreate) error {
+	units, errListUnit := repo.unitTypeStore.ListUnitType(ctx, map[string]interface{}{})
+	if errListUnit != nil {
+		return errListUnit
+	}
+
+	var mapUnit map[string]unittypemodel.UnitType
+	for _, v := range units {
+		mapUnit[v.Id] = v
+	}
+
+	for i, v := range data.ImportNoteDetails {
+		ingredient, errGetIngredient := repo.ingredientStore.FindIngredient(
+			ctx, map[string]interface{}{"id": v.IngredientId})
+		if errGetIngredient != nil {
+			return errGetIngredient
+		}
+
+		if mapUnit[v.UnitTypeId].MeasureType != mapUnit[ingredient.UnitTypeId].MeasureType {
+			return importnotemodel.ErrImportNoteMeasureTypeIsNotCorrect
+		}
+
+		data.ImportNoteDetails[i].Ingredient = ingredient
+		data.ImportNoteDetails[i].UnitTypeName = mapUnit[v.UnitTypeId].Name
+		data.ImportNoteDetails[i].PriceByDefaultUnitType =
+			common.RoundToInt(float32(v.Price) * float32(mapUnit[ingredient.UnitTypeId].Value) / float32(mapUnit[v.UnitTypeId].Value))
 	}
 	return nil
 }

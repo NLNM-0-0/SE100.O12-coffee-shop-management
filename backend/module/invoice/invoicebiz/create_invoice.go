@@ -38,7 +38,7 @@ type CreateInvoiceRepo interface {
 	HandleIngredientTotalAmount(
 		ctx context.Context,
 		invoiceId string,
-		ingredientTotalAmountNeedUpdate map[string]int,
+		ingredientTotalAmountNeedUpdate map[string]float32,
 	) error
 }
 
