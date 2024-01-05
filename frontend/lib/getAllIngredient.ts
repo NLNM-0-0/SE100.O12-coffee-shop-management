@@ -1,23 +1,25 @@
-import { apiKey, endPoint } from "@/constants";
+import { endPoint } from "@/constants";
 import { Ingredient } from "@/types";
 import useSWR from "swr";
-
-export default function getAllIngredient(token: string) {
-  const fetcher = (url: string) =>
-    fetch(url, {
-      headers: {
-        accept: "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+import { getApiKey } from "./auth/action";
+const fetcher = async (url: string) => {
+  const token = await getApiKey();
+  return fetch(url, {
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((res) => {
+      return res.json();
     })
-      .then((res) => {
-        return res.json();
-      })
-      .then((json) => {
-        return {
-          data: json.data as Ingredient[],
-        };
-      });
+    .then((json) => {
+      return {
+        data: json.data as Ingredient[],
+      };
+    });
+};
+export default function getAllIngredient() {
   const { data, error, isLoading, mutate } = useSWR(
     `${endPoint}/ingredients/all`,
     fetcher

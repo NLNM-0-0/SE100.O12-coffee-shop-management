@@ -58,7 +58,6 @@ import { AiOutlineClose } from "react-icons/ai";
 import { FilterDatePicker } from "./date-picker";
 import StaffList from "../staff-list";
 import getAllImportNoteForExcel from "@/lib/import/getAllImportNoteForExcel";
-import { getToken } from "@/lib/auth";
 import SupplierList from "../supplier-list";
 import StatusList from "../status-list";
 
@@ -303,9 +302,6 @@ export function ImportTable() {
   filters.forEach((item) => {
     stringToFilter = stringToFilter.concat(`&${item.type}=${item.value}`);
   });
-  const token = getToken();
-  if (!token) {
-  }
   const {
     mutate: mutate,
     data: response,
@@ -314,7 +310,6 @@ export function ImportTable() {
   } = getAllImportNote({
     page: page,
     filterString: stringToFilter,
-    token: token!,
   });
   const data = response?.data;
   const totalPage = Math.ceil(response?.paging.total / response?.paging.limit);
@@ -374,7 +369,7 @@ export function ImportTable() {
       const importNoteData: Promise<{
         data: ImportNote[];
         paging: PagingProps;
-      }> = getAllImportNoteForExcel({ page: "1", limit: 10000, token: token! });
+      }> = getAllImportNoteForExcel({ page: "1", limit: 10000 });
       const notesToExport = await importNoteData;
       if (notesToExport.data.length < 1) {
         toast({

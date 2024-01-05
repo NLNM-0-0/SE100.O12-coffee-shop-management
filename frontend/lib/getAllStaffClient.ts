@@ -1,19 +1,22 @@
 import { apiKey, endPoint } from "@/constants";
 import { Staff } from "@/types";
 import useSWR from "swr";
+import { getApiKey } from "./auth/action";
 
-export default function getAllStaff(token: string) {
-  const fetcher = (url: string) =>
-    fetch(url, {
-      headers: {
-        accept: "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+const fetcher = async (url: string) => {
+  const token = await getApiKey();
+  return fetch(url, {
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((res) => {
+      return res.json();
     })
-      .then((res) => {
-        return res.json();
-      })
-      .then((json) => json.data);
+    .then((json) => json.data);
+};
+export default function getAllStaff() {
   const { data, error, isLoading } = useSWR(`${endPoint}/users/all`, fetcher);
 
   return {
