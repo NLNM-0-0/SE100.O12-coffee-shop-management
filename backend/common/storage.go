@@ -133,7 +133,7 @@ func (s *Storage) Put(file, path string) (map[string]interface{}, error) {
 func (s *Storage) Refresh() error {
 	loc := fmt.Sprintf("https://securetoken.googleapis.com/v1/token?key=%s", s.APIKey)
 	data := map[string]string{
-		"grantType":    "refresh_token",
+		"grantType":    "refreshToken",
 		"refreshToken": s.RefreshToken,
 	}
 	b, err := json.Marshal(data)
@@ -145,11 +145,11 @@ func (s *Storage) Refresh() error {
 		return err
 	}
 
-	accessToken := res["access_token"].(string)
+	accessToken := res["accessToken"].(string)
 	if accessToken != "" {
 		s.Token = accessToken
 	}
-	refreshToken := res["refresh_token"].(string)
+	refreshToken := res["refreshToken"].(string)
 	if refreshToken != "" {
 		s.RefreshToken = refreshToken
 	}

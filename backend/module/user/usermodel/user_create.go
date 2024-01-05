@@ -7,6 +7,8 @@ import (
 type UserCreate struct {
 	Id       *string `json:"id" gorm:"column:id;"`
 	Name     string  `json:"name" gorm:"column:name;"`
+	Phone    string  `json:"phone" gorm:"column:phone;"`
+	Address  string  `json:"address" gorm:"column:address;"`
 	Email    string  `json:"email" gorm:"column:email;"`
 	Password string  `json:"-" gorm:"column:password;"`
 	Salt     string  `json:"-" gorm:"column:salt;"`
@@ -27,6 +29,9 @@ func (data *UserCreate) Validate() error {
 	}
 	if !common.ValidateEmail(data.Email) {
 		return ErrUserEmailInvalid
+	}
+	if !common.ValidatePhone(data.Phone) {
+		return ErrUserPhoneInvalid
 	}
 	if !common.ValidateNotNilId(&data.RoleId) {
 		return ErrUserRoleInvalid
