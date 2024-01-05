@@ -108,6 +108,10 @@ export enum MeasureType {
   Weight = "Weight",
   Unit = "Unit",
 }
+export enum StatusActive {
+  Active = "Đang giao dịch",
+  InActive = "Ngừng giao dịch",
+}
 export type Customer = {
   id: string;
   name: string;
@@ -122,6 +126,18 @@ export type Supplier = {
   email?: string;
   phone: string;
   debt: number;
+};
+export type SupplierDebt = {
+  createdAt: Date;
+  createdBy: {
+    id: string;
+    name: string;
+  };
+  id: string;
+  amount: number;
+  amountLeft: number;
+  supplierId: string;
+  type: string;
 };
 export interface UnitListProps {
   unit: string;

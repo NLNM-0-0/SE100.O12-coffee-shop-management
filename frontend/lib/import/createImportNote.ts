@@ -1,11 +1,11 @@
 import { apiKey, endPoint } from "@/constants";
 import axios from "axios";
+import { getApiKey } from "../auth/action";
 
 export default async function createImportNote({
   details,
   id,
   supplierId,
-  token,
 }: {
   details: {
     ingredientId: string;
@@ -15,7 +15,6 @@ export default async function createImportNote({
   }[];
   id?: string;
   supplierId: string;
-  token: string;
 }) {
   const url = `${endPoint}/importNotes`;
 
@@ -25,6 +24,7 @@ export default async function createImportNote({
     supplierId: supplierId,
   };
   console.log(data);
+  const token = await getApiKey();
   const headers = {
     accept: "application/json",
     "Content-Type": "application/json",

@@ -19,10 +19,12 @@ import { LuHome } from "react-icons/lu";
 import { MdOutlineWarehouse } from "react-icons/md";
 import { GoPeople, GoPerson } from "react-icons/go";
 import { z } from "zod";
+import { FaRegHandshake } from "react-icons/fa";
 
 export const apiKey =
   "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJfaWQiOiJnM1cyMUE3U1IiLCJyb2xlIjoiIn0sImV4cCI6MTcwMzU1NTY5OCwiaWF0IjoxNzAzNDY5Mjk4fQ.zm-7b5WY4b98_RUuwy-9HSyYNMAzqtOnkw-Z0aOwPSI";
 export const endPoint = "http://localhost:8080/v1";
+export const phoneRegex = new RegExp(/(0[3|5|7|8|9])+([0-9]{8})\b/g);
 
 export const required = z.string().min(1, "Không để trống trường này");
 
@@ -466,17 +468,17 @@ export const staffs: Staff[] = [
   {
     id: "NV01",
     name: "Nguyen Van Ba",
-    role: "Quan ly",
+    email: "Quan ly",
   },
   {
     id: "NV02",
     name: "Nguyen Van C",
-    role: "Thu ngan",
+    email: "Thu ngan",
   },
   {
     id: "NV03",
     name: "Nguyen Van D",
-    role: "Thu ngan",
+    email: "Thu ngan",
   },
 ];
 export const roles: Role[] = [
@@ -591,6 +593,12 @@ export const sidebarItems: SidebarItem[] = [
       { title: "Danh sách nhân viên", href: "/staff" },
       { title: "Phân quyền nhân viên", href: "/staff/role" },
     ],
+  },
+  {
+    title: "Quản lý nhà cung cấp",
+    href: "/supplier",
+    icon: FaRegHandshake,
+    submenu: false,
   },
   {
     title: "Quản lý khách hàng",

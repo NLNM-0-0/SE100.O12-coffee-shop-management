@@ -1,19 +1,18 @@
 import { endPoint } from "@/constants";
 import useSWR from "swr";
-import { getToken } from "../auth";
+import { getApiKey } from "../auth/action";
 
 export default function getAllImportNote({
   page,
   limit,
   filterString,
-  token,
 }: {
   page: string;
   limit?: number;
   filterString?: string;
-  token: string;
 }) {
-  const fetcher = (url: string) => {
+  const fetcher = async (url: string) => {
+    const token = await getApiKey();
     return fetch(url, {
       headers: {
         accept: "application/json",

@@ -6,7 +6,6 @@ import { Card } from "@/components/ui/card";
 import { FaChevronUp } from "react-icons/fa6";
 import { useFieldArray, useForm } from "react-hook-form";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import withAuth from "@/lib/withAuth";
 export type FormValues = {
   invoiceDetails: {
     foodId: string;
@@ -78,4 +77,4 @@ const OrderScreen = () => {
   );
 };
 
-export default withAuth(OrderScreen);
+export default OrderScreen;
