@@ -10,13 +10,11 @@ import { LuCheck, LuChevronsUpDown } from "react-icons/lu";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import Loading from "./loading";
-import getAllStaff from "@/lib/getAllStaffClient";
-import { getToken } from "@/lib/auth";
+import getAllStaff from "@/lib/getAllStaff";
 
 const StaffList = ({ staff, setStaff }: StaffListProps) => {
   const [openRole, setOpenRole] = useState(false);
-  const token = getToken();
-  const { staffs, isLoading, isError } = getAllStaff(token!);
+  const { staffs, isLoading, isError } = getAllStaff();
   useEffect(() => {
     // handleStaffSelected(staff);
   }, [staff]);

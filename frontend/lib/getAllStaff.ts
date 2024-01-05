@@ -1,7 +1,8 @@
 import { endPoint } from "@/constants";
-import { Ingredient } from "@/types";
+import { Staff } from "@/types";
 import useSWR from "swr";
 import { getApiKey } from "./auth/action";
+
 const fetcher = async (url: string) => {
   const token = await getApiKey();
   return fetch(url, {
@@ -13,22 +14,14 @@ const fetcher = async (url: string) => {
     .then((res) => {
       return res.json();
     })
-    .then((json) => {
-      return {
-        data: json.data as Ingredient[],
-      };
-    });
+    .then((json) => json.data);
 };
-export default function getAllIngredient() {
-  const { data, error, isLoading, mutate } = useSWR(
-    `${endPoint}/ingredients/all`,
-    fetcher
-  );
+export default function getAllStaff() {
+  const { data, error, isLoading } = useSWR(`${endPoint}/users/all`, fetcher);
 
   return {
-    data: data,
+    staffs: data as Staff[],
     isLoading,
     isError: error,
-    mutate: mutate,
   };
 }

@@ -1,20 +1,25 @@
 import { endPoint } from "@/constants";
-import { StatusNote } from "@/types";
 import axios from "axios";
 import { getApiKey } from "../auth/action";
 
-export default async function updateStatus({
-  idNote,
-  status,
+export default async function updateSupplier({
+  idSupplier,
+  name,
+  email,
+  phone,
 }: {
-  idNote: string;
-  status: StatusNote;
+  idSupplier: string;
+  name: string;
+  email: string;
+  phone: string;
 }) {
-  const url = `${endPoint}/importNotes/${idNote}`;
+  const url = `${endPoint}/suppliers/${idSupplier}`;
   const data = {
-    status: status,
+    email: email,
+    name: name,
+    phone: phone,
   };
-  console.log(data);
+
   const token = await getApiKey();
   const headers = {
     "Content-Type": "application/json",
@@ -23,7 +28,7 @@ export default async function updateStatus({
   };
 
   const res = axios
-    .post(url, data, { headers: headers })
+    .patch(url, data, { headers: headers })
     .then((response) => {
       if (response) return response.data;
     })

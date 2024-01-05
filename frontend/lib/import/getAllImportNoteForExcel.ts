@@ -1,17 +1,16 @@
 import { apiKey, endPoint } from "@/constants";
+import { getApiKey } from "../auth/action";
 
 export default async function getAllImportNoteForExcel({
   limit,
   page,
-  token,
 }: {
   limit?: number;
   page: string;
-  token: string;
 }) {
   const url = `${endPoint}/importNotes?page=${page}&limit=${limit ?? "10"}`;
   console.log(url);
-
+  const token = await getApiKey();
   const res = await fetch(url, {
     headers: {
       accept: "application/json",
