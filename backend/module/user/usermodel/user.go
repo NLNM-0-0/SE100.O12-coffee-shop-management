@@ -10,6 +10,8 @@ type User struct {
 	Id       string         `json:"id" gorm:"column:id;"`
 	Name     string         `json:"name" gorm:"column:name;"`
 	Email    string         `json:"email" gorm:"column:email;"`
+	Phone    string         `json:"phone" gorm:"column:phone;"`
+	Address  string         `json:"address" gorm:"column:address;"`
 	Password string         `json:"-" gorm:"column:password;"`
 	Salt     string         `json:"-" gorm:"column:salt;"`
 	RoleId   string         `json:"-" gorm:"column:roleId;"`
