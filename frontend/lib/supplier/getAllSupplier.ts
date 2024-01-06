@@ -1,16 +1,9 @@
 import { endPoint } from "@/constants";
+import { Supplier } from "@/types";
 import useSWR from "swr";
 import { getApiKey } from "../auth/action";
 
-export default function getAllImportNote({
-  page,
-  limit,
-  filterString,
-}: {
-  page: string;
-  limit?: number;
-  filterString?: string;
-}) {
+export default function getAllSupplier() {
   const fetcher = async (url: string) => {
     const token = await getApiKey();
     return fetch(url, {
@@ -23,23 +16,18 @@ export default function getAllImportNote({
         return res.json();
       })
       .then((json) => {
-        return {
-          paging: json.paging,
-          data: json.data,
-        };
+        return json.data as Supplier[];
       });
   };
-  const { data, error, isLoading, mutate, isValidating } = useSWR(
-    `${endPoint}/importNotes?page=${page}&limit=${limit ?? "10"}${
-      filterString ?? ""
-    }`,
+  const { data, error, isLoading, mutate } = useSWR(
+    `${endPoint}/suppliers/all`,
     fetcher
   );
+
   return {
-    data: data,
+    suppliers: data,
     isLoading,
     isError: error,
     mutate: mutate,
-    isValidating: isValidating,
   };
 }

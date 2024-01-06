@@ -20,7 +20,6 @@ import { toUnit, toVND } from "@/lib/utils";
 import { toast } from "../ui/use-toast";
 import getAllIngredient from "@/lib/getAllIngredient";
 import Loading from "../loading";
-import { getToken } from "@/lib/auth";
 const Total = ({
   control,
 }: {
@@ -75,8 +74,7 @@ const IngredientInsert = ({
     control: control,
     name: "details",
   });
-  const token = getToken();
-  const { data, isLoading, isError, mutate } = getAllIngredient(token!);
+  const { data, isLoading, isError, mutate } = getAllIngredient();
   const [value, setValue] = useState<Ingredient>();
   const handleOnValueChange = (item: Ingredient) => {
     if (!fieldsIngre.find((ingre) => ingre.ingredientId === item.id)) {

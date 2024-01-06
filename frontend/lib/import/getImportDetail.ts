@@ -1,15 +1,11 @@
-import { apiKey, endPoint } from "@/constants";
+import { endPoint } from "@/constants";
 import useSWR from "swr";
+import { getApiKey } from "../auth/action";
 
-export default function getImportNoteDetail({
-  idNote,
-  token,
-}: {
-  idNote: string;
-  token: string;
-}) {
-  const fetcher = (url: string) =>
-    fetch(url, {
+export default function getImportNoteDetail({ idNote }: { idNote: string }) {
+  const fetcher = async (url: string) => {
+    const token = await getApiKey();
+    return fetch(url, {
       headers: {
         accept: "application/json",
         Authorization: `Bearer ${token}`,
@@ -20,6 +16,8 @@ export default function getImportNoteDetail({
         return res.json();
       })
       .then((json) => json.data);
+  };
+
   const { data, error, isLoading, mutate } = useSWR(
     `${endPoint}/importNotes/${idNote}`,
     fetcher

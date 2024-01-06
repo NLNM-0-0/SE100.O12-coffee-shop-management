@@ -1,35 +1,25 @@
-import { apiKey, endPoint } from "@/constants";
+import { endPoint } from "@/constants";
 import axios from "axios";
 import { getApiKey } from "../auth/action";
 
-export default async function createImportNote({
-  details,
-  id,
-  supplierId,
+export default async function paySupplier({
+  quantity,
+  idSupplier,
 }: {
-  details: {
-    ingredientId: string;
-    amountImport: number;
-    price: number;
-    isReplacePrice?: boolean;
-  }[];
-  id?: string;
-  supplierId: string;
+  quantity: number;
+  idSupplier: string;
 }) {
-  const url = `${endPoint}/importNotes`;
+  const url = `${endPoint}/suppliers/${idSupplier}/pay`;
 
   const data = {
-    details,
-    id: id,
-    supplierId: supplierId,
+    amount: quantity,
   };
-  console.log(data);
+
   const token = await getApiKey();
   const headers = {
     accept: "application/json",
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
-
     // Add other headers as needed
   };
 
