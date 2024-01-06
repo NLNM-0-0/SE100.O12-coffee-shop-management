@@ -13,6 +13,6 @@ func SetupRoutes(router *gin.RouterGroup, appCtx appctx.AppContext) {
 		customers.POST("", CreateCustomer(appCtx))
 		customers.GET("/:id", SeeCustomerDetail(appCtx))
 		customers.GET("/:id/invoices", SeeCustomerInvoice(appCtx))
-		customers.POST("/:id", UpdateInfoCustomer(appCtx))
+		customers.PATCH("/:id", UpdateInfoCustomer(appCtx))
 	}
 }

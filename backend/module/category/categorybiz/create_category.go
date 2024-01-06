@@ -39,7 +39,7 @@ func (biz *createCategoryBiz) CreateCategory(
 		return err
 	}
 
-	idAddress, err := biz.gen.GenerateId()
+	idAddress, err := biz.gen.IdProcess(data.Id)
 	if err != nil {
 		return err
 	}
