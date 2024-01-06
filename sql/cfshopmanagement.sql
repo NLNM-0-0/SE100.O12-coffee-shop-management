@@ -185,10 +185,12 @@ DROP TABLE IF EXISTS `MUser`;
 CREATE TABLE `MUser` (
   `id` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `phone`varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `email` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `password` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `salt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `roleId` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `image` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `isActive` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `roleId` (`roleId`),
@@ -380,10 +382,10 @@ INSERT INTO `Feature` (`id`, `description`, `groupName`) VALUES
 
 
 
-INSERT INTO `MUser` (`id`, `name`, `email`, `password`, `salt`, `roleId`, `isActive`) VALUES
-('g3W21A7SR', 'Nguyễn Văn A', 'admin@gmail.com', '5e107317df151f6e8e0015c4f2ee7936', 'mVMxRDAHpAJfyzuiXWRELghNpynUqBKueSboGBcrwHUuzEWsms', 'admin', 1);
-INSERT INTO `MUser` (`id`, `name`, `email`, `password`, `salt`, `roleId`, `isActive`) VALUES
-('za1u8m4Sg', 'Nguyễn Văn U', 'user@gmail.com', 'cb58ac5a2272517d1960565444bde187', 'QYlnGKRgYBxIXzMnnQSVcglbtjPsAhVlxMRMDaqnaquxwADSur', 'user', 1);
+INSERT INTO `MUser` (`id`, `name`, `phone`, `email`, `password`, `salt`, `roleId`, `isActive`, `image`) VALUES
+('g3W21A7SR', 'Nguyễn Văn A', '0919676756', 'admin@gmail.com', '5e107317df151f6e8e0015c4f2ee7936', 'mVMxRDAHpAJfyzuiXWRELghNpynUqBKueSboGBcrwHUuzEWsms', 'admin', 1, 'https://firebasestorage.googleapis.com/v0/b/coffee-shop-web.appspot.com/o/Default%2Favatar.jpg?alt=media');
+INSERT INTO `MUser` (`id`, `name`, `phone`, `email`, `password`, `salt`, `roleId`, `isActive`, `image`) VALUES
+('za1u8m4Sg', 'Nguyễn Văn U', '0966656041', 'user@gmail.com', 'cb58ac5a2272517d1960565444bde187', 'QYlnGKRgYBxIXzMnnQSVcglbtjPsAhVlxMRMDaqnaquxwADSur', 'user', 1, 'https://firebasestorage.googleapis.com/v0/b/coffee-shop-web.appspot.com/o/Default%2Favatar.jpg?alt=media');
 
 
 
