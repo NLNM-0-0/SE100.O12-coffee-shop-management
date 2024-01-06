@@ -21,6 +21,12 @@ func (*Category) TableName() string {
 }
 
 var (
+	ErrCategoryIdInvalid = common.NewCustomError(
+		errors.New("id of category is invalid"),
+		"Mã của danh mục không hợp lệ",
+		"ErrCategoryIdInvalid",
+	)
+
 	ErrCategoryNameEmpty = common.NewCustomError(
 		errors.New("name of category is empty"),
 		"Tên của danh mục đang trống",

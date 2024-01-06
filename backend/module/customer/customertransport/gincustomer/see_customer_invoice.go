@@ -40,6 +40,6 @@ func SeeCustomerInvoice(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, common.NewSuccessResponse(result, paging, nil))
+		c.JSON(http.StatusOK, common.NewSuccessResponse(result, paging, filter))
 	}
 }

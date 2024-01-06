@@ -7,7 +7,7 @@ import (
 type IngredientCreate struct {
 	Id         *string `json:"id" gorm:"column:id;"`
 	Name       string  `json:"name" gorm:"column:name;"`
-	UnitTypeId string  `json:"-" gorm:"column:unitTypeId;"`
+	UnitTypeId string  `json:"unitTypeId" gorm:"column:unitTypeId;"`
 	Price      int     `json:"price" gorm:"column:price;"`
 }
 
