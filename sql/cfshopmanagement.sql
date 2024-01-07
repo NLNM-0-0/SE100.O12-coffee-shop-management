@@ -260,6 +260,19 @@ CREATE TABLE `SizeFood` (
   CONSTRAINT `SizeFood_ibfk_2` FOREIGN KEY (`recipeId`) REFERENCES `Recipe` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+DROP TABLE IF EXISTS `StockChangeHistory`;
+CREATE TABLE `StockChangeHistory` (
+  `id` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `ingredientId` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `amount` float NOT NULL DEFAULT '0',
+  `amountLeft` float NOT NULL DEFAULT '0',
+  `type` enum('Sell','Import','Export','Modify') NOT NULL,
+  `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`,`ingredientId`),
+  KEY `supplierId` (`ingredientId`),
+  CONSTRAINT `StockChangeHistory_ibfk_1` FOREIGN KEY (`ingredientId`) REFERENCES `Ingredient` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 DROP TABLE IF EXISTS `StockReport`;
 CREATE TABLE `StockReport` (
   `id` varchar(12) NOT NULL,
