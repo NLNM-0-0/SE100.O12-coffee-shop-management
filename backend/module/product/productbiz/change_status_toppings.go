@@ -10,7 +10,7 @@ import (
 type ChangeStatusToppingsRepo interface {
 	ChangeStatusToppings(
 		ctx context.Context,
-		data []productmodel.ToppingUpdateStatus) error
+		data *productmodel.ToppingUpdateStatus) error
 }
 
 type changeStatusToppingsBiz struct {
@@ -26,19 +26,26 @@ func NewChangeStatusToppingsBiz(
 
 func (biz *changeStatusToppingsBiz) ChangeStatusToppings(
 	ctx context.Context,
-	data []productmodel.ToppingUpdateStatus) error {
+	data productmodel.ProductsUpdateStatus) error {
 	if !biz.requester.IsHasFeature(common.ToppingUpdateStatusFeatureCode) {
 		return productmodel.ErrToppingChangeStatusNoPermission
 	}
 
-	for _, v := range data {
-		if err := v.Validate(); err != nil {
+	if err := data.Validate(); err != nil {
+		return err
+	}
+
+	for _, v := range data.ProductIds {
+		toppingUpdateStatus := productmodel.ToppingUpdateStatus{
+			ProductUpdateStatus: &productmodel.ProductUpdateStatus{
+				ProductId: v,
+				IsActive:  data.IsActive,
+			},
+		}
+		if err := biz.repo.ChangeStatusToppings(ctx, &toppingUpdateStatus); err != nil {
 			return err
 		}
 	}
 
-	if err := biz.repo.ChangeStatusToppings(ctx, data); err != nil {
-		return err
-	}
 	return nil
 }

@@ -13,16 +13,6 @@ import (
 	"net/http"
 )
 
-// @BasePath /v1
-// @Security BearerAuth
-// @Summary Get nearest invoice
-// @Tags invoices
-// @Accept json
-// @Produce json
-// @Param request query invoicemodel.ReqGetNearestInvoice true "request"
-// @Response 200 {object} invoicemodel.ResGetNearestInvoice "list invoice"
-// @Response 400 {object} common.AppError "error"
-// @Router /invoices/nearest [get]
 func GetNearestInvoice(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var request invoicemodel.ReqGetNearestInvoice

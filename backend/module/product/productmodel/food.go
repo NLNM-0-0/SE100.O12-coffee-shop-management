@@ -11,6 +11,7 @@ type Food struct {
 	*Product       `json:",inline"`
 	FoodCategories Categories `json:"categories" gorm:"foreignkey:foodId;association_foreignkey:id"`
 	FoodSizes      Sizes      `json:"sizes" gorm:"foreignkey:foodId;association_foreignkey:id"`
+	Image          string     `json:"image" gorm:"column:image;"`
 }
 
 func (*Food) TableName() string {
@@ -65,6 +66,11 @@ var (
 		errors.New("size id is invalid"),
 		"Kích cỡ không hợp lệ",
 		"ErrFoodSizeIdInvalid",
+	)
+	ErrFoodImageInvalid = common.NewCustomError(
+		errors.New("image of food is invalid"),
+		"Ảnh không hợp lệ",
+		"ErrFoodImageInvalid",
 	)
 	ErrFoodCreateNoPermission = common.ErrNoPermission(
 		errors.New("Bạn không có quyền tạo sản phẩm mới"),

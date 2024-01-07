@@ -9,6 +9,7 @@ type FoodCreate struct {
 	*ProductCreate `json:",inline"`
 	Categories     []string                       `json:"categories" gorm:"-"`
 	Sizes          []sizefoodmodel.SizeFoodCreate `json:"sizes" gorm:"-"`
+	Image          *string                        `json:"image" gorm:"column:image;"`
 }
 
 func (*FoodCreate) TableName() string {
@@ -21,6 +22,9 @@ func (data *FoodCreate) Validate() error {
 	}
 	if err := (*data.ProductCreate).Validate(); err != nil {
 		return err
+	}
+	if !common.ValidateUrl(data.Image, common.DefaultImageFood) {
+		return ErrFoodImageInvalid
 	}
 	if data.Categories == nil || len(data.Categories) == 0 {
 		return ErrFoodCategoryEmpty

@@ -10,7 +10,7 @@ import (
 type ChangeStatusFoodsRepo interface {
 	ChangeStatusFoods(
 		ctx context.Context,
-		data []productmodel.FoodUpdateStatus) error
+		data *productmodel.FoodUpdateStatus) error
 }
 
 type changeStatusFoodsBiz struct {
@@ -26,19 +26,26 @@ func NewChangeStatusFoodsBiz(
 
 func (biz *changeStatusFoodsBiz) ChangeStatusFoods(
 	ctx context.Context,
-	data []productmodel.FoodUpdateStatus) error {
+	data productmodel.ProductsUpdateStatus) error {
 	if !biz.requester.IsHasFeature(common.FoodUpdateStatusFeatureCode) {
 		return productmodel.ErrFoodChangeStatusNoPermission
 	}
 
-	for _, v := range data {
-		if err := v.Validate(); err != nil {
+	if err := data.Validate(); err != nil {
+		return err
+	}
+
+	for _, v := range data.ProductIds {
+		foodUpdateStatus := productmodel.FoodUpdateStatus{
+			ProductUpdateStatus: &productmodel.ProductUpdateStatus{
+				ProductId: v,
+				IsActive:  data.IsActive,
+			},
+		}
+		if err := biz.repo.ChangeStatusFoods(ctx, &foodUpdateStatus); err != nil {
 			return err
 		}
 	}
 
-	if err := biz.repo.ChangeStatusFoods(ctx, data); err != nil {
-		return err
-	}
 	return nil
 }

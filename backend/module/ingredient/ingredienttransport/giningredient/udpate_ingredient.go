@@ -1,20 +1,21 @@
-package ginproduct
+package giningredient
 
 import (
 	"backend/common"
 	"backend/component/appctx"
 	"backend/middleware"
-	"backend/module/product/productbiz"
-	"backend/module/product/productmodel"
-	"backend/module/product/productrepo"
-	"backend/module/product/productstore"
+	"backend/module/ingredient/ingredientbiz"
+	"backend/module/ingredient/ingredientmodel"
+	"backend/module/ingredient/ingredientstore"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-func ChangeStatusToppings(appCtx appctx.AppContext) gin.HandlerFunc {
+func UpdateInfoIngredient(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var data productmodel.ProductsUpdateStatus
+		id := c.Param("id")
+
+		var data ingredientmodel.IngredientUpdate
 
 		if err := c.ShouldBind(&data); err != nil {
 			panic(common.ErrInvalidRequest(err))
@@ -24,11 +25,11 @@ func ChangeStatusToppings(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		db := appCtx.GetMainDBConnection().Begin()
 
-		store := productstore.NewSQLStore(db)
-		repo := productrepo.NewChangeStatusToppingsRepo(store)
-		business := productbiz.NewChangeStatusToppingsBiz(repo, requester)
+		store := ingredientstore.NewSQLStore(db)
 
-		if err := business.ChangeStatusToppings(c.Request.Context(), data); err != nil {
+		business := ingredientbiz.NewUpdateInfoIngredientBiz(store, requester)
+
+		if err := business.UpdateInfoIngredient(c.Request.Context(), id, &data); err != nil {
 			db.Rollback()
 			panic(err)
 		}

@@ -8,6 +8,7 @@ import (
 	"backend/module/invoice/invoicemodel"
 	"backend/module/shopgeneral/shopgeneralmodel"
 	"context"
+	"fmt"
 )
 
 type CreateInvoiceRepo interface {
@@ -86,10 +87,7 @@ func (biz *createInvoiceBiz) CreateInvoice(
 	if errGetShopGeneral != nil {
 		return errGetShopGeneral
 	}
-	data.ShopName = general.Name
-	data.ShopPhone = general.Phone
-	data.ShopAddress = general.Address
-	data.ShopPassWifi = general.WifiPass
+
 	if err := biz.repo.HandleIngredientTotalAmount(
 		ctx, data.Id, data.MapIngredient); err != nil {
 		return err
@@ -101,26 +99,32 @@ func (biz *createInvoiceBiz) CreateInvoice(
 			return errGetCustomer
 		}
 
-		data.Customer.Id = customer.Id
-		data.Customer.Name = customer.Name
-		data.Customer.Phone = customer.Phone
-
 		priceUseForPoint := float32(0)
-		pointUse := float32(0)
+		pointUse := 0
 		if data.IsUsePoint {
-			if float32(data.TotalPrice) >= customer.Point*general.UsePointPercent {
+			if float32(data.TotalPrice) >= float32(customer.Point)*general.UsePointPercent {
 				pointUse = customer.Point
-				priceUseForPoint = customer.Point * general.UsePointPercent
+				priceUseForPoint = float32(customer.Point) * general.UsePointPercent
 			} else {
-				pointUse = float32(data.TotalPrice) / general.UsePointPercent
+				pointUse = common.RoundToInt(float32(data.TotalPrice) / general.UsePointPercent)
 				priceUseForPoint = float32(data.TotalPrice)
 			}
 		}
+
 		priceUseForPointInt := common.RoundToInt(priceUseForPoint)
+		common.CustomRound(&priceUseForPoint)
+		data.AmountReceived = data.TotalPrice - priceUseForPointInt
+		data.AmountPriceUsePoint = priceUseForPointInt
+
+		pointReceive := common.RoundToInt(float32(data.AmountReceived) * general.AccumulatePointPercent)
+		fmt.Println(pointReceive)
+
+		data.PointUse = pointUse
+		data.PointReceive = pointReceive
 
 		amountPointNeedUpdate :=
-			float32(data.AmountReceived)*general.AccumulatePointPercent - pointUse
-		common.CustomRound(&amountPointNeedUpdate)
+			pointReceive - pointUse
+
 		customerUpdatePoint := customermodel.CustomerUpdatePoint{
 			Amount: &amountPointNeedUpdate,
 		}
@@ -128,10 +132,6 @@ func (biz *createInvoiceBiz) CreateInvoice(
 			ctx, *data.CustomerId, customerUpdatePoint); err != nil {
 			return err
 		}
-
-		common.CustomRound(&priceUseForPoint)
-		data.AmountReceived = data.TotalPrice - priceUseForPointInt
-		data.AmountPriceUsePoint = priceUseForPointInt
 
 	} else {
 		if data.IsUsePoint {

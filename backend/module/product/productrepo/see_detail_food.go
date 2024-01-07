@@ -26,7 +26,7 @@ func (repo *seeDetailFoodRepo) SeeDetailFood(
 	result, err := repo.store.FindFood(
 		ctx,
 		map[string]interface{}{"id": foodId},
-		"FoodSizes.Recipe.Details.Ingredient", "FoodCategories.Category")
+		"FoodSizes.Recipe.Details.Ingredient.UnitType", "FoodCategories.Category")
 
 	if err != nil {
 		return nil, err

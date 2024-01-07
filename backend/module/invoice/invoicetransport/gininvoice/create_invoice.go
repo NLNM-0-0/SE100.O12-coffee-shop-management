@@ -15,6 +15,7 @@ import (
 	"backend/module/product/productstore"
 	"backend/module/shopgeneral/shopgeneralstore"
 	"backend/module/sizefood/sizefoodstore"
+	"backend/module/stockchangehistory/stockchangehistorystore"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -40,6 +41,7 @@ func CreateInvoice(appCtx appctx.AppContext) gin.HandlerFunc {
 		toppingStore := productstore.NewSQLStore(db)
 		ingredientStore := ingredientstore.NewSQLStore(db)
 		shopGeneralStore := shopgeneralstore.NewSQLStore(db)
+		stockChangeHistory := stockchangehistorystore.NewSQLStore(db)
 
 		repo := invoicerepo.NewCreateInvoiceRepo(
 			invoiceStore,
@@ -50,6 +52,7 @@ func CreateInvoice(appCtx appctx.AppContext) gin.HandlerFunc {
 			toppingStore,
 			ingredientStore,
 			shopGeneralStore,
+			stockChangeHistory,
 		)
 
 		gen := generator.NewShortIdGenerator()
@@ -61,22 +64,24 @@ func CreateInvoice(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
+		shopStore := shopgeneralstore.NewSQLStore(appCtx.GetMainDBConnection())
+
+		printRepo := invoicerepo.NewSeeInvoiceDetailRepo(invoiceDetailStore, invoiceStore)
+
+		biz := invoicebiz.NewPrintInvoiceBiz(
+			printRepo, shopStore, requester)
+
+		result, err := biz.PrintInvoice(c.Request.Context(), data.Id)
+
+		if err != nil {
+			panic(err)
+		}
+
 		if err := db.Commit().Error; err != nil {
 			db.Rollback()
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"id":           data.Id,
-			"customer":     data.Customer,
-			"shopName":     data.ShopName,
-			"shopPhone":    data.ShopPhone,
-			"shopAddress":  data.ShopAddress,
-			"shopPassWifi": data.ShopPassWifi,
-			"details":      data.InvoiceDetails,
-			"total":        data.TotalPrice,
-			"received":     data.AmountReceived,
-			"discount":     data.AmountPriceUsePoint,
-		})
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(result))
 	}
 }

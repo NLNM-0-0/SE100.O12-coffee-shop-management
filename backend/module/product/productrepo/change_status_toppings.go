@@ -23,12 +23,10 @@ func NewChangeStatusToppingsRepo(store ChangeStatusToppingsStore) *changeStatusT
 
 func (biz *changeStatusToppingsRepo) ChangeStatusToppings(
 	ctx context.Context,
-	data []productmodel.ToppingUpdateStatus) error {
-	for _, v := range data {
-		if err := biz.store.UpdateStatusTopping(
-			ctx, v.ProductId, &v); err != nil {
-			return err
-		}
+	data *productmodel.ToppingUpdateStatus) error {
+	if err := biz.store.UpdateStatusTopping(
+		ctx, data.ProductId, data); err != nil {
+		return err
 	}
 
 	return nil

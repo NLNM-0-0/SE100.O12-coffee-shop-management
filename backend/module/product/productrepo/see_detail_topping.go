@@ -27,7 +27,7 @@ func (repo *seeDetailToppingRepo) SeeDetailTopping(
 	result, err := repo.store.FindTopping(
 		ctx,
 		map[string]interface{}{"id": toppingId},
-		"Recipe.Details.Ingredient")
+		"Recipe.Details.Ingredient.UnitType")
 
 	if err != nil {
 		return nil, err

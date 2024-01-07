@@ -14,7 +14,7 @@ import (
 
 func ChangeStatusFoods(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var data []productmodel.FoodUpdateStatus
+		var data productmodel.ProductsUpdateStatus
 
 		if err := c.ShouldBind(&data); err != nil {
 			panic(common.ErrInvalidRequest(err))

@@ -6,9 +6,9 @@ import (
 )
 
 type CategoryFood struct {
-	FoodId     string                 `json:"foodId" gorm:"column:foodId;"`
-	CategoryId string                 `json:"-" gorm:"column:categoryId;"`
-	Category   categorymodel.Category `json:"category" gorm:"foreignkey:CategoryId"`
+	FoodId     string                       `json:"-" gorm:"column:foodId;"`
+	CategoryId string                       `json:"-" gorm:"column:categoryId;"`
+	Category   categorymodel.SimpleCategory `json:"category"`
 }
 
 func (*CategoryFood) TableName() string {
