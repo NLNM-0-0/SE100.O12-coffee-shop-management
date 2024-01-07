@@ -20,6 +20,7 @@ import { Switch } from "@/components/ui/switch";
 import { useSWRConfig } from "swr";
 import getAllIngredient from "@/lib/getAllIngredient";
 import Loading from "@/components/loading";
+import ConfirmDialog from "@/components/confirm-dialog";
 
 export const FormSchema = z.object({
   idNote: z.string().max(12, "Tối đa 12 ký tự"),
@@ -29,12 +30,19 @@ export const FormSchema = z.object({
       z.object({
         ingredientId: z.string(),
         isReplacePrice: z.boolean(),
-        price: z.coerce.number().gte(1, "Đơn giá phải lớn hơn 0"),
+        price: z.coerce
+          .number()
+          .refine((value) => Number.isInteger(value) && value >= 1, {
+            message: "Đơn giá phải là số nguyên lớn hơn 0",
+          }),
         oldPrice: z.coerce.number(),
         amountImport: z.coerce.number().gte(1, "Số lượng phải lớn hơn 0"),
+        unitTypeId: z.string(),
       })
     )
-    .nonempty("Vui lòng chọn ít nhất một nguyên liệu nhập"),
+    .refine((details) => details.length > 0, {
+      message: "Vui lòng chọn ít nhất một nguyên liệu nhập",
+    }),
 });
 
 const AddNote = () => {
@@ -75,6 +83,7 @@ const AddNote = () => {
           amountImport: item?.amountImport,
           price: item?.price,
           isReplacePrice: isReplacePrice,
+          unitTypeId: item.unitTypeId,
         };
       }),
       id: data.idNote,
@@ -144,6 +153,9 @@ const AddNote = () => {
                   amountImport: row.getCell(3).value,
                   price: row.getCell(4).value,
                   oldPrice: oldPrice,
+                  unitTypeId: data?.data.find((ingre) => ingre.id === idIngre)
+                    ?.unitType.id,
+                  isReplacePrice: false,
                 };
 
                 importNote.details.push(detail);
@@ -176,13 +188,16 @@ const AddNote = () => {
   } else
     return (
       <div className="col items-center">
-        <div className="col xl:w-4/5 w-full xl:px-0 md:px-6 px-0">
+        <div className="col xl:w-4/5 w-full px-0">
           <div className="flex justify-between gap-2">
             <h1 className="font-medium text-xxl self-start">Thêm phiếu nhập</h1>
-            <ImportSheet handleFile={handleFile} />
+            <ImportSheet
+              sampleFileLink="/import-sample.xlsx"
+              handleFile={handleFile}
+            />
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit, onError)}>
+          <form>
             <div className="flex flex-col gap-4">
               <div className="flex lg:flex-row flex-col gap-4">
                 <Card className="basis-3/4">
@@ -250,12 +265,18 @@ const AddNote = () => {
                     Hủy
                   </div>
                 </Button>
-                <Button className="px-4 pl-2 md:flex-none  flex-1">
-                  <div className="flex flex-wrap gap-2 items-center">
-                    <LuCheck />
-                    Thêm
-                  </div>
-                </Button>
+                <ConfirmDialog
+                  title="Xác nhận tạo phiếu nhập"
+                  description="Bạn xác nhận muốn tạo phiếu nhập ?"
+                  handleYes={() => handleSubmit(onSubmit)()}
+                >
+                  <Button className="px-4 pl-2 md:flex-none  flex-1">
+                    <div className="flex flex-wrap gap-2 items-center">
+                      <LuCheck />
+                      Thêm
+                    </div>
+                  </Button>
+                </ConfirmDialog>
               </div>
             </div>
           </form>

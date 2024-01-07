@@ -5,7 +5,6 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
@@ -17,11 +16,12 @@ import { toast } from "../ui/use-toast";
 
 const ImportSheet = ({
   handleFile,
+  sampleFileLink,
 }: {
   handleFile: (reader: FileReader) => void;
+  sampleFileLink: string;
 }) => {
   const [file, setFile] = useState<any>();
-  const [errorMessage, setErrorMessage] = useState(false);
   const fileType = [
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   ];
@@ -30,7 +30,6 @@ const ImportSheet = ({
     if (selectedFile) {
       if (selectedFile && fileType.includes(selectedFile.type)) {
         if (selectedFile.size > 2000000) {
-          console.log(e.target.files[0].size);
           console.log("Dung lượng file không hợp lệ");
           toast({
             variant: "destructive",
@@ -65,7 +64,7 @@ const ImportSheet = ({
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant={"outline"} className="bg-white">
+        <Button variant={"outline"} className="bg-white px-3">
           <div className="flex flex-nowrap gap-1 items-center">
             <FiUpload className="w-4 h-4 text-green-700" />
             Nhập danh sách
@@ -79,9 +78,9 @@ const ImportSheet = ({
         <div className="text-sm text-muted-foreground mt-4">
           <p>- Chuyển đổi file nhập dưới dạng .XLSX trước khi tải dữ liệu</p>
           <span>
-            - Tải file mẫu sản phẩm
+            - Tải file mẫu
             <Button variant={"link"} className="px-1">
-              <a href={"/import-sample.xlsx"} download="Sample.xlsx">
+              <a href={sampleFileLink} download="Sample.xlsx">
                 tại đây
               </a>
             </Button>
@@ -96,7 +95,6 @@ const ImportSheet = ({
               onChange={handleChange}
               className="col-span-3"
             />
-            {errorMessage ? <span>File không hợp lệ</span> : null}
           </div>
         </div>
         <SheetFooter>

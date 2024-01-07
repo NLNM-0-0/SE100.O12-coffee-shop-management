@@ -59,7 +59,7 @@ import { FilterDatePicker } from "./date-picker";
 import StaffList from "../staff-list";
 import getAllImportNoteForExcel from "@/lib/import/getAllImportNoteForExcel";
 import SupplierList from "../supplier-list";
-import StatusList from "../status-list";
+import StatusNoteList from "../status-note-list";
 
 export const columns: ColumnDef<ImportNote>[] = [
   {
@@ -524,7 +524,7 @@ export function ImportTable() {
                               </div>
                             ) : item.type === "status" ? (
                               <div className="flex-1">
-                                <StatusList
+                                <StatusNoteList
                                   status={status}
                                   setStatus={(value) => {
                                     setStatus(value);

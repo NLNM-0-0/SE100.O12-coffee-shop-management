@@ -1,6 +1,5 @@
 "use client";
 
-import { CaretSortIcon } from "@radix-ui/react-icons";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -14,8 +13,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -28,7 +25,7 @@ import { ImportNoteDetail } from "@/types";
 
 import { useState } from "react";
 import { Input } from "../ui/input";
-import { toUnit, toVND } from "@/lib/utils";
+import { toVND } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
 export const columns: ColumnDef<ImportNoteDetail>[] = [
@@ -64,7 +61,7 @@ export const columns: ColumnDef<ImportNoteDetail>[] = [
       <div className="leading-6 flex flex-col">
         {row.original.ingredient.name}
         <span className="text-muted-foreground">
-          ({toUnit(row.original.ingredient.measureType)})
+          ({row.original.unitTypeName})
         </span>
       </div>
     ),
@@ -127,7 +124,7 @@ export const columns: ColumnDef<ImportNoteDetail>[] = [
 ];
 export function ImportDetailTable(details: ImportNoteDetail[]) {
   const data = Object.values(details);
-
+  console.log(data);
   const router = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);

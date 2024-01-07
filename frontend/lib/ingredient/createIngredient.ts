@@ -1,40 +1,33 @@
-import { apiKey, endPoint } from "@/constants";
+import { endPoint } from "@/constants";
 import axios from "axios";
 import { getApiKey } from "../auth/action";
 
-export default async function createImportNote({
-  details,
+export default async function createIngredient({
   id,
-  supplierId,
+  name,
+  unitTypeId,
+  price,
 }: {
-  details: {
-    ingredientId: string;
-    amountImport: number;
-    price: number;
-    isReplacePrice?: boolean;
-    unitTypeId: string;
-  }[];
-  id?: string;
-  supplierId: string;
+  id: string;
+  name: string;
+  unitTypeId: string;
+  price: number;
 }) {
-  const url = `${endPoint}/importNotes`;
-
+  const url = `${endPoint}/ingredients`;
   const data = {
-    details,
     id: id,
-    supplierId: supplierId,
+    name: name,
+    unitTypeId: unitTypeId,
+    price: price,
   };
-  console.log(data);
+
   const token = await getApiKey();
   const headers = {
-    accept: "application/json",
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
-
-    // Add other headers as needed
+    accept: "application/json",
   };
 
-  // Make a POST request with headers
   const res = axios
     .post(url, data, { headers: headers })
     .then((response) => {

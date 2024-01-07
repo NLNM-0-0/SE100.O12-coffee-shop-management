@@ -464,23 +464,6 @@ export const exportNotes: ExportNote[] = [
   },
 ];
 
-export const staffs: Staff[] = [
-  {
-    id: "NV01",
-    name: "Nguyen Van Ba",
-    email: "Quan ly",
-  },
-  {
-    id: "NV02",
-    name: "Nguyen Van C",
-    email: "Thu ngan",
-  },
-  {
-    id: "NV03",
-    name: "Nguyen Van D",
-    email: "Thu ngan",
-  },
-];
 export const roles: Role[] = [
   {
     id: "1",
