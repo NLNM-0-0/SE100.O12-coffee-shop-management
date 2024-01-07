@@ -9,7 +9,7 @@ import (
 
 func (s *sqlStore) ListAllStockChangeForReport(
 	ctx context.Context,
-	bookId string,
+	ingredientId string,
 	timeFrom time.Time,
 	timeTo time.Time) ([]stockchangehistorymodel.StockChangeHistory, error) {
 	var result []stockchangehistorymodel.StockChangeHistory
@@ -18,7 +18,7 @@ func (s *sqlStore) ListAllStockChangeForReport(
 	db = db.Table(common.TableStockChangeHistory)
 
 	if err := db.
-		Where("ingredientId = ?", bookId).
+		Where("ingredientId = ?", ingredientId).
 		Where("createdAt >= ?", timeFrom).
 		Where("createdAt <= ?", timeTo).
 		Order("createdAt").

@@ -22,6 +22,6 @@ var (
 		"ErrSaleReportDateInvalid",
 	)
 	ErrSaleReportViewNoPermission = common.ErrNoPermission(
-		errors.New("Bạn không có quyền xem báo cáo doanh thu"),
+		errors.New("Bạn không có quyền xem báo cáo mặt hàng"),
 	)
 )

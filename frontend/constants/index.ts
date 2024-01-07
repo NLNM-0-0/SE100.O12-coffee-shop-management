@@ -20,6 +20,7 @@ import { MdOutlineWarehouse } from "react-icons/md";
 import { GoPeople, GoPerson } from "react-icons/go";
 import { z } from "zod";
 import { FaRegHandshake } from "react-icons/fa";
+import { AiOutlineLineChart } from "react-icons/ai";
 
 export const apiKey =
   "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJfaWQiOiJnM1cyMUE3U1IiLCJyb2xlIjoiIn0sImV4cCI6MTcwMzU1NTY5OCwiaWF0IjoxNzAzNDY5Mjk4fQ.zm-7b5WY4b98_RUuwy-9HSyYNMAzqtOnkw-Z0aOwPSI";
@@ -545,6 +546,17 @@ export const statuses = [
   },
 ];
 export const sidebarItems: SidebarItem[] = [
+  {
+    title: "Báo cáo",
+    href: "/report/stock",
+    icon: AiOutlineLineChart,
+    submenu: true,
+    subMenuItems: [
+      { title: "Báo cáo tồn kho", href: "/report/stock" },
+      { title: "Báo cáo nợ", href: "/report/debt" },
+      { title: "Báo cáo mặt hàng", href: "/report/sale" },
+    ],
+  },
   {
     title: "Quản lý sản phẩm",
     href: "/product-manage",

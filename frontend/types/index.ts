@@ -1,4 +1,5 @@
 import { IconType } from "react-icons";
+import { string } from "zod";
 
 export type Product = {
   id: string;
@@ -194,3 +195,109 @@ export interface StatusListProps {
   setStatus: (role: boolean) => void;
   display: { trueText: string; falseText: string };
 }
+
+export type DebtReport = {
+  timeFrom: Date,
+  timeTo: Date,
+  initial: number,
+  debt: number,
+  pay: number,
+  final: number,
+  details: [
+    {
+      debt: number;
+      final: number;
+      initial: number;
+      pay: number;
+      supplier: {
+        id: string;
+        name: string;
+        phone: string;
+      };
+    }
+  ]
+}
+
+export type DebtReportDetail = {
+  debt: number;
+  final: number;
+  initial: number;
+  pay: number;
+  supplier: {
+    id: string;
+    name: string;
+    phone: string;
+  };
+};
+
+export type SaleReportDetail = {
+  amount: number;
+  food: {
+    id: string;
+    name: string;
+  };
+  totalSales: number;
+}
+
+export type SaleReport = {
+  timeFrom: Date,
+  timeTo: Date,
+  total: number,
+  amount: number
+  details: [
+    {
+      amount: number;
+      food: {
+        id: string;
+        name: string;
+      };
+      totalSales: number;
+    }
+  ]
+}
+
+export type StockReportDetail = {
+  ingredient: {
+    id: string;
+    name: string;
+    unitType: {
+      id: string;
+      name: string; 
+      measureType: string;
+      value: number;
+    };
+  };
+  final: number;
+  import: number;
+  export: number;
+  initial: number;
+  modify: number;
+  sell: number;
+};
+
+export type StockReport = {
+  id: string,
+  timeFrom: Date,
+  timeTo: Date,
+  details: [
+    {
+      ingredient: {
+        id: string;
+        name: string;
+        unitType: {
+          id: string;
+          name: string; 
+          measureType: string;
+          value: number;
+        };
+      };
+      initial: number;
+      sell: number;
+      import: number;
+      export: number; 
+      modify: number;
+      final: number;
+    }
+  ]
+}
+
