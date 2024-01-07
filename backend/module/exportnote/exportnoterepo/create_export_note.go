@@ -133,7 +133,7 @@ func (repo *createExportNoteRepo) ChangeUnitOfIngredient(
 		return errListUnit
 	}
 
-	var mapUnit map[string]unittypemodel.UnitType
+	mapUnit := make(map[string]unittypemodel.UnitType)
 	for _, v := range units {
 		mapUnit[v.Id] = v
 	}

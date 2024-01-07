@@ -14,7 +14,7 @@ import (
 
 func ChangeStatusUsers(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var data []usermodel.UserUpdateStatus
+		var data usermodel.UsersUpdateStatus
 
 		if err := c.ShouldBind(&data); err != nil {
 			panic(common.ErrInvalidRequest(err))

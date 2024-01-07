@@ -12,6 +12,7 @@ func SetupRoutes(router *gin.RouterGroup, appCtx appctx.AppContext) {
 	auth := router.Group("", middleware.RequireAuth(appCtx))
 	{
 		auth.GET("/profile", SeeProfile(appCtx), middleware.RequireAuth(appCtx))
+		auth.PATCH("/password", UpdatePassword(appCtx), middleware.RequireAuth(appCtx))
 	}
 	users := router.Group("/users", middleware.RequireAuth(appCtx))
 	{

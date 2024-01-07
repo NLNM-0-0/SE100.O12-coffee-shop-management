@@ -30,19 +30,21 @@ func NewChangeStatusUserBiz(
 
 func (biz *changeStatusUserBiz) ChangeStatusUser(
 	ctx context.Context,
-	data []usermodel.UserUpdateStatus) error {
+	data usermodel.UsersUpdateStatus) error {
 	if !biz.requester.IsHasFeature(common.UserUpdateStatusFeatureCode) {
 		return usermodel.ErrUserUpdateStatusNoPermission
 	}
 
-	for _, v := range data {
-		if err := v.Validate(); err != nil {
-			return err
-		}
+	if err := data.Validate(); err != nil {
+		return err
 	}
 
-	for _, v := range data {
-		if err := biz.repo.UpdateStatusUser(ctx, &v); err != nil {
+	for _, v := range data.UserIds {
+		userUpdateStatus := usermodel.UserUpdateStatus{
+			UserId:   v,
+			IsActive: data.IsActive,
+		}
+		if err := biz.repo.UpdateStatusUser(ctx, &userUpdateStatus); err != nil {
 			return err
 		}
 	}

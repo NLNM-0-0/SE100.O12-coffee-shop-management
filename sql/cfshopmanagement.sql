@@ -105,7 +105,7 @@ CREATE TABLE `ImportNoteDetail` (
   `ingredientId` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `price` float NOT NULL,
   `amountImport` int NOT NULL,
-  `totalUnit` float NOT NULL,
+  `totalUnit` int NOT NULL,
   `unitTypeName` text NOT NULL,
   PRIMARY KEY (`importNoteId`,`ingredientId`),
   KEY `ingredientId` (`ingredientId`),
@@ -128,8 +128,6 @@ CREATE TABLE `Ingredient` (
 DROP TABLE IF EXISTS `InventoryCheckNote`;
 CREATE TABLE `InventoryCheckNote` (
   `id` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `amountDifferent` int NOT NULL,
-  `amountAfterAdjust` int NOT NULL,
   `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
   `createdBy` varchar(12) NOT NULL,
   PRIMARY KEY (`id`),
@@ -187,6 +185,7 @@ CREATE TABLE `MUser` (
   `name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `phone`varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `email` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `address` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `password` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `salt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `roleId` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -382,10 +381,10 @@ INSERT INTO `Feature` (`id`, `description`, `groupName`) VALUES
 
 
 
-INSERT INTO `MUser` (`id`, `name`, `phone`, `email`, `password`, `salt`, `roleId`, `isActive`, `image`) VALUES
-('g3W21A7SR', 'Nguyễn Văn A', '0919676756', 'admin@gmail.com', '5e107317df151f6e8e0015c4f2ee7936', 'mVMxRDAHpAJfyzuiXWRELghNpynUqBKueSboGBcrwHUuzEWsms', 'admin', 1, 'https://firebasestorage.googleapis.com/v0/b/coffee-shop-web.appspot.com/o/Default%2Favatar.jpg?alt=media');
-INSERT INTO `MUser` (`id`, `name`, `phone`, `email`, `password`, `salt`, `roleId`, `isActive`, `image`) VALUES
-('za1u8m4Sg', 'Nguyễn Văn U', '0966656041', 'user@gmail.com', 'cb58ac5a2272517d1960565444bde187', 'QYlnGKRgYBxIXzMnnQSVcglbtjPsAhVlxMRMDaqnaquxwADSur', 'user', 1, 'https://firebasestorage.googleapis.com/v0/b/coffee-shop-web.appspot.com/o/Default%2Favatar.jpg?alt=media');
+INSERT INTO `MUser` (`id`, `name`, `phone`, `email`, `address`, `password`, `salt`, `roleId`, `isActive`, `image`) VALUES
+('g3W21A7SR', 'Nguyễn Văn A', '0919676756', 'admin@gmail.com', 'TPHCM', '5e107317df151f6e8e0015c4f2ee7936', 'mVMxRDAHpAJfyzuiXWRELghNpynUqBKueSboGBcrwHUuzEWsms', 'admin', 1, 'https://firebasestorage.googleapis.com/v0/b/coffee-shop-web.appspot.com/o/Default%2Favatar.jpg?alt=media');
+INSERT INTO `MUser` (`id`, `name`, `phone`, `email`, `address`, `password`, `salt`, `roleId`, `isActive`, `image`) VALUES
+('za1u8m4Sg', 'Nguyễn Văn U', '0966656041', 'user@gmail.com', 'TPHCM', 'cb58ac5a2272517d1960565444bde187', 'QYlnGKRgYBxIXzMnnQSVcglbtjPsAhVlxMRMDaqnaquxwADSur', 'user', 1, 'https://firebasestorage.googleapis.com/v0/b/coffee-shop-web.appspot.com/o/Default%2Favatar.jpg?alt=media');
 
 
 

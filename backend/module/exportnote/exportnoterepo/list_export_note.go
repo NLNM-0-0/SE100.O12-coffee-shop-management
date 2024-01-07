@@ -31,7 +31,7 @@ func (repo *listExportNoteRepo) ListExportNote(
 	result, err := repo.store.ListExportNote(
 		ctx,
 		filter,
-		[]string{"id"},
+		[]string{"ExportNote.id"},
 		paging,
 		"CreatedByUser")
 

@@ -220,8 +220,8 @@ func (repo *changeStatusImportNoteRepo) ChangeUnitOfIngredient(
 		return errListUnit
 	}
 
-	var mapUnit map[string]unittypemodel.UnitType
-	var mapUnitName map[string]unittypemodel.UnitType
+	mapUnit := make(map[string]unittypemodel.UnitType)
+	mapUnitName := make(map[string]unittypemodel.UnitType)
 	for _, v := range units {
 		mapUnit[v.Id] = v
 		mapUnitName[v.Name] = v

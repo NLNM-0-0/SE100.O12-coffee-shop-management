@@ -47,8 +47,8 @@ func handleFilter(
 		if filter.SearchKey != "" {
 			db = common.GetWhereClause(db, filter.SearchKey, propertiesContainSearchKey)
 		}
-		if filter.MeasureType != "" {
-			db = db.Where("measureType = ?", filter.MeasureType)
+		if filter.UnitType != "" {
+			db = db.Where("unitTypeId = ?", filter.UnitType)
 		}
 		if filter.MinPrice != nil {
 			db = db.Where("price >= ?", filter.MinPrice)
