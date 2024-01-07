@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Loading from "./loading";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,22 +6,16 @@ import {
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
 import { LuCheck, LuChevronsUpDown } from "react-icons/lu";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "./ui/command";
-import { cn, statusNoteToString } from "@/lib/utils";
-import { StatusNote } from "@/types";
+import { Command, CommandEmpty, CommandGroup, CommandItem } from "./ui/command";
+import { cn, reasonToString } from "@/lib/utils";
+import { ExportReason } from "@/types";
 
 export interface StatusNoteListProps {
   status: string;
   setStatus: (value: string) => void;
 }
-const statuses = [StatusNote.Done, StatusNote.Cancel, StatusNote.Inprogress];
-const StatusNoteList = ({ status, setStatus }: StatusNoteListProps) => {
+const statuses = [ExportReason.Damaged, ExportReason.OutOfDate];
+const ExportNoteList = ({ status, setStatus }: StatusNoteListProps) => {
   const [open, setOpen] = useState(false);
   return (
     <div className="flex gap-1">
@@ -35,7 +28,7 @@ const StatusNoteList = ({ status, setStatus }: StatusNoteListProps) => {
             className="justify-between w-full pl-2"
           >
             {status
-              ? statusNoteToString(status as StatusNote)
+              ? reasonToString(status as ExportReason)
               : "Chọn trạng thái"}
             <LuChevronsUpDown className="ml-1 h-4 w-4 shrink-0 opacity-50" />
           </Button>
@@ -46,7 +39,7 @@ const StatusNoteList = ({ status, setStatus }: StatusNoteListProps) => {
               <div className="text-sm">Không tìm thấy</div>
             </CommandEmpty>
             <CommandGroup className="max-h-48 overflow-y-auto">
-              {statuses.map((item: StatusNote) => (
+              {statuses.map((item: ExportReason) => (
                 <CommandItem
                   value={item}
                   key={item}
@@ -61,7 +54,7 @@ const StatusNoteList = ({ status, setStatus }: StatusNoteListProps) => {
                       item === status ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  {statusNoteToString(item)}
+                  {reasonToString(item)}
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -72,4 +65,4 @@ const StatusNoteList = ({ status, setStatus }: StatusNoteListProps) => {
   );
 };
 
-export default StatusNoteList;
+export default ExportNoteList;

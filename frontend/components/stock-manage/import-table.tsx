@@ -83,18 +83,6 @@ export const columns: ColumnDef<ImportNote>[] = [
     size: 4,
   },
   {
-    id: "stt",
-    header: ({ table }) => (
-      <div className="flex justify-center font-semibold">STT</div>
-    ),
-    cell: ({ row }) => (
-      <div className="flex justify-center">{row.index + 1}</div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-    size: 4,
-  },
-  {
     accessorKey: "id",
     header: () => {
       return <span className="font-semibold">Mã phiếu</span>;
@@ -620,7 +608,7 @@ export function ImportTable() {
           </div>
         </div>
 
-        <div className="rounded-md border w-full">
+        <div className="scroll___table">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
