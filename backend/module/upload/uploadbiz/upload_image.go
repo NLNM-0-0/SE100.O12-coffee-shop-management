@@ -31,7 +31,7 @@ func (biz *uploadImageBiz) UploadImage(
 	fileHeader *multipart.FileHeader) (*string, error) {
 	fileNameLocal := fileHeader.Filename
 	extension := filepath.Ext(fileNameLocal)
-	if extension != ".png" && extension != ".jpeg" && extension != ".jpg" {
+	if !uploadmodel.CheckImageExtension(extension) {
 		return nil, uploadmodel.ErrUploadImageInvalid
 	}
 

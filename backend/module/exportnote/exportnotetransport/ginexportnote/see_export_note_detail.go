@@ -16,13 +16,6 @@ func SeeExportNoteDetail(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
 
-		var paging common.Paging
-		if err := c.ShouldBind(&paging); err != nil {
-			panic(common.ErrInvalidRequest(err))
-		}
-
-		paging.Fulfill()
-
 		exportNoteDetailStore := exportnotedetailstore.NewSQLStore(appCtx.GetMainDBConnection())
 		exportNoteStore := exportnotestore.NewSQLStore(appCtx.GetMainDBConnection())
 
@@ -38,6 +31,6 @@ func SeeExportNoteDetail(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, common.NewSuccessResponse(result, paging, nil))
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(result))
 	}
 }

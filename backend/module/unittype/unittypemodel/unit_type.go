@@ -12,6 +12,10 @@ type UnitType struct {
 	Value       int         `json:"value" gorm:"column:value;"`
 }
 
+func (*UnitType) TableName() string {
+	return common.TableUnitType
+}
+
 var (
 	ErrUnitTypeMeasureTypeInvalid = common.NewCustomError(
 		errors.New("measure type is valid"),

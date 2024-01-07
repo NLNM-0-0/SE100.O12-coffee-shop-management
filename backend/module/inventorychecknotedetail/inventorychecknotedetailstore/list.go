@@ -18,7 +18,7 @@ func (s *sqlStore) ListInventoryCheckNoteDetail(
 	db = db.Where("inventoryCheckNoteId = ?", inventoryCheckNoteId)
 
 	if err := db.
-		Preload("Ingredient.UnitType", func(db *gorm.DB) *gorm.DB {
+		Preload("Ingredient", func(db *gorm.DB) *gorm.DB {
 			return db.Order("Ingredient.name")
 		}).
 		Find(&result).Error; err != nil {

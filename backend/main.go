@@ -18,6 +18,7 @@ import (
 	ginstockreports "backend/module/stockreport/stockreporttransport/ginstockreport"
 	"backend/module/supplier/suppliertransport/ginsupplier"
 	"backend/module/supplierdebtreport/supplierdebtreporttransport/ginsupplierdebtreport"
+	"backend/module/unittype/unittypetransport/ginunittype"
 	"backend/module/upload/uploadtransport/ginupload"
 	"backend/module/user/usertransport/ginuser"
 	cloud "cloud.google.com/go/storage"
@@ -88,6 +89,7 @@ func main() {
 		ginsupplier.SetupRoutes(v1, appCtx)
 		ginuser.SetupRoutes(v1, appCtx)
 		ginupload.SetupRoutes(v1, appCtx)
+		ginunittype.SetupRoutes(v1, appCtx)
 		report := v1.Group("/reports")
 		{
 			ginstockreports.SetupRoutes(report, appCtx)
