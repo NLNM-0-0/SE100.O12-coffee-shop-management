@@ -14,8 +14,9 @@ import * as z from "zod";
 import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { Supplier } from "@/types";
+import { Customer, Supplier } from "@/types";
 import updateSupplier from "@/lib/supplier/updateSupplier";
+import updateCustomer from "@/lib/customer/updateCustomer";
 const phoneRegex = new RegExp(/(0[3|5|7|8|9])+([0-9]{8})\b/g);
 const required = z.string().min(1, "Không để trống trường này");
 
@@ -26,10 +27,10 @@ const SupplierSchema = z.object({
 });
 
 const EditDialog = ({
-  supplier,
+  customer,
   refresh,
 }: {
-  supplier: Supplier;
+  customer: Customer;
   refresh: () => void;
 }) => {
   const {
@@ -40,9 +41,9 @@ const EditDialog = ({
   } = useForm<z.infer<typeof SupplierSchema>>({
     resolver: zodResolver(SupplierSchema),
     defaultValues: {
-      name: supplier.name,
-      email: supplier.email,
-      phone: supplier.phone,
+      name: customer.name,
+      email: customer.email,
+      phone: customer.phone,
     },
   });
   const router = useRouter();
@@ -51,11 +52,11 @@ const EditDialog = ({
   ) => {
     setOpen(false);
 
-    const response: Promise<any> = updateSupplier({
+    const response: Promise<any> = updateCustomer({
       name: data.name,
       phone: data.phone,
       email: data.email,
-      idSupplier: supplier.id,
+      idCustomer: customer.id,
     });
     const responseData = await response;
 
@@ -83,9 +84,9 @@ const EditDialog = ({
       onOpenChange={(open) => {
         if (open) {
           reset({
-            name: supplier.name,
-            email: supplier.email,
-            phone: supplier.phone,
+            name: customer.name,
+            email: customer.email,
+            phone: customer.phone,
           });
         }
         setOpen(open);
@@ -97,13 +98,13 @@ const EditDialog = ({
       <DialogContent className="xl:max-w-[720px] max-w-[472px] p-0 bg-white">
         <DialogHeader>
           <DialogTitle className="p-6 pb-0">
-            Chỉnh sửa thông tin nhà cung cấp
+            Chỉnh sửa thông tin khách hàng
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="p-6 flex flex-col gap-4 border-y-[1px]">
             <div>
-              <Label htmlFor="nameNcc">Tên nhà cung cấp</Label>
+              <Label htmlFor="nameNcc">Tên khách hàng</Label>
               <Input id="nameNcc" {...register("name")}></Input>
               {errors.name && (
                 <span className="error___message">{errors.name.message}</span>
@@ -135,9 +136,9 @@ const EditDialog = ({
                 variant={"outline"}
                 onClick={() => {
                   reset({
-                    name: supplier.name,
-                    email: supplier.email,
-                    phone: supplier.phone,
+                    name: customer.name,
+                    email: customer.email,
+                    phone: customer.phone,
                   });
                 }}
               >
