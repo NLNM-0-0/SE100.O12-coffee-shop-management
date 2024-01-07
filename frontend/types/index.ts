@@ -27,6 +27,12 @@ export type MeasureUnit = {
   id: string;
   name: "g" | "kg" | "l" | "ml" | "đơn vị";
 };
+export type Unit = {
+  id: string;
+  name: string;
+  measureType: string;
+  value: number;
+};
 
 export type IngredientForChoose = {
   id: string;
@@ -39,7 +45,12 @@ export type Ingredient = {
   name: string;
   amount: number;
   price: number;
-  measureType: string;
+  unitType: {
+    id: string;
+    name: string;
+    measureType: string;
+    value: number;
+  };
 };
 export type IngredientDetail = {
   idIngre: string;
@@ -48,9 +59,17 @@ export type IngredientDetail = {
 };
 
 export type Staff = {
-  id: string;
-  name: string;
+  address?: string;
   email: string;
+  id: string;
+  isActive: boolean;
+  name: string;
+  image: string;
+  phone?: string;
+  role: {
+    id: string;
+    name: string;
+  };
 };
 export type Role = {
   id: string;
@@ -87,10 +106,10 @@ export type ImportNoteDetail = {
   ingredient: {
     id: string;
     name: string;
-    measureType: string;
   };
   price: number;
   amountImport: number;
+  unitTypeName: string;
 };
 export type ExportNote = {
   id: string;
@@ -161,9 +180,17 @@ export interface CategoryListProps {
   checkedCategory: Array<string>;
   onCheckChanged: (idCate: string) => void;
   canAdd?: boolean;
+  readonly?: boolean;
+  isEdit?: boolean;
+  onRemove?: (index: number) => void;
 }
 export type PagingProps = {
   page: number;
   limit: number;
   total: number;
 };
+export interface StatusListProps {
+  status?: boolean;
+  setStatus: (role: boolean) => void;
+  display: { trueText: string; falseText: string };
+}
