@@ -1,74 +1,73 @@
+import { StatusListProps } from "@/types";
 import { useState } from "react";
-import Loading from "./loading";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Button } from "./ui/button";
+import { Command, CommandGroup, CommandItem } from "./ui/command";
 import { LuCheck, LuChevronsUpDown } from "react-icons/lu";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "./ui/command";
-import { cn, statusNoteToString } from "@/lib/utils";
-import { StatusNote } from "@/types";
+import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
 
-export interface StatusListProps {
-  status: string;
-  setStatus: (value: string) => void;
-}
-const statuses = [StatusNote.Done, StatusNote.Cancel, StatusNote.Inprogress];
-const StatusList = ({ status, setStatus }: StatusListProps) => {
+const StatusList = ({ status, setStatus, display }: StatusListProps) => {
   const [open, setOpen] = useState(false);
   return (
-    <div className="flex gap-1">
-      <DropdownMenu open={open} onOpenChange={setOpen}>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className="justify-between w-full pl-2"
-          >
-            {status
-              ? statusNoteToString(status as StatusNote)
-              : "Chọn trạng thái"}
-            <LuChevronsUpDown className="ml-1 h-4 w-4 shrink-0 opacity-50" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="DropdownMenuContent">
-          <Command>
-            <CommandEmpty className="py-2 px-6">
-              <div className="text-sm">Không tìm thấy nhà cung cấp</div>
-            </CommandEmpty>
-            <CommandGroup className="max-h-48 overflow-y-auto">
-              {statuses.map((item: StatusNote) => (
-                <CommandItem
-                  value={item}
-                  key={item}
-                  onSelect={() => {
-                    setStatus(item);
-                    setOpen(false);
-                  }}
-                >
-                  <LuCheck
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      item === status ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  {statusNoteToString(item)}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </Command>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="justify-between w-full min-w-0 p-2"
+        >
+          {status === true
+            ? display.trueText
+            : status === false
+            ? display.falseText
+            : "Chọn trạng thái"}
+          <LuChevronsUpDown className="ml-1 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="DropdownMenuContent p-0">
+        <Command>
+          <CommandGroup>
+            <CommandItem
+              className="p-1"
+              value={display.trueText}
+              onSelect={() => {
+                setStatus(true);
+                setOpen(false);
+              }}
+            >
+              <LuCheck
+                className={cn(
+                  "mr-1 h-4 w-4",
+                  status ? "opacity-100" : "opacity-0"
+                )}
+              />
+              {display.trueText}
+            </CommandItem>
+            <CommandItem
+              className="p-1"
+              value={display.falseText}
+              onSelect={() => {
+                setStatus(false);
+                setOpen(false);
+              }}
+            >
+              <LuCheck
+                className={cn(
+                  "mr-1 h-4 w-4",
+                  status === false ? "opacity-100" : "opacity-0"
+                )}
+              />
+              {display.falseText}
+            </CommandItem>
+          </CommandGroup>
+        </Command>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
