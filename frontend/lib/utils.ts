@@ -1,4 +1,4 @@
-import { MeasureType, StatusNote } from "@/types";
+import { ExportReason, MeasureType, StatusNote } from "@/types";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -39,6 +39,15 @@ export const statusNoteToString = (status: StatusNote) => {
     return "Đã hoàn thành";
   } else {
     return "Đã hủy";
+  }
+};
+export const reasonToString = (status: ExportReason) => {
+  if (status === ExportReason.Damaged) {
+    return "Hư hỏng";
+  } else if (status === ExportReason.OutOfDate) {
+    return "Hết hạn";
+  } else {
+    return "";
   }
 };
 export const isAdmin = ({

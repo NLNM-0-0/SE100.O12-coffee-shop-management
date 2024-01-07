@@ -113,14 +113,35 @@ export type ImportNoteDetail = {
 };
 export type ExportNote = {
   id: string;
-  createBy: string;
-  createAt: Date;
   reason: string;
+  createdAt: Date;
+  createdBy: {
+    id: string;
+    name: string;
+  };
+};
+
+export type CustomerInvoice = {
+  id: string;
+  totalPrice: number;
+  amountReceived: number;
+  amountPriceUsePoint: number;
+  pointUse: number;
+  pointReceive: number;
+  createdBy: {
+    id: string;
+    name: string;
+  };
+  createdAt: Date;
 };
 export enum StatusNote {
   Inprogress = "InProgress",
   Done = "Done",
   Cancel = "Cancel",
+}
+export enum ExportReason {
+  Damaged = "Damaged",
+  OutOfDate = "OutOfDate",
 }
 export enum MeasureType {
   Volume = "Volume",
