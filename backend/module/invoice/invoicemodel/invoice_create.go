@@ -8,18 +8,15 @@ import (
 type InvoiceCreate struct {
 	Id                  string                                   `json:"-" gorm:"column:id;"`
 	CustomerId          *string                                  `json:"customerId" gorm:"column:customerId;"`
-	Customer            SimpleCustomer                           `json:"customer" gorm:"-"`
 	TotalPrice          int                                      `json:"-" gorm:"column:totalPrice;"`
 	IsUsePoint          bool                                     `json:"isUsePoint" gorm:"-"`
 	AmountReceived      int                                      `json:"-" gorm:"column:amountReceived"`
 	AmountPriceUsePoint int                                      `json:"-" gorm:"column:amountPriceUsePoint"`
+	PointUse            int                                      `json:"-" gorm:"column:pointUse;"`
+	PointReceive        int                                      `json:"-" gorm:"column:pointReceive;"`
 	CreatedBy           string                                   `json:"-" gorm:"column:createdBy;"`
 	InvoiceDetails      []invoicedetailmodel.InvoiceDetailCreate `json:"details" gorm:"-"`
 	MapIngredient       map[string]float32                       `json:"-" gorm:"-"`
-	ShopName            string                                   `json:"-" gorm:"-"`
-	ShopPhone           string                                   `json:"-" gorm:"-"`
-	ShopAddress         string                                   `json:"-" gorm:"-"`
-	ShopPassWifi        string                                   `json:"-" gorm:"-"`
 }
 
 func (*InvoiceCreate) TableName() string {

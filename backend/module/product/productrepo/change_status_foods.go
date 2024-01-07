@@ -23,12 +23,10 @@ func NewChangeStatusFoodsRepo(store ChangeStatusFoodsStore) *changeStatusFoodsRe
 
 func (biz *changeStatusFoodsRepo) ChangeStatusFoods(
 	ctx context.Context,
-	data []productmodel.FoodUpdateStatus) error {
-	for _, v := range data {
-		if err := biz.store.UpdateStatusFood(
-			ctx, v.ProductId, &v); err != nil {
-			return err
-		}
+	data *productmodel.FoodUpdateStatus) error {
+	if err := biz.store.UpdateStatusFood(
+		ctx, data.ProductId, data); err != nil {
+		return err
 	}
 
 	return nil

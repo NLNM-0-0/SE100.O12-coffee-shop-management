@@ -33,7 +33,7 @@ CREATE TABLE `Customer` (
   `name` text NOT NULL,
   `email` text NOT NULL,
   `phone` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `point` float DEFAULT '0',
+  `point` int DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `phone` (`phone`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -75,6 +75,7 @@ CREATE TABLE `Food` (
   `name` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `description` text NOT NULL,
   `cookingGuide` text NOT NULL,
+  `image` text NOT NULL,
   `isActive` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
@@ -155,6 +156,8 @@ CREATE TABLE `Invoice` (
   `totalPrice` int NOT NULL,
   `amountReceived` int NOT NULL,
   `amountPriceUsePoint` int NOT NULL,
+  `pointUse` int NOT NULL,
+  `pointReceive` int NOT NULL,
   `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
   `createdBy` varchar(13) NOT NULL,
   PRIMARY KEY (`id`),
@@ -168,7 +171,7 @@ DROP TABLE IF EXISTS `InvoiceDetail`;
 CREATE TABLE `InvoiceDetail` (
   `invoiceId` varchar(13) NOT NULL,
   `foodId` varchar(13) NOT NULL,
-  `sizeName` varchar(13) NOT NULL,
+  `sizeName` text NOT NULL,
   `amount` int NOT NULL,
   `unitPrice` int NOT NULL,
   `description` text NOT NULL,
@@ -257,6 +260,38 @@ CREATE TABLE `SizeFood` (
   CONSTRAINT `SizeFood_ibfk_2` FOREIGN KEY (`recipeId`) REFERENCES `Recipe` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+DROP TABLE IF EXISTS `StockReport`;
+CREATE TABLE `StockReport` (
+  `id` varchar(12) NOT NULL,
+  `timeFrom` timestamp NOT NULL,
+  `timeTo` timestamp NOT NULL,
+  `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deletedAt` datetime DEFAULT NULL,
+  `isActive` tinyint(1) DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `StockReportDetail`;
+CREATE TABLE `StockReportDetail` (
+  `reportId` varchar(12) NOT NULL,
+  `ingredientId` varchar(12) NOT NULL,
+  `initial` int NOT NULL,
+  `sell` int NOT NULL,
+  `import` int NOT NULL,
+  `export` int NOT NULL,
+  `modify` int NOT NULL,
+  `final` int NOT NULL,
+  `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deletedAt` datetime DEFAULT NULL,
+  `isActive` tinyint(1) DEFAULT '1',
+  PRIMARY KEY (`reportId`,`ingredientId`),
+  KEY `ingredientId` (`ingredientId`),
+  CONSTRAINT `StockReportDetail_ibfk_1` FOREIGN KEY (`reportId`) REFERENCES `StockReport` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `StockReportDetail_ibfk_2` FOREIGN KEY (`ingredientId`) REFERENCES `Ingredient` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 DROP TABLE IF EXISTS `Supplier`;
 CREATE TABLE `Supplier` (
   `id` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -282,6 +317,40 @@ CREATE TABLE `SupplierDebt` (
   KEY `createdBy` (`createdBy`),
   CONSTRAINT `SupplierDebt_ibfk_1` FOREIGN KEY (`supplierId`) REFERENCES `Supplier` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `SupplierDebt_ibfk_2` FOREIGN KEY (`createdBy`) REFERENCES `MUser` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `SupplierDebtReport`;
+CREATE TABLE `SupplierDebtReport` (
+  `id` varchar(12) NOT NULL,
+  `timeFrom` timestamp NOT NULL,
+  `timeTo` timestamp NOT NULL,
+  `initial` int NOT NULL,
+  `debt` int NOT NULL,
+  `pay` int NOT NULL,
+  `final` int NOT NULL,
+  `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deletedAt` datetime DEFAULT NULL,
+  `isActive` tinyint(1) DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `SupplierDebtReportDetail`;
+CREATE TABLE `SupplierDebtReportDetail` (
+  `reportId` varchar(12) NOT NULL,
+  `supplierId` varchar(12) NOT NULL,
+  `initial` int NOT NULL,
+  `debt` int NOT NULL,
+  `pay` int NOT NULL,
+  `final` int NOT NULL,
+  `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deletedAt` datetime DEFAULT NULL,
+  `isActive` tinyint(1) DEFAULT '1',
+  PRIMARY KEY (`reportId`,`supplierId`),
+  KEY `supplierId` (`supplierId`),
+  CONSTRAINT `SupplierDebtReportDetail_ibfk_1` FOREIGN KEY (`supplierId`) REFERENCES `Supplier` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `SupplierDebtReportDetail_ibfk_2` FOREIGN KEY (`reportId`) REFERENCES `SupplierDebtReport` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `Topping`;
@@ -350,9 +419,13 @@ INSERT INTO `Feature` (`id`, `description`, `groupName`) VALUES
 ('IMP_UP_STATE', 'Chỉnh sửa trạng thái phiếu nhập', 'Phiếu nhập'),
 ('IMP_VIEW', 'Xem phiếu nhập', 'Phiếu nhập'),
 ('ING_CREATE', 'Tạo nguyên liệu', 'Nguyên liệu'),
+('ING_UP', 'Chỉnh sửa thông tin nguyên liệu', 'Nguyên liệu'),
 ('ING_VIEW', 'Xem nguyên liệu', 'Nguyên liệu'),
 ('INV_CREATE', 'Tạo hóa đơn', 'Hóa đơn'),
 ('INV_VIEW', 'Xem hóa đơn', 'Hóa đơn'),
+('RPT_DEBT', 'Xem báo cáo nợ', 'Báo cáo'),
+('RPT_SALE', 'Xem báo cáo mặt hàng', 'Báo cáo'),
+('RPT_STOCK', 'Xem báo cáo tồn kho', 'Báo cáo'),
 ('SUP_CREATE', 'Tạo nhà cung cấp', 'Nhà cung cấp'),
 ('SUP_PAY', 'Trả nợ nhà cung cấp', 'Nhà cung cấp'),
 ('SUP_UP_INFO', 'Chỉnh sửa thông tin nhà cung cấp', 'Nhà cung cấp'),
@@ -419,9 +492,13 @@ INSERT INTO `RoleFeature` (`roleId`, `featureId`) VALUES
 ('admin', 'IMP_UP_STATE'),
 ('admin', 'IMP_VIEW'),
 ('admin', 'ING_CREATE'),
+('admin', 'ING_UP'),
 ('admin', 'ING_VIEW'),
 ('admin', 'INV_CREATE'),
 ('admin', 'INV_VIEW'),
+('admin', 'RPT_DEBT'),
+('admin', 'RPT_SALE'),
+('admin', 'RPT_STOCK'),
 ('admin', 'SUP_CREATE'),
 ('admin', 'SUP_PAY'),
 ('admin', 'SUP_UP_INFO'),

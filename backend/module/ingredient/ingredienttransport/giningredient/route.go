@@ -12,5 +12,6 @@ func SetupRoutes(router *gin.RouterGroup, appCtx appctx.AppContext) {
 		ingredients.GET("", ListIngredient(appCtx))
 		ingredients.GET("/all", GetAllIngredient(appCtx))
 		ingredients.POST("", CreateIngredient(appCtx))
+		ingredients.PATCH("/:id", UpdateInfoIngredient(appCtx))
 	}
 }

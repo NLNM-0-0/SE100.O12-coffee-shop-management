@@ -12,7 +12,7 @@ type UserCreate struct {
 	Email    string  `json:"email" gorm:"column:email;"`
 	Password string  `json:"-" gorm:"column:password;"`
 	Salt     string  `json:"-" gorm:"column:salt;"`
-	Image    string  `json:"image" gorm:"column:image;"`
+	Image    *string `json:"image" gorm:"column:image;"`
 	RoleId   string  `json:"roleId" gorm:"column:roleId;"`
 }
 
@@ -36,7 +36,7 @@ func (data *UserCreate) Validate() error {
 	if !common.ValidateNotNilId(&data.RoleId) {
 		return ErrUserRoleInvalid
 	}
-	if !common.ValidateUrl(data.Image) {
+	if !common.ValidateUrl(data.Image, common.DefaultImageAvatar) {
 		return ErrUserImageInvalid
 	}
 	return nil

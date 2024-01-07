@@ -46,6 +46,9 @@ var (
 	ErrIngredientNameDuplicate = common.ErrDuplicateKey(
 		errors.New("Tên của nguyên vật liệu đã tồn tại"),
 	)
+	ErrIngredientUpdateNoPermission = common.ErrNoPermission(
+		errors.New("Bạn không có quyền chỉnh sửa nguyên vật liệu"),
+	)
 	ErrIngredientCreateNoPermission = common.ErrNoPermission(
 		errors.New("Bạn không có quyền thêm nguyên vật liệu mới"),
 	)

@@ -26,7 +26,7 @@ func (repo *getNearestInvoiceRepo) GetNearestInvoice(
 	result, err := repo.store.GetNearest(
 		ctx,
 		amountNeed,
-		"CreatedByUser")
+		"CreatedByUser", "Customer")
 
 	if err != nil {
 		return nil, err

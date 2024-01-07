@@ -10,6 +10,7 @@ import (
 	"backend/module/sizefood/sizefoodmodel"
 	"backend/module/stockchangehistory/stockchangehistorymodel"
 	"context"
+	"fmt"
 )
 
 type InvoiceStore interface {
@@ -105,16 +106,18 @@ func NewCreateInvoiceRepo(
 	foodStore FoodStore,
 	toppingStore ToppingStore,
 	ingredientStore IngredientStore,
-	shopGeneralStore ShopGeneralStore) *createInvoiceRepo {
+	shopGeneralStore ShopGeneralStore,
+	stockChangeHistoryStore StockChangeHistoryStore) *createInvoiceRepo {
 	return &createInvoiceRepo{
-		invoiceStore:       invoiceStore,
-		invoiceDetailStore: invoiceDetailStore,
-		customerStore:      customerStore,
-		sizeFoodStore:      sizeFoodStore,
-		foodStore:          foodStore,
-		toppingStore:       toppingStore,
-		ingredientStore:    ingredientStore,
-		shopGeneralStore:   shopGeneralStore,
+		invoiceStore:            invoiceStore,
+		invoiceDetailStore:      invoiceDetailStore,
+		customerStore:           customerStore,
+		sizeFoodStore:           sizeFoodStore,
+		foodStore:               foodStore,
+		toppingStore:            toppingStore,
+		ingredientStore:         ingredientStore,
+		shopGeneralStore:        shopGeneralStore,
+		stockChangeHistoryStore: stockChangeHistoryStore,
 	}
 }
 
@@ -350,7 +353,7 @@ func (repo *createInvoiceRepo) HandleIngredientTotalAmount(
 	ctx context.Context,
 	invoiceId string,
 	ingredientTotalAmountNeedUpdate map[string]float32) error {
-	var history []stockchangehistorymodel.StockChangeHistory
+	history := make([]stockchangehistorymodel.StockChangeHistory, 0)
 	for key, value := range ingredientTotalAmountNeedUpdate {
 		ingredient, errGetIngredient := repo.ingredientStore.FindIngredient(
 			ctx, map[string]interface{}{"id": key})
@@ -379,6 +382,7 @@ func (repo *createInvoiceRepo) HandleIngredientTotalAmount(
 			Type:         &typeChange,
 		}
 		history = append(history, stockChangeHistory)
+		fmt.Println(history)
 	}
 
 	if err := repo.stockChangeHistoryStore.CreateLisStockChangeHistory(

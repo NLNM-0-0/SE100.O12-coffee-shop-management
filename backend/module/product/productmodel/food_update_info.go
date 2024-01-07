@@ -9,6 +9,7 @@ type FoodUpdateInfo struct {
 	*ProductUpdateInfo `json:",inline"`
 	Categories         *[]string                       `json:"categories" gorm:"-"`
 	Sizes              *[]sizefoodmodel.SizeFoodUpdate `json:"sizes" gorm:"-"`
+	Image              *string                         `json:"image" gorm:"column:image;"`
 }
 
 func (*FoodUpdateInfo) TableName() string {
@@ -20,6 +21,9 @@ func (data *FoodUpdateInfo) Validate() error {
 		if err := (*data.ProductUpdateInfo).Validate(); err != nil {
 			return err
 		}
+	}
+	if !common.ValidateUrl(data.Image, common.DefaultImageFood) {
+		return ErrFoodImageInvalid
 	}
 	if data.Categories != nil {
 		if len(*data.Categories) == 0 {

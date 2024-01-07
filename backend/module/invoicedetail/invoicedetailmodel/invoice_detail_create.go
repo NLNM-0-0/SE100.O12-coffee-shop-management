@@ -7,7 +7,7 @@ import (
 type InvoiceDetailCreate struct {
 	InvoiceId   string                 `json:"-" gorm:"column:invoiceId;"`
 	FoodId      string                 `json:"foodId" gorm:"column:foodId;"`
-	FoodName    string                 `json:"foodName" gorm:"column:foodName;"`
+	FoodName    string                 `json:"foodName" gorm:"-"`
 	SizeId      string                 `json:"sizeId" gorm:"-"`
 	SizeName    string                 `json:"sizeName" gorm:"column:sizeName"`
 	Toppings    *InvoiceDetailToppings `json:"toppings" gorm:"column:toppings;"`

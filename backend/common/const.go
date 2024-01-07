@@ -1,7 +1,6 @@
 package common
 
 const (
-	TableImage                    string = "Image"
 	TableUser                     string = "MUser"
 	TableCategory                 string = "Category"
 	TableCategoryFood             string = "CategoryFood"
@@ -56,6 +55,7 @@ const (
 	ImportNoteChangeStatusFeatureCode   = "IMP_UP_STATE"
 	IngredientViewFeatureCode           = "ING_VIEW"
 	IngredientCreateFeatureCode         = "ING_CREATE"
+	IngredientUpdateFeatureCode         = "ING_UP"
 	InvoiceViewFeatureCode              = "INV_VIEW"
 	InvoiceCreateFeatureCode            = "INV_CREATE"
 	SupplierViewFeatureCode             = "SUP_VIEW"
@@ -69,9 +69,9 @@ const (
 	UserViewFeatureCode                 = "USE_VIEW"
 	UserUpdateInfoFeatureCode           = "USE_UP_INFO"
 	UserUpdateStatusFeatureCode         = "USE_UP_STATE"
-	SupplierDebtReportViewFeatureCode   = "REPORT_VIEW_SUPPLIER"
-	StockReportViewFeatureCode          = "REPORT_VIEW_STOCK"
-	SaleReportViewFeatureCode           = "REPORT_VIEW_SALE"
+	SupplierDebtReportViewFeatureCode   = "RPT_DEBT"
+	StockReportViewFeatureCode          = "RPT_STOCK"
+	SaleReportViewFeatureCode           = "RPT_SALE"
 )
 
 const RoleAdminId = "admin"
@@ -79,3 +79,8 @@ const RoleAdminId = "admin"
 const DefaultPass = "app123"
 
 const CurrentUserStr = "current_user"
+
+const (
+	DefaultImageFood   string = "https://firebasestorage.googleapis.com/v0/b/coffee-shop-web.appspot.com/o/Default%2Ffood.png?alt=media"
+	DefaultImageAvatar string = "https://firebasestorage.googleapis.com/v0/b/coffee-shop-web.appspot.com/o/Default%2Favatar.jpg?alt=media"
+)

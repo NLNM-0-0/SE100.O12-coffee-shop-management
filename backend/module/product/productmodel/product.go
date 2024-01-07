@@ -10,7 +10,6 @@ type Product struct {
 	Name         string `json:"name" gorm:"column:name;"`
 	Description  string `json:"description" gorm:"column:description;"`
 	CookingGuide string `json:"cookingGuide" gorm:"column:cookingGuide;"`
-	Image        string `json:"image" gorm:"column:image;"`
 	IsActive     bool   `json:"isActive" gorm:"column:isActive;"`
 }
 
@@ -25,11 +24,6 @@ var (
 		"Tên đang trống",
 		"ErrProductNameEmpty",
 	)
-	ErrProductImageInvalid = common.NewCustomError(
-		errors.New("image of product is empty"),
-		"Ảnh không hợp lệ",
-		"ErrProductImageInvalid",
-	)
 	ErrProductIsActiveEmpty = common.NewCustomError(
 		errors.New("status of product is empty"),
 		"Trạng thái đang trống",
@@ -39,5 +33,10 @@ var (
 		errors.New("product has been inactive"),
 		"Đã ngừng bán",
 		"ErrProductInactive",
+	)
+	ErrProductStatusEmpty = common.NewCustomError(
+		errors.New("user status is empty"),
+		"Trạng thái của sản phẩm đang trống",
+		"ErrProductStatusEmpty",
 	)
 )

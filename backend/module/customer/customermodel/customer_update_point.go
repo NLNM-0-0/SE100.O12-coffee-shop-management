@@ -3,7 +3,7 @@ package customermodel
 import "backend/common"
 
 type CustomerUpdatePoint struct {
-	Amount *float32 `json:"amount" gorm:"-"`
+	Amount *int `json:"amount" gorm:"-"`
 }
 
 func (*CustomerUpdatePoint) TableName() string {

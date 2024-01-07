@@ -11,7 +11,8 @@ func SetupRoutes(router *gin.RouterGroup, appCtx appctx.AppContext) {
 	{
 		invoices.GET("", ListInvoice(appCtx))
 		invoices.GET("/nearest", GetNearestInvoice(appCtx))
-		invoices.POST("", CreateInvoice(appCtx))
 		invoices.GET("/:id", SeeInvoiceDetail(appCtx))
+		invoices.GET("/:id/printReview", PrintInvoiceDetail(appCtx))
+		invoices.POST("", CreateInvoice(appCtx))
 	}
 }

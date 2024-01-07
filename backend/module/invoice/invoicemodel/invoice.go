@@ -15,6 +15,8 @@ type Invoice struct {
 	TotalPrice          float32                            `json:"totalPrice" gorm:"column:totalPrice;"`
 	AmountReceived      int                                `json:"amountReceived" gorm:"column:amountReceived"`
 	AmountPriceUsePoint int                                `json:"amountPriceUsePoint" gorm:"column:amountPriceUsePoint"`
+	PointUse            int                                `json:"pointUse" gorm:"column:pointUse;"`
+	PointReceive        int                                `json:"pointReceive" gorm:"column:pointReceive;"`
 	CreatedBy           string                             `json:"-" gorm:"column:createdBy;"`
 	CreatedByUser       usermodel.SimpleUser               `json:"createdBy" gorm:"foreignKey:CreatedBy;references:Id"`
 	CreatedAt           *time.Time                         `json:"createdAt" gorm:"column:createdAt;"`
