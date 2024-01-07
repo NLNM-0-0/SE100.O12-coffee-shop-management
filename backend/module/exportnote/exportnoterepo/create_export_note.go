@@ -151,7 +151,7 @@ func (repo *createExportNoteRepo) ChangeUnitOfIngredient(
 
 		data.ExportNoteDetails[i].Ingredient = ingredient
 		data.ExportNoteDetails[i].AmountExportByDefaultUnitType =
-			v.AmountExport * float32(mapUnit[ingredient.UnitTypeId].Value) / float32(mapUnit[v.UnitTypeId].Value)
+			v.AmountExport * float32(mapUnit[v.UnitTypeId].Value) / float32(mapUnit[ingredient.UnitTypeId].Value)
 		data.ExportNoteDetails[i].UnitTypeName = mapUnit[v.UnitTypeId].Name
 	}
 	return nil
