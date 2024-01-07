@@ -4,6 +4,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import {
   Control,
+  Controller,
   UseFormReturn,
   useFieldArray,
   useWatch,
@@ -16,10 +17,10 @@ import { z } from "zod";
 import { FormSchema } from "@/app/stock-manage/import/add-note/page";
 import { AutoComplete } from "../autocomplete";
 import { Ingredient } from "@/types";
-import { toUnit, toVND } from "@/lib/utils";
-import { toast } from "../ui/use-toast";
+import { toVND } from "@/lib/utils";
 import getAllIngredient from "@/lib/getAllIngredient";
 import Loading from "../loading";
+import UnitListType from "./unit-list-type";
 const Total = ({
   control,
 }: {
@@ -84,6 +85,7 @@ const IngredientInsert = ({
         price: item.price,
         oldPrice: item.price,
         isReplacePrice: false,
+        unitTypeId: item.unitType.id,
       });
     }
   };
@@ -101,18 +103,22 @@ const IngredientInsert = ({
           onValueChange={handleOnValueChange}
           value={value}
         />
-        <div>
+        <div className="text-sm">
           <div className="grid grid-cols-4 lg:gap-3 gap-2 font-medium py-2 px-2 mt-2 rounded-t-md bg-[#ffe9db]">
-            <h2 className="">Tên nguyên liệu</h2>
-            <h2 className=" text-left">Đơn giá</h2>
-            <h2 className=" text-left">Số lượng</h2>
-            <h2 className=" text-right pr-12 ">Thành tiền</h2>
+            <h2 className="col-span-1">Tên nguyên liệu</h2>
+            <h2 className="col-span-1 text-left">Đơn giá</h2>
+            <h2 className="col-span-1 text-left">Số lượng</h2>
+            <h2 className="col-span-1 text-right pr-12 ">Thành tiền</h2>
           </div>
           <div className="border border-t-0 py-2 rounded-b-md">
             {fieldsIngre.length < 1 ? (
               <div className="flex flex-col items-center gap-4 py-8 text-muted-foreground font-medium">
                 <CiBoxes className="h-24 w-24 text-muted-foreground/40" />
-                Chọn sản phẩm nhập kho
+                {errors.details ? (
+                  <p className="error___message">{errors.details.message}</p>
+                ) : (
+                  "Chọn sản phẩm nhập kho"
+                )}
               </div>
             ) : null}
             {fieldsIngre.map((ingre, index) => {
@@ -123,27 +129,42 @@ const IngredientInsert = ({
                 return (
                   <div
                     key={ingre.id}
-                    className="grid md:grid-cols-4 grid-cols-3 items-center p-2 lg:gap-3 gap-2"
+                    className="grid grid-cols-4 p-2 lg:gap-3 gap-2 items-start"
                   >
-                    <div className="flex">
-                      <h2 className="font-medium">{value?.name}</h2>
-                      <h2 className="ml-1 text-muted-foreground">
-                        ({toUnit(value?.measureType)})
+                    <div className="flex col-span-1 items-center">
+                      <h2 className="font-medium basis-2/3 min-w-[3rem]">
+                        {value?.name}
                       </h2>
+                      <div className="w-1/3 min-w-[4rem]">
+                        <Controller
+                          control={control}
+                          name={`details.${index}.unitTypeId`}
+                          render={({ field }) => (
+                            <UnitListType
+                              measureType={value.unitType.measureType}
+                              unit={field.value}
+                              setUnit={(value) => field.onChange(value)}
+                            />
+                          )}
+                        />
+                      </div>
                     </div>
-                    <div className="relative p-1">
+                    <div className="relative col-span-1">
                       <Input
-                        type="number"
                         defaultValue={ingre.price}
                         {...register(`details.${index}.price` as const)}
-                        min={1}
                       ></Input>
-                      {errors.details && errors.details[index] ? (
+                      {errors &&
+                      errors.details &&
+                      errors.details[index] &&
+                      (errors.details[index]!.price as
+                        | { message: string }
+                        | undefined) ? (
                         <span className="error___message">
-                          {errors.details[index]?.message}
+                          {errors.details[index]!.price!.message}
                         </span>
                       ) : null}
-                      <div className="absolute top-0 right-0 cursor-pointer group">
+                      <div className="absolute top-[-4px] right-[-4px] cursor-pointer group col-span-1">
                         <IoMdInformationCircleOutline
                           className={`h-5 w-5 text-teal-700`}
                         />
@@ -152,18 +173,28 @@ const IngredientInsert = ({
                           className="absolute bottom-5 right-3 w-fit whitespace-nowrap scale-0 transition-all rounded bg-teal-100 p-2 text-xs font-medium text-teal-800 group-hover:scale-100
                       group-active:scale-100"
                         >
-                          Giá ban đầu: {toVND(ingre.oldPrice)}
+                          Giá ban đầu: {toVND(ingre.oldPrice)}/
+                          {ingre.unitTypeId}
                         </span>
                       </div>
                     </div>
-
-                    <Input
-                      type="number"
-                      className="lg:w-full w-4/5"
-                      defaultValue={ingre.amountImport}
-                      {...register(`details.${index}.amountImport` as const)}
-                      min={1}
-                    ></Input>
+                    <div>
+                      <Input
+                        className="col-span-1"
+                        defaultValue={ingre.amountImport}
+                        {...register(`details.${index}.amountImport` as const)}
+                      ></Input>
+                      {errors &&
+                      errors.details &&
+                      errors.details[index] &&
+                      (errors.details[index]!.amountImport as
+                        | { message: string }
+                        | undefined) ? (
+                        <span className="error___message">
+                          {errors.details[index]!.amountImport!.message}
+                        </span>
+                      ) : null}
+                    </div>
 
                     <div className="text-right flex justify-end gap-2 items-center">
                       <AddUp control={control} index={index} />

@@ -12,6 +12,7 @@ export default async function createImportNote({
     amountImport: number;
     price: number;
     isReplacePrice?: boolean;
+    unitTypeId: string;
   }[];
   id?: string;
   supplierId: string;
