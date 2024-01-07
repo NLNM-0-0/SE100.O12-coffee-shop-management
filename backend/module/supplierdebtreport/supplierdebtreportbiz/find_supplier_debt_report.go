@@ -163,7 +163,7 @@ func (biz *findSupplierDebtReportBiz) FindSupplierDebtReport(
 			initial = final - debtAmount - payAmount
 		}
 
-		if initial != 0 && (debtAmount != 0 || payAmount != 0) {
+		if initial != 0 || debtAmount != 0 || payAmount != 0 {
 			detailCreate := supplierdebtreportdetailmodel.ReqCreateSupplierDebtReportDetail{
 				ReportId:   reportId,
 				SupplierId: supplier.Id,

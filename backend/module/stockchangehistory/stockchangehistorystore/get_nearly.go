@@ -5,13 +5,14 @@ import (
 	"backend/module/stockchangehistory/stockchangehistorymodel"
 	"context"
 	"errors"
-	"gorm.io/gorm"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 func (s *sqlStore) GetNearlyStockChangeHistory(
 	ctx context.Context,
-	bookId string,
+	ingredientId string,
 	timeFrom time.Time) (*stockchangehistorymodel.StockChangeHistory, error) {
 	var result stockchangehistorymodel.StockChangeHistory
 	db := s.db
@@ -21,7 +22,7 @@ func (s *sqlStore) GetNearlyStockChangeHistory(
 	timeRequest := timeFrom.Add(-time.Second)
 
 	if err := db.
-		Where("ingredientId = ?", bookId).
+		Where("ingredientId = ?", ingredientId).
 		Where("createdAt <= ?", timeRequest).
 		Order("createdAt desc").
 		First(&result).Error; err != nil {
