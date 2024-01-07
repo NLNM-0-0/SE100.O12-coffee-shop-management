@@ -119,7 +119,7 @@ func (repo *createImportNoteRepo) ChangeUnitOfIngredient(
 		data.ImportNoteDetails[i].Ingredient = ingredient
 		data.ImportNoteDetails[i].UnitTypeName = mapUnit[v.UnitTypeId].Name
 		data.ImportNoteDetails[i].PriceByDefaultUnitType =
-			common.RoundToInt(float32(v.Price) * float32(mapUnit[ingredient.UnitTypeId].Value) / float32(mapUnit[v.UnitTypeId].Value))
+			common.RoundToInt(float32(v.Price) * float32(mapUnit[v.UnitTypeId].Value) / float32(mapUnit[ingredient.UnitTypeId].Value))
 	}
 	return nil
 }
