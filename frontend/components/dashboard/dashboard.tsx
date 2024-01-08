@@ -1,17 +1,15 @@
 "use client";
 import getDashboard from "@/lib/dashboard/getReport";
-import { CardDashboardInfo, Dashboard, CharComponent } from "@/types";
+import { CardDashboardInfo, Dashboard } from "@/types";
 import { useState } from "react";
 import { toast } from "../ui/use-toast";
 import DashboardHeader from "./dashboard-header";
 import DashboardCardHolder from "./dashboard-card-container";
-import DashboardChart from "./dashboard-chart";
-import { da } from "date-fns/locale";
 import DashboardTopFoodContainer from "./dashboard-top-food-container";
 import Loading from "../loading";
 import DashboardChartContainer from "./dashboard-chart-container";
 
-const DebtReport = () => {
+const DashboardComponent = () => {
   const [data, setData] = useState<Dashboard>({
     timeFrom: new Date(),
     timeTo: new Date(),
@@ -61,18 +59,6 @@ const DebtReport = () => {
     setIsLoading(false);
   };
 
-  const onExport = () => {
-    //   if (data == undefined || data.details.length < 1) {
-    //     toast({
-    //       variant: "destructive",
-    //       title: "Có lỗi",
-    //       description: "Không có báo cáo nợ nào",
-    //     });
-    //   } else {
-    //     ExportDebtReport(data, "DebtReport.xlsx");
-    //   }
-  };
-
   let cardInfos: CardDashboardInfo[] = [];
   const amount = data.totalSale;
   const formatted = new Intl.NumberFormat("vi-VN", {
@@ -104,7 +90,7 @@ const DebtReport = () => {
   return (
     <div className="flex flex-col lg:gap-[6] gap-4">
       <div>
-        <DashboardHeader onClick={onGetDashboard} onExport={onExport} />
+        <DashboardHeader onClick={onGetDashboard} />
       </div>
       {isLoading ? (
         <Loading></Loading>
@@ -126,4 +112,4 @@ const DebtReport = () => {
   );
 };
 
-export default DebtReport;
+export default DashboardComponent;

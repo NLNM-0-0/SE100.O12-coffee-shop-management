@@ -112,8 +112,8 @@ const ImportDetail = ({ params }: { params: { importId: string } }) => {
                 <div className="flex flex-col">
                   {data.closedAt ? (
                     <>
-                      <span>12/10/2023</span>
-                      <span className="font-light">Nguyễn Thị Huệ</span>
+                      <span>{new Date(data.closedAt).toLocaleDateString()}</span>
+                      <span className="font-light">{data.closed.name}</span>
                     </>
                   ) : (
                     "Chưa đóng phiếu"

@@ -10,10 +10,10 @@ import { CalendarIcon } from "@radix-ui/react-icons";
 import { Calendar } from "../ui/calendar";
 
 const DashboardHeader = (props: any) => {
-  const { onClick, onExport } = props;
+  const { onClick } = props;
 
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: addDays(new Date(), -30),
+    from: new Date(),
     to: new Date(),
   });
 
@@ -75,14 +75,6 @@ const DashboardHeader = (props: any) => {
             className="px-5"
           >
             Xem
-          </Button>
-          <Button
-            onClick={onExport}
-            type="button"
-            className="pl-[20px] pr-[20px] bg-white border border-primary text-primary hover:text-primary"
-            variant={"outline"}
-          >
-            Xuất
           </Button>
         </div>
       </div>

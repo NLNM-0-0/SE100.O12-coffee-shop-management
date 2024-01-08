@@ -1,6 +1,7 @@
 "use client";
 import ConfirmDialog from "@/components/confirm-dialog";
 import Loading from "@/components/loading";
+import { ExportExportNoteDetail } from "@/components/stock-manage/excel-export-detail";
 import { ExportImportNoteDetail } from "@/components/stock-manage/excel-import-detail";
 import { ExportDetailTable } from "@/components/stock-manage/export-detail-table";
 import { Button } from "@/components/ui/button";
@@ -37,8 +38,7 @@ const ExportDetail = ({ params }: { params: { exportId: string } }) => {
                 variant={"outline"}
                 className="p-2"
                 onClick={() => {
-                  //TODO
-                  // ExportImportNoteDetail(data, data.details, "phieunhap.xlsx");
+                  ExportExportNoteDetail(data, data.details, "phieuxuat.xlsx");
                 }}
               >
                 <FaRegFileExcel className="mr-1 h-5 w-5 text-green-700" />
