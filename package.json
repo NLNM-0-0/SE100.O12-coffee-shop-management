@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "antd": "^5.12.8"
+    "antd": "^5.12.8",
+    "react-chartjs-2": "^5.2.0"
   }
 }

@@ -1,6 +1,9 @@
 package common
 
-import "math"
+import (
+	"math"
+	"time"
+)
 
 const maxDecimalNumber = 3
 
@@ -16,4 +19,12 @@ func RoundToInt(num float32) int {
 func CustomRound(num *float32) {
 	roundedNum := roundToDecimal(*num, maxDecimalNumber)
 	*num = roundedNum
+}
+
+func RoundTime(date time.Time) (*time.Time, string) {
+	roundedTime := date.Round(time.Hour)
+
+	result := roundedTime.Format(time.RFC3339)
+
+	return &roundedTime, result
 }

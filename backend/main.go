@@ -5,6 +5,7 @@ import (
 	"backend/middleware"
 	"backend/module/category/categorytransport/gincategory"
 	"backend/module/customer/customertransport/gincustomer"
+	"backend/module/dashboard/dashboardtransport/gindashboard"
 	"backend/module/exportnote/exportnotetransport/ginexportnote"
 	"backend/module/feature/featuretransport/ginfeature"
 	"backend/module/importnote/importnotetransport/ginimportnote"
@@ -90,6 +91,7 @@ func main() {
 		ginuser.SetupRoutes(v1, appCtx)
 		ginupload.SetupRoutes(v1, appCtx)
 		ginunittype.SetupRoutes(v1, appCtx)
+		gindashboard.SetupRoutes(v1, appCtx)
 		report := v1.Group("/reports")
 		{
 			ginstockreports.SetupRoutes(report, appCtx)
