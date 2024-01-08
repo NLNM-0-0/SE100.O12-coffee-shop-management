@@ -45,7 +45,7 @@ var (
 	)
 	ErrInvoiceIngredientIsNotEnough = common.NewCustomError(
 		errors.New("exist ingredient in the stock is not enough for the invoice"),
-		"Tồn tại 1 nguyên vật liệu có số lượng trong kho đủ để bán",
+		"Tồn tại 1 nguyên vật liệu có số lượng trong kho không đủ để bán",
 		"ErrInvoiceIngredientIsNotEnough",
 	)
 	ErrInvoiceCreateNoPermission = common.ErrNoPermission(
