@@ -31,9 +31,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { FilterValue, Product } from "@/types";
+import { FilterValue, Topping } from "@/types";
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import { Input } from "../ui/input";
 
 import { useRouter, useSearchParams } from "next/navigation";
@@ -44,13 +44,14 @@ import { LuFilter } from "react-icons/lu";
 import { Label } from "../ui/label";
 import { AiOutlineClose } from "react-icons/ai";
 import Image from "next/image";
-import { includesRoles } from "@/lib/utils";
+import { includesRoles, toVND } from "@/lib/utils";
 import { useCurrentUser } from "@/hooks/use-user";
 import { getFilterString } from "@/app/product-manage/table-layout";
-import getAllFood from "@/lib/food/getListFood";
 import { Checkbox } from "../ui/checkbox";
+import getAllTopping from "@/lib/topping/getListTopping";
+import { CaretSortIcon } from "@radix-ui/react-icons";
 
-export const columns: ColumnDef<Product>[] = [
+export const columns: ColumnDef<Topping>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -79,21 +80,6 @@ export const columns: ColumnDef<Product>[] = [
     size: 1,
   },
   {
-    accessorKey: "image",
-    header: () => {},
-    cell: ({ row }) => (
-      <div className="flex justify-end">
-        <Image
-          src={row.getValue("image") || "/avatar.png"}
-          alt="image"
-          className="object-contain h-14 w-14 min-w-[3rem]"
-          width={56}
-          height={56}
-        ></Image>
-      </div>
-    ),
-  },
-  {
     accessorKey: "name",
     header: () => {
       return (
@@ -109,6 +95,48 @@ export const columns: ColumnDef<Product>[] = [
       return <span className="font-semibold whitespace-normal">Mô tả</span>;
     },
     cell: ({ row }) => <div>{row.getValue("description")}</div>,
+    size: 4,
+  },
+  {
+    accessorKey: "cost",
+    header: ({ column }) => (
+      <div className="flex justify-end whitespace-normal">
+        <Button
+          variant={"ghost"}
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="pl-1 pr-2"
+        >
+          <CaretSortIcon className="h-4 w-4" />
+          <span className="font-semibold">Giá vốn</span>
+        </Button>
+      </div>
+    ),
+    cell: ({ row }) => {
+      const amount = row.original.cost;
+
+      return <div className="text-right font-medium">{toVND(amount)}</div>;
+    },
+    size: 4,
+  },
+  {
+    accessorKey: "price",
+    header: ({ column }) => (
+      <div className="flex justify-end whitespace-normal">
+        <Button
+          variant={"ghost"}
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="pl-1 pr-2"
+        >
+          <CaretSortIcon className="h-4 w-4" />
+          <span className="font-semibold">Giá bán</span>
+        </Button>
+      </div>
+    ),
+    cell: ({ row }) => {
+      const amount = row.original.price;
+
+      return <div className="text-right font-medium">{toVND(amount)}</div>;
+    },
     size: 4,
   },
   {
@@ -137,7 +165,7 @@ export const columns: ColumnDef<Product>[] = [
     size: 1,
   },
 ];
-export function ProductTable() {
+export function ToppingTable() {
   const searchParams = useSearchParams();
   const page = searchParams.get("page") ?? "1";
 
@@ -148,7 +176,7 @@ export function ProductTable() {
     titles: response,
     isLoading,
     isError,
-  } = getAllFood({
+  } = getAllTopping({
     page: page,
     filter: stringToFilter,
   });
@@ -202,7 +230,7 @@ export function ProductTable() {
     data.filters.forEach((item) => {
       filterString = filterString.concat(`&${item.type}=${item.value}`);
     });
-    router.push(`/product-manage?page=${Number(page)}${filterString}`);
+    router.push(`/product-manage/topping?page=${Number(page)}${filterString}`);
   };
   const { currentUser } = useCurrentUser();
 
@@ -403,22 +431,28 @@ export function ProductTable() {
           <Paging
             page={page}
             onNavigateNext={() =>
-              router.push(`/product-manage?page=${+page + 1}${stringToFilter}`)
+              router.push(
+                `/product-manage/topping?page=${+page + 1}${stringToFilter}`
+              )
             }
             onNavigateBack={() =>
-              router.push(`/product-manage?page=${+page - 1}${stringToFilter}`)
+              router.push(
+                `/product-manage/topping?page=${+page - 1}${stringToFilter}`
+              )
             }
             totalPage={totalPage}
             onPageSelect={(selectedPage) => {
               router.push(
-                `/product-manage?page=${selectedPage}${stringToFilter}`
+                `/product-manage/topping?page=${selectedPage}${stringToFilter}`
               );
             }}
             onNavigateFirst={() =>
-              router.push(`/product-manage?page=${1}${stringToFilter}`)
+              router.push(`/product-manage/topping?page=${1}${stringToFilter}`)
             }
             onNavigateLast={() =>
-              router.push(`/product-manage?page=${totalPage}${stringToFilter}`)
+              router.push(
+                `/product-manage/topping?page=${totalPage}${stringToFilter}`
+              )
             }
           />
         </div>

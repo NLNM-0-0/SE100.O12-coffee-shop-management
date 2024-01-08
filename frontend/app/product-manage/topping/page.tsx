@@ -2,9 +2,9 @@ import { Metadata } from "next";
 import { withAuth } from "@/lib/role/withAuth";
 import TableLayout from "./table-layout";
 export const metadata: Metadata = {
-  title: "Mặt hàng",
+  title: "Topping",
 };
-function ProductManagement({
+function ToppingManagement({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
@@ -12,4 +12,4 @@ function ProductManagement({
   return <TableLayout />;
 }
 
-export default withAuth(ProductManagement, ["ING_VIEW"]);
+export default withAuth(ToppingManagement, ["TOP_VIEW"]);

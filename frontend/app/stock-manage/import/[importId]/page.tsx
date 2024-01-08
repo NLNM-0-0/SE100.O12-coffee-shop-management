@@ -53,7 +53,7 @@ const ImportDetail = ({ params }: { params: { importId: string } }) => {
               <span className="font-light">Mã phiếu nhập</span>
               <span>{data.id}</span>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap justify-end">
               <Button
                 variant={"outline"}
                 className="p-2"

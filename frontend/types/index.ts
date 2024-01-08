@@ -4,12 +4,18 @@ import { string } from "zod";
 export type Product = {
   id: string;
   name: string;
-  price: number;
-  status: "active" | "inactive";
+  isActive: boolean;
   image?: string;
-  idCate?: string;
+  description: string;
 };
-
+export type Topping = {
+  id: string;
+  name: string;
+  isActive: boolean;
+  cost: number;
+  price: number;
+  description: string;
+};
 export type SidebarItem = {
   title: string;
   href: string;
@@ -122,6 +128,14 @@ export type ExportNote = {
   };
 };
 
+export type ExportNoteDetail = {
+  ingredient: {
+    id: string;
+    name: string;
+  };
+  amountExport: number;
+  unitTypeName: string;
+};
 export type CustomerInvoice = {
   id: string;
   totalPrice: number;
@@ -321,7 +335,6 @@ export type StockReport = {
     }
   ];
 };
-
 export type Dashboard = {
   timeFrom: Date;
   timeTo: Date;

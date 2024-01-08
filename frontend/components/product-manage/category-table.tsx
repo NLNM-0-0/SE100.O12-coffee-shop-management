@@ -49,7 +49,7 @@ export const columns: ColumnDef<Category>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          <span className="font-semibold">Thể loại</span>
+          <span className="font-semibold">Danh mục</span>
 
           <CaretSortIcon className="ml-2 h-4 w-4" />
         </Button>
@@ -126,7 +126,7 @@ export function CategoryTable({
       <div className="w-full">
         <div className="flex items-center py-4 gap-2">
           <Input
-            placeholder="Tìm kiếm thể loại"
+            placeholder="Tìm kiếm danh mục"
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)

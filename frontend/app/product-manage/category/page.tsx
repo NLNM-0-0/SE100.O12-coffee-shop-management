@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import TableLayout from "./table-layout";
 import { withAuth } from "@/lib/role/withAuth";
 export const metadata: Metadata = {
-  title: "Thể loại",
+  title: "Danh mục",
 };
 const CategoryPage = ({
   searchParams,

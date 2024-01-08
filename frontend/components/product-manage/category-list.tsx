@@ -53,15 +53,15 @@ const CategoryList = ({
                 aria-expanded={openCategory}
                 className="justify-between w-full bg-white"
               >
-                Chọn thể loại
+                Chọn danh mục
                 <LuChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="DropdownMenuContent">
               <Command>
-                <CommandInput placeholder="Tìm tên thể loại" />
+                <CommandInput placeholder="Tìm tên danh mục" />
                 <CommandEmpty className="py-2">
-                  <div className="text-sm">Không tìm thấy thể loại</div>
+                  <div className="text-sm">Không tìm thấy danh mục</div>
                 </CommandEmpty>
                 <CommandGroup className="overflow-y-auto max-h-48">
                   {categories?.data.map((item: any) => (

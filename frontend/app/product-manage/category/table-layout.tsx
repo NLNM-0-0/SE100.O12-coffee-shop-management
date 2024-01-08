@@ -59,7 +59,7 @@ const TableLayout = ({
       toast({
         variant: "success",
         title: "Thành công",
-        description: "Thêm thể loại thành công",
+        description: "Thêm danh mục thành công",
       });
       handleCategoryAdded("");
     }
@@ -68,7 +68,7 @@ const TableLayout = ({
   return (
     <div className="col">
       <div className="flex flex-row justify-between items-center">
-        <h1>Thể loại</h1>
+        <h1>Danh mục</h1>
         {currentUser &&
         includesRoles({
           currentUser: currentUser,
@@ -76,7 +76,7 @@ const TableLayout = ({
         }) ? (
           <div className="flex gap-4">
             <CreateCategory handleCategoryAdded={handleCategoryAdded}>
-              <Button>Thêm thể loại</Button>
+              <Button>Thêm danh mục</Button>
             </CreateCategory>
           </div>
         ) : null}
