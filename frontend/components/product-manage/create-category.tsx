@@ -56,9 +56,9 @@ const CreateCategory = ({
       toast({
         variant: "success",
         title: "Thành công",
-        description: "Thêm thể loại thành công",
+        description: "Thêm danh mục thành công",
       });
-      handleCategoryAdded(responseData.name);
+      handleCategoryAdded(responseData.data);
       setOpen(false);
     }
   };
@@ -77,12 +77,12 @@ const CreateCategory = ({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-[472px] p-0 bg-white">
         <DialogHeader>
-          <DialogTitle className="p-6 pb-0">Thêm thể loại</DialogTitle>
+          <DialogTitle className="p-6 pb-0">Thêm danh mục</DialogTitle>
         </DialogHeader>
         <form>
           <div className="p-6 flex flex-col gap-4 border-y-[1px]">
             <div>
-              <Label htmlFor="nameNcc">Tên thể loại</Label>
+              <Label htmlFor="nameNcc">Tên danh mục</Label>
               <Input id="nameNcc" {...register("name")}></Input>
               {errors.name && (
                 <span className="error___message">{errors.name.message}</span>
