@@ -61,6 +61,7 @@ import getAllImportNoteForExcel from "@/lib/import/getAllImportNoteForExcel";
 import SupplierList from "../supplier-list";
 import StatusNoteList from "../status-note-list";
 import getAllExportNote from "@/lib/export/getAllExport";
+import { ExportExportNote } from "./excel-export-list";
 
 export const columns: ColumnDef<ExportNote>[] = [
   {
@@ -253,24 +254,23 @@ export function ExportTable() {
         toast({
           variant: "destructive",
           title: "Có lỗi",
-          description: "Không có phiếu nhập nào",
+          description: "Không có phiếu xuất nào",
         });
       } else {
-        //TODO
-        // ExportImportNote(notesToExport.data, `Danh sách phiếu nhập.xlsx`);
+        ExportExportNote(notesToExport.data, `ExportNotes.xlsx`);
       }
     } else {
       if (table.getFilteredSelectedRowModel().rows.length < 1) {
         toast({
           variant: "destructive",
           title: "Có lỗi",
-          description: "Không có phiếu nhập nào",
+          description: "Không có phiếu xuất nào",
         });
       } else {
-        // ExportImportNote(
-        //   table.getFilteredSelectedRowModel().rows.map((row) => row.original),
-        //   `Danh sách phiếu nhập.xlsx`
-        // );
+        ExportExportNote(
+          table.getFilteredSelectedRowModel().rows.map((row) => row.original),
+          `ExportNotes.xlsx`
+        );
       }
     }
   };
