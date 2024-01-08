@@ -1,18 +1,12 @@
 import {
   Category,
-  Customer,
-  ExportNote,
   ImportNote,
-  ImportNoteDetail,
-  Ingredient,
   IngredientDetail,
   IngredientForChoose,
   MeasureUnit,
   Product,
   Role,
-  RoleFunction,
   SidebarItem,
-  Staff,
   StatusNote,
 } from "@/types";
 import { LuHome } from "react-icons/lu";
@@ -21,6 +15,7 @@ import { GoPeople, GoPerson } from "react-icons/go";
 import { z } from "zod";
 import { FaRegHandshake } from "react-icons/fa";
 import { AiOutlineLineChart } from "react-icons/ai";
+import { BsShop } from "react-icons/bs";
 
 export const apiKey =
   "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJfaWQiOiJnM1cyMUE3U1IiLCJyb2xlIjoiIn0sImV4cCI6MTcwMzU1NTY5OCwiaWF0IjoxNzAzNDY5Mjk4fQ.zm-7b5WY4b98_RUuwy-9HSyYNMAzqtOnkw-Z0aOwPSI";
@@ -444,27 +439,6 @@ export const importNotes: ImportNote[] = [
   },
 ];
 
-export const exportNotes: ExportNote[] = [
-  {
-    id: "PX001",
-    reason: "Het han",
-    createAt: new Date(),
-    createBy: "NV002",
-  },
-  {
-    id: "PX002",
-    reason: "Hu",
-    createAt: new Date(2023, 9, 8),
-    createBy: "NV002",
-  },
-  {
-    id: "PX003",
-    reason: "Het han",
-    createAt: new Date(2023, 10, 1),
-    createBy: "NV002",
-  },
-];
-
 export const roles: Role[] = [
   {
     id: "1",
@@ -473,65 +447,6 @@ export const roles: Role[] = [
   {
     id: "2",
     name: "Thu ngan",
-  },
-];
-export const roleFunctions: RoleFunction[] = [
-  {
-    id: "1",
-    name: "Tinh nang ban hang",
-  },
-  {
-    id: "2",
-    name: "Tong quan",
-  },
-  {
-    id: "3",
-    name: "Quan ly nhan vien",
-  },
-  {
-    id: "4",
-    name: "Quan ly hoa don",
-  },
-  {
-    id: "5",
-    name: "Bao cao",
-  },
-  {
-    id: "6",
-    name: "Quan ly khach hang",
-  },
-  {
-    id: "7",
-    name: "Quan ly kho",
-  },
-];
-export const customers: Customer[] = [
-  {
-    id: "KH001",
-    name: "Nguyen Thi Hue",
-    phone: "098123456",
-    email: "hue@gmail.com",
-    point: 0,
-  },
-  {
-    id: "KH002",
-    name: "Nguyen Thi Hoa",
-    phone: "098123456",
-    point: 2,
-  },
-  {
-    id: "KH003",
-    name: "Nguyen Thi Lan",
-    phone: "098123456",
-    email: "lan@gmail.com",
-    point: 10,
-  },
-  {
-    id: "KH004",
-    name: "Nguyen Thi Hong",
-    phone: "098123456",
-    email: "hong@gmail.com",
-    point: 8,
   },
 ];
 
@@ -546,6 +461,12 @@ export const statuses = [
   },
 ];
 export const sidebarItems: SidebarItem[] = [
+  {
+    title: "Bán hàng",
+    href: "/order",
+    icon: BsShop,
+    submenu: false,
+  },
   {
     title: "Báo cáo",
     href: "/report/stock",
@@ -563,7 +484,8 @@ export const sidebarItems: SidebarItem[] = [
     icon: LuHome,
     submenu: true,
     subMenuItems: [
-      { title: "Danh sách mặt hàng", href: "/product-manage" },
+      { title: "Mặt hàng", href: "/product-manage" },
+      { title: "Topping", href: "/product-manage/topping" },
       { title: "Danh mục", href: "/product-manage/category" },
     ],
   },

@@ -21,14 +21,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ImportNoteDetail } from "@/types";
+import { ExportNoteDetail } from "@/types";
 
 import { useState } from "react";
 import { Input } from "../ui/input";
 import { toVND } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
-export const columns: ColumnDef<ImportNoteDetail>[] = [
+export const columns: ColumnDef<ExportNoteDetail>[] = [
   {
     id: "stt",
     header: ({ table }) => (
@@ -66,54 +66,36 @@ export const columns: ColumnDef<ImportNoteDetail>[] = [
     accessorKey: "amountImport",
     header: ({ column }) => (
       <div className="flex justify-end whitespace-normal">
-        <span className="font-semibold">Số lượng</span>
+        <span className="font-semibold">Xuất</span>
       </div>
     ),
     cell: ({ row }) => {
       return (
         <div className="text-right font-medium">
-          {row.original.amountImport.toLocaleString("vi-VN")}{" "}
-          <span className="text-muted-foreground">
-            ({row.original.unitTypeName})
-          </span>
+          {row.original.amountExport.toLocaleString("vi-VN")}
         </div>
       );
     },
     size: 4,
   },
   {
-    accessorKey: "price",
+    accessorKey: "unitTypeName",
     header: ({ column }) => (
       <div className="flex justify-end whitespace-normal">
-        <span className="font-semibold">Đơn giá</span>
-      </div>
-    ),
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("price"));
-
-      return <div className="text-right font-medium">{toVND(amount)}</div>;
-    },
-    size: 4,
-  },
-  {
-    accessorKey: "totalUnit",
-    accessorFn: (row) => row.amountImport * row.price,
-    header: ({ column }) => (
-      <div className="flex justify-end whitespace-normal">
-        <span className="font-semibold">Thành tiền</span>
+        <span className="font-semibold">Đơn vị</span>
       </div>
     ),
     cell: ({ row }) => {
       return (
         <div className="text-right font-medium">
-          {toVND(row.original.amountImport * row.original.price)}
+          {row.original.unitTypeName}
         </div>
       );
     },
     size: 4,
   },
 ];
-export function ImportDetailTable(details: ImportNoteDetail[]) {
+export function ExportDetailTable(details: ExportNoteDetail[]) {
   const data = Object.values(details);
   console.log(data);
   const router = useRouter();
