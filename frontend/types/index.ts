@@ -218,12 +218,12 @@ export interface StatusListProps {
 }
 
 export type DebtReport = {
-  timeFrom: Date,
-  timeTo: Date,
-  initial: number,
-  debt: number,
-  pay: number,
-  final: number,
+  timeFrom: Date;
+  timeTo: Date;
+  initial: number;
+  debt: number;
+  pay: number;
+  final: number;
   details: [
     {
       debt: number;
@@ -236,8 +236,8 @@ export type DebtReport = {
         phone: string;
       };
     }
-  ]
-}
+  ];
+};
 
 export type DebtReportDetail = {
   debt: number;
@@ -258,13 +258,13 @@ export type SaleReportDetail = {
     name: string;
   };
   totalSales: number;
-}
+};
 
 export type SaleReport = {
-  timeFrom: Date,
-  timeTo: Date,
-  total: number,
-  amount: number
+  timeFrom: Date;
+  timeTo: Date;
+  total: number;
+  amount: number;
   details: [
     {
       amount: number;
@@ -274,8 +274,8 @@ export type SaleReport = {
       };
       totalSales: number;
     }
-  ]
-}
+  ];
+};
 
 export type StockReportDetail = {
   ingredient: {
@@ -283,7 +283,7 @@ export type StockReportDetail = {
     name: string;
     unitType: {
       id: string;
-      name: string; 
+      name: string;
       measureType: string;
       value: number;
     };
@@ -297,9 +297,9 @@ export type StockReportDetail = {
 };
 
 export type StockReport = {
-  id: string,
-  timeFrom: Date,
-  timeTo: Date,
+  id: string;
+  timeFrom: Date;
+  timeTo: Date;
   details: [
     {
       ingredient: {
@@ -307,7 +307,7 @@ export type StockReport = {
         name: string;
         unitType: {
           id: string;
-          name: string; 
+          name: string;
           measureType: string;
           value: number;
         };
@@ -315,10 +315,48 @@ export type StockReport = {
       initial: number;
       sell: number;
       import: number;
-      export: number; 
+      export: number;
       modify: number;
       final: number;
     }
-  ]
-}
+  ];
+};
 
+export type Dashboard = {
+  timeFrom: Date;
+  timeTo: Date;
+  totalSale: number;
+  totalProduct: number;
+  totalSold: number;
+  totalPoint: number;
+  topSoldFoods: [{ id: string; name: string; amount: number }];
+  chartSaleComponents: [
+    {
+      time: Date;
+      value: number;
+    }
+  ];
+  chartAmountReceiveComponents: [
+    {
+      time: Date;
+      value: number;
+    }
+  ];
+};
+
+export type CardDashboardInfo = {
+  title: string;
+  value: string;
+  icon: string;
+};
+
+export type TopSoldFood = {
+  id: string;
+  name: string;
+  amount: number;
+};
+
+export type CharComponent = {
+  time: Date;
+  value: number;
+};
