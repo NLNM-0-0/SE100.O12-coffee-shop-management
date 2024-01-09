@@ -15,13 +15,14 @@ func (*SimpleFood) TableName() string {
 }
 
 type InvoiceDetail struct {
-	InvoiceId   string     `json:"invoiceId" gorm:"column:invoiceId;"`
-	FoodId      string     `json:"-" gorm:"column:foodId;"`
-	Food        SimpleFood `json:"food" gorm:"foreignKey:FoodId;references:Id"`
-	SizeName    string     `json:"sizeName" gorm:"column:sizeName"`
-	Amount      int        `json:"amount" gorm:"column:amount;"`
-	UnitPrice   int        `json:"unitPrice" gorm:"column:unitPrice"`
-	Description string     `json:"description" gorm:"column:description;"`
+	InvoiceId   string                `json:"invoiceId" gorm:"column:invoiceId;"`
+	FoodId      string                `json:"-" gorm:"column:foodId;"`
+	Food        SimpleFood            `json:"food" gorm:"foreignKey:FoodId;references:Id"`
+	SizeName    string                `json:"sizeName" gorm:"column:sizeName"`
+	Amount      int                   `json:"amount" gorm:"column:amount;"`
+	UnitPrice   int                   `json:"unitPrice" gorm:"column:unitPrice"`
+	Description string                `json:"description" gorm:"column:description;"`
+	Toppings    InvoiceDetailToppings `json:"toppings" gorm:"column:toppings;"`
 }
 
 func (*InvoiceDetail) TableName() string {
