@@ -269,7 +269,7 @@ export function SupplierTable({
       }
     });
 
-    router.push(`/supplier?page=${Number(page)}${minDebt}${maxDebt}${search}`);
+    router.push(`/supplier?page=1${minDebt}${maxDebt}${search}`);
   };
   const [openFilter, setOpenFilter] = useState(false);
 
@@ -295,7 +295,7 @@ export function SupplierTable({
                   <LuFilter className="ml-1 h-4 w-4" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-80">
+              <PopoverContent className="w-80 max-h-[32rem] mx-6 overflow-y-auto">
                 <form
                   className="flex flex-col gap-4"
                   onSubmit={handleSubmit(onSubmit)}

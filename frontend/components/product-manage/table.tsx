@@ -202,7 +202,7 @@ export function ProductTable() {
     data.filters.forEach((item) => {
       filterString = filterString.concat(`&${item.type}=${item.value}`);
     });
-    router.push(`/product-manage?page=${Number(page)}${filterString}`);
+    router.push(`/product-manage?page=1${filterString}`);
   };
   const { currentUser } = useCurrentUser();
 
@@ -233,7 +233,7 @@ export function ProductTable() {
                     <LuFilter className="ml-1 h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-96">
+                <PopoverContent className="w-96 mx-6 max-h-[32rem] mx-6 overflow-y-auto">
                   <form
                     className="flex flex-col gap-4"
                     onSubmit={handleSubmit(onSubmit)}

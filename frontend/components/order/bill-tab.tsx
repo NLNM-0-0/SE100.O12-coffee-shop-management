@@ -6,6 +6,7 @@ import {
   UseFieldArrayRemove,
   UseFieldArrayUpdate,
   UseFormRegister,
+  UseFormReset,
   UseFormSetValue,
   UseFormWatch,
   useWatch,
@@ -155,6 +156,7 @@ const BillTab = ({
   foods,
   onPayClick,
   isSheet,
+  reset,
 }: {
   fields: FieldArrayWithId<FormValues, "details", "id">[];
   setValue: UseFormSetValue<FormValues>;
@@ -166,6 +168,7 @@ const BillTab = ({
   remove: UseFieldArrayRemove;
   isSheet?: boolean;
   foods: ProductForSale[] | undefined;
+  reset: UseFormReset<FormValues>;
 }) => {
   const invoices = watch("details");
   const [open, setOpen] = useState(false);
@@ -196,27 +199,49 @@ const BillTab = ({
               name="customer"
               render={({ field }) => (
                 <>
-                  <CustomerList
-                    onRemove={() => {
-                      field.onChange({
-                        customerId: "",
-                        customerPoint: 0,
-                      });
-                    }}
-                    canRemove
-                    handleCustomerAdded={(customerId) => {
-                      mutate(`${endPoint}/customers/all`);
-                      field.onChange({
-                        customerId: customerId,
-                        customerPoint: 0,
-                      });
-                    }}
-                    canAdd
-                    customerId={field.value.customerId}
-                    setCustomerId={(id, point) =>
-                      field.onChange({ customerId: id, customerPoint: point })
-                    }
-                  />
+                  <div className="flex gap-1">
+                    <div className="flex-1">
+                      <CustomerList
+                        onRemove={() => {
+                          field.onChange({
+                            customerId: "",
+                            customerPoint: 0,
+                          });
+                          setValue("isUsePoint", false);
+                        }}
+                        canRemove
+                        handleCustomerAdded={(customerId) => {
+                          mutate(`${endPoint}/customers/all`);
+                          field.onChange({
+                            customerId: customerId,
+                            customerPoint: 0,
+                          });
+                        }}
+                        canAdd
+                        customerId={field.value.customerId}
+                        setCustomerId={(id, point) =>
+                          field.onChange({
+                            customerId: id,
+                            customerPoint: point,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <Button
+                      variant={"ghost"}
+                      className="h-8 p-0 px-2 rounded-lg"
+                      onClick={() => {
+                        reset({
+                          customer: {},
+                          isUsePoint: false,
+                          details: [],
+                        });
+                      }}
+                    >
+                      <FiTrash2 className="opacity-50" />
+                    </Button>
+                  </div>
                   <Controller
                     control={control}
                     name="isUsePoint"

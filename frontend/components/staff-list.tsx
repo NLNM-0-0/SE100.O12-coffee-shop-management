@@ -29,7 +29,7 @@ const StaffList = ({ staff, setStaff }: StaffListProps) => {
             variant="outline"
             role="combobox"
             aria-expanded={openRole}
-            className="justify-between flex-1 min-w-0"
+            className="justify-between flex-1 min-w-0 w-full"
           >
             {staff
               ? staffs.find((item) => item.id === staff)?.name

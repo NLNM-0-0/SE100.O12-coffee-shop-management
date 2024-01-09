@@ -150,7 +150,7 @@ export const columns: ColumnDef<CustomerInvoice>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="p-1"
         >
-          <span className="font-semibold">Tích điểm</span>
+          <span className="font-semibold">Thành tiền</span>
 
           <CaretSortIcon className="h-4 w-4" />
         </Button>
@@ -215,49 +215,11 @@ export function InvoiceTable({ customerId }: { customerId: string }) {
     },
   });
 
-  const [exportOption, setExportOption] = useState("all");
-  const handleExport = async () => {
-    // if (exportOption === "all") {
-    //   const importNoteData: Promise<{
-    //     data: ImportNote[];
-    //     paging: PagingProps;
-    //   }> = getAllSupplierNote({ idSupplier: supplierId });
-    //   const notesToExport = await importNoteData;
-    //   if (notesToExport.data.length < 1) {
-    //     toast({
-    //       variant: "destructive",
-    //       title: "Có lỗi",
-    //       description: "Không có phiếu nhập nào",
-    //     });
-    //   } else {
-    //     //TODO
-    //     // ExportImportNote(
-    //     //   notesToExport.data,
-    //     //   `NCC${supplierId} Danh sách phiếu nhập.xlsx`
-    //     // );
-    //   }
-    // } else {
-    //   if (data.length < 1) {
-    //     toast({
-    //       variant: "destructive",
-    //       title: "Có lỗi",
-    //       description: "Không có phiếu nhập nào",
-    //     });
-    //   } else {
-    //     // ExportImportNote(data, `NCC${supplierId} Danh sách phiếu nhập.xlsx`);
-    //   }
-    // }
-  };
   if (isLoading) {
     return <Loading />;
   } else {
     return (
       <div className="flex flex-col gap-4">
-        {/* <ExportDialog
-          handleExport={handleExport}
-          setExportOption={setExportOption}
-          isImport
-        /> */}
         <div className="flex items-center gap-2">
           <Label>Lịch sử mua hàng</Label>
         </div>

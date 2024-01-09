@@ -198,7 +198,7 @@ const ProductTab = ({
                   },
                   foodName: prod.name,
                   toppings: [],
-                  description: fields.at(index)?.description ?? "",
+                  description: "",
                 });
               }}
             >

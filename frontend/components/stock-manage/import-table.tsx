@@ -389,7 +389,7 @@ export function ImportTable() {
     data.filters.forEach((item) => {
       filterString = filterString.concat(`&${item.type}=${item.value}`);
     });
-    router.push(`/stock-manage/import?page=${Number(page)}${filterString}`);
+    router.push(`/stock-manage/import?page=1${filterString}`);
   };
   if (isError) return <div>Failed to load</div>;
   else if (isLoading) {
@@ -418,7 +418,7 @@ export function ImportTable() {
                     <LuFilter className="ml-1 h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-96 max-h-[32rem] overflow-y-auto">
+                <PopoverContent className="w-96 max-h-[32rem] mx-6 overflow-y-auto">
                   <form
                     className="flex flex-col gap-4"
                     onSubmit={handleSubmit(onSubmit)}
