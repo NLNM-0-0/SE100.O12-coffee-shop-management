@@ -2,26 +2,16 @@ import { useState } from "react";
 import { Input } from "../ui/input";
 
 import { Button } from "../ui/button";
-import {
-  Control,
-  Controller,
-  UseFormReturn,
-  useFieldArray,
-  useWatch,
-} from "react-hook-form";
+import { UseFormReturn, useFieldArray } from "react-hook-form";
 
 import { AiOutlineClose } from "react-icons/ai";
-import { CiBoxes } from "react-icons/ci";
-import { IoMdInformationCircleOutline } from "react-icons/io";
 import { z } from "zod";
 import { AutoComplete } from "../autocomplete";
 import { Ingredient } from "@/types";
-import { toVND } from "@/lib/utils";
 import getAllIngredient from "@/lib/getAllIngredient";
 import Loading from "../loading";
-import UnitListType from "./unit-list-type";
-import { FormSchema } from "@/app/product-manage/add/page";
-const SizeInsert = ({
+import { FormSchema } from "@/app/product-manage/[foodId]/page";
+const SizeUpdate = ({
   form,
   sizeIndex,
 }: {
@@ -212,4 +202,4 @@ const SizeInsert = ({
   }
 };
 
-export default SizeInsert;
+export default SizeUpdate;
