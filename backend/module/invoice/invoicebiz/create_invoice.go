@@ -142,6 +142,8 @@ func (biz *createInvoiceBiz) CreateInvoice(
 	if err := biz.repo.HandleInvoice(ctx, data); err != nil {
 		return err
 	}
+
+	fmt.Println(data.TotalCost)
 	return nil
 }
 

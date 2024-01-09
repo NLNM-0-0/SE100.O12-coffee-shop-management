@@ -192,13 +192,16 @@ func (repo *createInvoiceRepo) HandleData(
 	ctx context.Context,
 	data *invoicemodel.InvoiceCreate) error {
 	totalPrice := 0
+	totalCost := 0
 
 	mapTopping := make(map[string]int)
 	mapToppingName := make(map[string]string)
 	mapToppingPrice := make(map[string]int)
+	mapToppingCost := make(map[string]int)
 	mapFood := make(map[string]map[string]int)
 	mapFoodSizeName := make(map[string]map[string]string)
 	mapFoodSizePrice := make(map[string]map[string]int)
+	mapFoodSizeCost := make(map[string]map[string]int)
 
 	for _, detail := range data.InvoiceDetails {
 		for _, topping := range *detail.Toppings {
@@ -236,6 +239,11 @@ func (repo *createInvoiceRepo) HandleData(
 			}
 			mapFoodSizePrice[keyFood][keySize] += sizeFood.Price
 
+			if mapFoodSizeCost[keyFood] == nil {
+				mapFoodSizeCost[keyFood] = make(map[string]int)
+			}
+			mapFoodSizeCost[keyFood][keySize] += sizeFood.Cost
+
 			for _, recipeDetail := range sizeFood.Recipe.Details {
 				mapIngredient[recipeDetail.IngredientId] +=
 					recipeDetail.AmountNeed * float32(value)
@@ -257,6 +265,7 @@ func (repo *createInvoiceRepo) HandleData(
 
 		mapToppingName[key] = topping.Name
 		mapToppingPrice[key] = topping.Price
+		mapToppingCost[key] = topping.Cost
 
 		for _, recipeDetail := range topping.Recipe.Details {
 			mapIngredient[recipeDetail.IngredientId] += recipeDetail.AmountNeed * float32(value)
@@ -268,11 +277,12 @@ func (repo *createInvoiceRepo) HandleData(
 		data.InvoiceDetails[i].SizeName = mapFoodSizeName[invoiceDetail.FoodId][invoiceDetail.SizeId]
 
 		priceToppings := 0
+		costToppings := 0
 		var toppings invoicedetailmodel.InvoiceDetailToppings
 
 		for _, topping := range *invoiceDetail.Toppings {
 			priceToppings += mapToppingPrice[topping.Id]
-
+			costToppings += mapToppingCost[topping.Id]
 			simpleTopping := invoicedetailmodel.InvoiceDetailTopping{
 				Id:    topping.Id,
 				Name:  mapToppingName[topping.Id],
@@ -285,9 +295,11 @@ func (repo *createInvoiceRepo) HandleData(
 		data.InvoiceDetails[i].UnitPrice =
 			mapFoodSizePrice[invoiceDetail.FoodId][invoiceDetail.SizeId] + priceToppings
 		totalPrice += data.InvoiceDetails[i].UnitPrice * invoiceDetail.Amount
+		totalCost = mapFoodSizeCost[invoiceDetail.FoodId][invoiceDetail.SizeId] + costToppings
 	}
 
 	data.TotalPrice = totalPrice
+	data.TotalCost = totalCost
 
 	return nil
 }

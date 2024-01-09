@@ -66,20 +66,20 @@ func (repo *seeDashboardRepo) SeeDashboard(
 	mapFoodAmount := make(map[string]int)
 	mapFoodName := make(map[string]string)
 	mapFoodSales := make(map[string]int)
-	listSale := make([]dashboardmodel.ChartComponent, 0)
-	listAmountReceive := make([]dashboardmodel.ChartComponent, 0)
+	listCost := make([]dashboardmodel.ChartComponent, 0)
+	listPrice := make([]dashboardmodel.ChartComponent, 0)
 	for _, invoice := range allInvoices {
 		chartSale := dashboardmodel.ChartComponent{
 			Time:  *invoice.CreatedAt,
-			Value: invoice.TotalPrice,
+			Value: invoice.TotalCost,
 		}
-		listSale = append(listSale, chartSale)
+		listCost = append(listCost, chartSale)
 
 		chartAmountReceive := dashboardmodel.ChartComponent{
 			Time:  *invoice.CreatedAt,
-			Value: invoice.AmountReceived,
+			Value: invoice.TotalPrice,
 		}
-		listAmountReceive = append(listAmountReceive, chartAmountReceive)
+		listPrice = append(listPrice, chartAmountReceive)
 
 		totalPoint += invoice.PointReceive
 
@@ -131,8 +131,8 @@ func (repo *seeDashboardRepo) SeeDashboard(
 	}
 	resDashBoard.TopSoldFoods = listFood
 
-	resDashBoard.ChartAmountReceiveComponents = listAmountReceive
-	resDashBoard.ChartSaleComponents = listSale
+	resDashBoard.ChartCostComponents = listCost
+	resDashBoard.ChartPriceComponents = listPrice
 	resDashBoard.TotalSale = total
 	resDashBoard.TotalCustomer = totalCustomer
 	resDashBoard.TotalSold = totalAmount

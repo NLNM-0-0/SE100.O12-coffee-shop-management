@@ -10,6 +10,7 @@ type InvoiceCreateTemp struct {
 	Id                  string  `json:"-" gorm:"column:id;"`
 	CustomerId          *string `json:"customerId" gorm:"column:customerId;"`
 	TotalPrice          int     `json:"-" gorm:"column:totalPrice;"`
+	TotalCost           int     `json:"-" gorm:"column:totalCost;"`
 	AmountReceived      int     `json:"-" gorm:"column:amountReceived"`
 	AmountPriceUsePoint int     `json:"-" gorm:"column:amountPriceUsePoint"`
 	PointUse            int     `json:"-" gorm:"column:pointUse;"`
@@ -34,6 +35,7 @@ func (s *sqlStore) CreateInvoice(
 		Id:                  data.Id,
 		CustomerId:          customerId,
 		TotalPrice:          data.TotalPrice,
+		TotalCost:           data.TotalCost,
 		AmountReceived:      data.AmountReceived,
 		AmountPriceUsePoint: data.AmountPriceUsePoint,
 		PointUse:            data.PointUse,
