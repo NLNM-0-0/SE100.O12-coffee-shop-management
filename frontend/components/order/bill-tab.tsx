@@ -34,6 +34,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+import CustomerList from "../customer-list";
+import { endPoint } from "@/constants";
+import { useSWRConfig } from "swr";
+import { Checkbox } from "../ui/checkbox";
+import { ShoppingBag } from "lucide-react";
+import { useShop } from "@/hooks/use-shop";
 const AddUp = ({
   control,
   index,
@@ -55,6 +61,7 @@ const AddUp = ({
 };
 
 export const Total = ({ control }: { control: Control<FormValues> }) => {
+  const { shop } = useShop();
   const formValues = useWatch({
     name: "details",
     control,
@@ -72,10 +79,67 @@ export const Total = ({ control }: { control: Control<FormValues> }) => {
     0
   );
   return (
-    <div className="flex gap-2 items-center">
-      <span>Tổng tiền</span>
-      <div className="pr-2 py-1">({totalQuantity})</div>
-      <h1 className="text-sm">{toVND(total)}</h1>
+    <div className="flex flex-col w-max">
+      <div className="flex gap-2 items-center justify-between">
+        <div className="flex gap-2 items-center">
+          <span className="min-w-[5rem]">Tổng tiền</span>
+          <div className="pr-2 py-1">({totalQuantity})</div>
+        </div>
+
+        <h1 className="text-sm">{toVND(total)}</h1>
+      </div>
+      <Controller
+        control={control}
+        name="customer"
+        render={({ field }) => {
+          return (
+            <div className="flex flex-col gap-2">
+              <Controller
+                control={control}
+                name="isUsePoint"
+                render={({ field: checkedField }) => {
+                  const discount =
+                    field.value.customerId &&
+                    field.value.customerId !== "" &&
+                    checkedField.value &&
+                    field.value.customerPoint &&
+                    shop
+                      ? field.value.customerPoint * shop?.usePointPercent
+                      : 0;
+                  shop?.usePointPercent;
+                  const finalTotal = total - discount;
+                  return (
+                    <div className="w-full flex flex-col gap-2">
+                      {field.value.customerId &&
+                        field.value.customerId !== "" &&
+                        checkedField.value &&
+                        shop && (
+                          <div className="flex flex-col gap-2">
+                            <div className="flex justify-between gap-2 items-center">
+                              <span className="min-w-[5rem] \">Giảm</span>
+                              <h1 className="text-sm self-end">
+                                {toVND(
+                                  field.value.customerPoint *
+                                    (shop?.usePointPercent ?? 0)
+                                )}
+                              </h1>
+                            </div>
+                          </div>
+                        )}
+                      <div className="flex gap-2 items-center justify-between">
+                        <div className="flex gap-2 items-center">
+                          <span className="min-w-[5rem]">Thành tiền</span>
+                        </div>
+                        <h1 className="text-sm">{toVND(finalTotal)}</h1>
+                      </div>
+                    </div>
+                  );
+                }}
+              />
+            </div>
+          );
+        }}
+      />
     </div>
   );
 };
@@ -105,6 +169,7 @@ const BillTab = ({
 }) => {
   const invoices = watch("details");
   const [open, setOpen] = useState(false);
+  const { shop } = useShop();
   useEffect(() => {
     document.addEventListener("keydown", detectKeyDown, true);
   }, []);
@@ -116,6 +181,7 @@ const BillTab = ({
       document.removeEventListener("keydown", detectKeyDown);
     };
   };
+  const { mutate } = useSWRConfig();
   return (
     <Card className="sticky right-0 top-0 h-[86vh] overflow-hidden">
       <CardContent
@@ -123,9 +189,74 @@ const BillTab = ({
           isSheet ? "rounded-none" : ""
         }`}
       >
-        <div className="flex flex-col bg-white  shadow-[0_2px_2px_-2px_rgba(0,0,0,0.2)]">
-          <div className="p-4">
-            <Input placeholder="Tìm kiếm khách hàng"></Input>
+        <div className="bg-white  shadow-[0_2px_2px_-2px_rgba(0,0,0,0.2)]">
+          <div className="p-4 flex flex-col gap-4">
+            <Controller
+              control={control}
+              name="customer"
+              render={({ field }) => (
+                <>
+                  <CustomerList
+                    onRemove={() => {
+                      field.onChange({
+                        customerId: "",
+                        customerPoint: 0,
+                      });
+                    }}
+                    canRemove
+                    handleCustomerAdded={(customerId) => {
+                      mutate(`${endPoint}/customers/all`);
+                      field.onChange({
+                        customerId: customerId,
+                        customerPoint: 0,
+                      });
+                    }}
+                    canAdd
+                    customerId={field.value.customerId}
+                    setCustomerId={(id, point) =>
+                      field.onChange({ customerId: id, customerPoint: point })
+                    }
+                  />
+                  <Controller
+                    control={control}
+                    name="isUsePoint"
+                    render={({ field: checkedField }) => (
+                      <div className="flex gap-2">
+                        {field.value.customerId &&
+                          field.value.customerId !== "" &&
+                          shop && (
+                            <Checkbox
+                              className="mr-2"
+                              id="cbPoint"
+                              checked={checkedField.value}
+                              onCheckedChange={(isCheck) => {
+                                if (isCheck && field.value.customerPoint > 0) {
+                                  checkedField.onChange(isCheck);
+                                } else if (!isCheck) {
+                                  checkedField.onChange(isCheck);
+                                }
+                              }}
+                            ></Checkbox>
+                          )}
+
+                        {field.value.customerId &&
+                          field.value.customerId !== "" &&
+                          shop && (
+                            <Label>
+                              Dùng {field.value.customerPoint} điểm (giảm{" "}
+                              {toVND(
+                                field.value.customerPoint *
+                                  (shop?.usePointPercent ?? 0)
+                              )}
+                              )
+                            </Label>
+                          )}
+                      </div>
+                    )}
+                  />
+                </>
+              )}
+            />
           </div>
         </div>
         <div className="flex flex-col gap-2  overflow-auto pt-4 flex-1">
@@ -314,9 +445,12 @@ const BillTab = ({
         </div>
         <div className="flex flex-col gap-4 p-4 items-end shadow-[0_-2px_2px_-2px_rgba(0,0,0,0.2)] bg-white px-6">
           {/* Total */}
-          <div className="ml-auto">
-            <Total control={control} />
+          <div className="flex flex-col">
+            <div className="ml-auto">
+              <Total control={control} />
+            </div>
           </div>
+
           <RadioGroup defaultValue="all">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="all" id="r1" />

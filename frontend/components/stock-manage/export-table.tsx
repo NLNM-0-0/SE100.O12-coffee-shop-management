@@ -39,11 +39,8 @@ import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { reasonToString, statusNoteToString, toVND } from "@/lib/utils";
 import ExportDialog from "./export-dialog";
-import { ExportImportNote } from "./excel-import-list";
 import { toast } from "../ui/use-toast";
 import { useRouter, useSearchParams } from "next/navigation";
-import { BiBox } from "react-icons/bi";
-import getAllImportNote from "@/lib/import/getAllImport";
 import Loading from "../loading";
 import Paging, { PagingProps } from "../paging";
 import {
@@ -62,6 +59,7 @@ import SupplierList from "../supplier-list";
 import StatusNoteList from "../status-note-list";
 import getAllExportNote from "@/lib/export/getAllExport";
 import { ExportExportNote } from "./excel-export-list";
+import getAllExportNoteForExcel from "@/lib/export/getAllExportNoteForExcel";
 
 export const columns: ColumnDef<ExportNote>[] = [
   {
@@ -248,7 +246,7 @@ export function ExportTable() {
       const importNoteData: Promise<{
         data: ExportNote[];
         paging: PagingProps;
-      }> = getAllImportNoteForExcel({ page: "1", limit: 10000 });
+      }> = getAllExportNoteForExcel({ page: "1", limit: 10000 });
       const notesToExport = await importNoteData;
       if (notesToExport.data.length < 1) {
         toast({
