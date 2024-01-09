@@ -3,41 +3,30 @@ import { Staff } from "@/types";
 import useSWR from "swr";
 import { getApiKey } from "../auth/action";
 
-export type FoodProps = {
+export type ToppingProps = {
   id: string;
   image: string;
   name: string;
   description: string;
   cookingGuide: string;
   isActive: boolean;
-  categories: {
-    category: {
-      id: string;
-      name: string;
-    };
-  }[];
-  sizes: {
-    foodId: string;
-    sizeId: string;
-    name: string;
-    cost: 0;
-    price: 0;
-    recipe: {
-      details: {
-        ingredient: {
+  price: number;
+  cost: number;
+  recipe: {
+    details: {
+      ingredient: {
+        id: string;
+        name: string;
+        unitType: {
           id: string;
           name: string;
-          unitType: {
-            id: string;
-            name: string;
-            measureType: string;
-            value: number;
-          };
+          measureType: string;
+          value: number;
         };
-        amountNeed: number;
-      }[];
-    };
-  }[];
+      };
+      amountNeed: number;
+    }[];
+  };
 };
 const fetcher = async (url: string) => {
   const token = await getApiKey();
@@ -56,12 +45,12 @@ const fetcher = async (url: string) => {
 
 export default function getFood(idFood: string) {
   const { data, error, isLoading, mutate } = useSWR(
-    `${endPoint}/foods/${idFood}`,
+    `${endPoint}/toppings/${idFood}`,
     fetcher
   );
 
   return {
-    data: data as FoodProps,
+    data: data as ToppingProps,
     isLoading,
     isError: error,
     mutate: mutate,

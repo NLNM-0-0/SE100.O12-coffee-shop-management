@@ -149,7 +149,11 @@ const EditProductPage = ({ params }: { params: { foodId: string } }) => {
     }
   };
   const onErrors: SubmitErrorHandler<z.infer<typeof FormSchema>> = (data) => {
-    console.log(data);
+    toast({
+      variant: "destructive",
+      title: "Có lỗi",
+      description: "Vui lòng điền đầy đủ thông tin",
+    });
   };
   const [image, setImage] = useState<any>();
   const [imagePreviews, setImagePreviews] = useState<any>();

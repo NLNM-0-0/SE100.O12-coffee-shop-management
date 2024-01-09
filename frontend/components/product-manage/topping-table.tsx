@@ -401,6 +401,9 @@ export function ToppingTable() {
                           key={cell.id}
                           onClick={() => {
                             if (!cell.id.includes("select")) {
+                              router.push(
+                                `/product-manage/topping/${row.original.id}`
+                              );
                             }
                           }}
                         >
