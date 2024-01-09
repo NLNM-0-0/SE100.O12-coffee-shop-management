@@ -35,6 +35,7 @@ func (s *sqlStore) ListImportNoteBySupplier(
 	}
 
 	if err := db.
+		Order("createdAt desc").
 		Find(&result).Error; err != nil {
 		return nil, common.ErrDB(err)
 	}
