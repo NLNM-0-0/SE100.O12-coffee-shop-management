@@ -234,7 +234,7 @@ func (repo *createInvoiceRepo) HandleData(
 			if mapFoodSizePrice[keyFood] == nil {
 				mapFoodSizePrice[keyFood] = make(map[string]int)
 			}
-			mapFoodSizePrice[keyFood][keySize] += sizeFood.Cost
+			mapFoodSizePrice[keyFood][keySize] += sizeFood.Price
 
 			for _, recipeDetail := range sizeFood.Recipe.Details {
 				mapIngredient[recipeDetail.IngredientId] +=
@@ -256,7 +256,7 @@ func (repo *createInvoiceRepo) HandleData(
 		}
 
 		mapToppingName[key] = topping.Name
-		mapToppingPrice[key] = topping.Cost
+		mapToppingPrice[key] = topping.Price
 
 		for _, recipeDetail := range topping.Recipe.Details {
 			mapIngredient[recipeDetail.IngredientId] += recipeDetail.AmountNeed * float32(value)

@@ -26,15 +26,15 @@ var (
 		"Tên của kích cỡ không hợp lệ",
 		"ErrSizeFoodNameEmpty",
 	)
-	ErrSizeFoodCostIsNegativeNumber = common.NewCustomError(
-		errors.New("cost is negative number"),
-		"Giá bán đang là số âm",
-		"ErrSizeFoodCostIsNegativeNumber",
-	)
 	ErrSizeFoodPriceIsNegativeNumber = common.NewCustomError(
 		errors.New("price is negative number"),
-		"Giá gốc đang là số âm",
+		"Giá bán đang là số âm",
 		"ErrSizeFoodPriceIsNegativeNumber",
+	)
+	ErrSizeFoodCostIsNegativeNumber = common.NewCustomError(
+		errors.New("cost is negative number"),
+		"Giá gốc đang là số âm",
+		"ErrSizeFoodCostIsNegativeNumber",
 	)
 	ErrSizeFoodRecipeEmpty = common.NewCustomError(
 		errors.New("recipe is empty"),
