@@ -373,6 +373,7 @@ export function ProductTable() {
                           key={cell.id}
                           onClick={() => {
                             if (!cell.id.includes("select")) {
+                              router.push(`product-manage/${row.original.id}`);
                             }
                           }}
                         >

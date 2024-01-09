@@ -10,12 +10,13 @@ import updateStatus from "@/lib/import/changeStatus";
 import getImportNoteDetail from "@/lib/import/getImportDetail";
 import { toVND } from "@/lib/utils";
 import { StatusNote } from "@/types";
-
+import { useRouter } from "next/navigation";
 import { BiBox } from "react-icons/bi";
 import { FaRegFileExcel } from "react-icons/fa";
 import { FiTrash2 } from "react-icons/fi";
 import { LuPackageCheck, LuPhone } from "react-icons/lu";
 const ImportDetail = ({ params }: { params: { importId: string } }) => {
+  const router = useRouter();
   const { data, isLoading, isError, mutate } = getImportNoteDetail({
     idNote: params.importId,
   });
@@ -39,6 +40,7 @@ const ImportDetail = ({ params }: { params: { importId: string } }) => {
         description: "Chuyển trạng thái thành công",
       });
       mutate();
+      router.refresh();
     }
   };
   if (isError) return <div>Failed to load</div>;
@@ -112,7 +114,9 @@ const ImportDetail = ({ params }: { params: { importId: string } }) => {
                 <div className="flex flex-col">
                   {data.closedAt ? (
                     <>
-                      <span>{new Date(data.closedAt).toLocaleDateString()}</span>
+                      <span>
+                        {new Date(data.closedAt).toLocaleDateString()}
+                      </span>
                       <span className="font-light">{data.closed.name}</span>
                     </>
                   ) : (
