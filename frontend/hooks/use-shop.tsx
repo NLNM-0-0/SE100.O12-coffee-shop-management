@@ -1,17 +1,9 @@
 "use client";
 import { getUser } from "@/lib/auth/action";
 import getShopGeneral from "@/lib/shop-general/getShopGeneral";
+import { ShopGeneral } from "@/types";
 import { useEffect, useState } from "react";
 
-export type ShopGeneral = {
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-  wifiPass: string;
-  accumulatePointPercent: number;
-  usePointPercent: number;
-};
 export const useShop = () => {
   const [shop, setShop] = useState<ShopGeneral | undefined>(undefined);
   const [loading, setLoading] = useState(true);

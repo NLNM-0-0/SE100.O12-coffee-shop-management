@@ -53,7 +53,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import StaffList from "../staff-list";
-import { RiCopperCoinLine } from "react-icons/ri";
+import { GiShamrock } from "react-icons/gi";
 import { FilterDatePicker } from "../stock-manage/date-picker";
 
 type FormValues = {
@@ -91,7 +91,6 @@ export const columns: ColumnDef<Invoice>[] = [
   },
   {
     accessorKey: "customer",
-    accessorFn: (row) => row.customer.name,
     header: () => {
       return <div className="font-semibold">Khách hàng</div>;
     },
@@ -106,6 +105,27 @@ export const columns: ColumnDef<Invoice>[] = [
       } else {
         return <></>;
       }
+    },
+  },
+  {
+    accessorKey: "totalPrice",
+    header: ({ column }) => (
+      <div className=" flex justify-end">
+        <Button
+          className="p-1"
+          variant={"ghost"}
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          <span className="font-semibold">Tổng tiền</span>
+
+          <CaretSortIcon className="ml-1 h-4 w-4" />
+        </Button>
+      </div>
+    ),
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue("totalPrice"));
+      const formatted = toVND(amount);
+      return <div className="text-right font-medium">{formatted}</div>;
     },
   },
   {
@@ -135,31 +155,10 @@ export const columns: ColumnDef<Invoice>[] = [
         <div className="text-right font-medium flex flex-col items-end gap-1">
           -{formatted}
           <div className="flex items-center gap-1 text-rose-700">
-            -{row.original.pointUse} <RiCopperCoinLine className="h-5 w-5" />
+            -{row.original.pointUse} <GiShamrock className="h-5 w-5" />
           </div>
         </div>
       );
-    },
-  },
-  {
-    accessorKey: "totalPrice",
-    header: ({ column }) => (
-      <div className=" flex justify-end">
-        <Button
-          className="p-1"
-          variant={"ghost"}
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          <span className="font-semibold">Tổng đơn</span>
-
-          <CaretSortIcon className="ml-1 h-4 w-4" />
-        </Button>
-      </div>
-    ),
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("totalPrice"));
-      const formatted = toVND(amount);
-      return <div className="text-right font-medium">{formatted}</div>;
     },
   },
   {
@@ -190,7 +189,7 @@ export const columns: ColumnDef<Invoice>[] = [
         <div className="text-right font-medium flex flex-col items-end gap-1">
           {formatted}
           <div className="flex items-center gap-1 text-green-700">
-            {row.original.pointReceive} <RiCopperCoinLine className="h-5 w-5" />
+            {row.original.pointReceive} <GiShamrock className="h-5 w-5" />
           </div>
         </div>
       );
@@ -541,7 +540,7 @@ const InvoiceTable = ({
         </DropdownMenu>
       </div>
       <div className="rounded-md border overflow-x-auto min-w-full max-w-[50vw]">
-        <Table>
+        <Table className="w-max min-w-full">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

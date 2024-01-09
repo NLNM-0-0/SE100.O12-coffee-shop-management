@@ -22,6 +22,7 @@ import createInvoice from "@/lib/invoice/createInvoice";
 import Loading from "@/components/loading";
 import { ToastAction } from "@/components/ui/toast";
 import PrintInvoice from "@/components/invoice/print-invoice";
+import { useRouter } from "next/navigation";
 export type FormValues = {
   customer: {
     customerId: string;
@@ -69,6 +70,7 @@ function sortToppings(toppings: Topping[]): Topping[] {
   return toppings.slice().sort((a, b) => a.id.localeCompare(b.id));
 }
 const OrderScreen = () => {
+  const router = useRouter();
   const form = useForm<FormValues>({
     defaultValues: {
       customer: {},
@@ -164,10 +166,7 @@ const OrderScreen = () => {
         description: "Thêm mới hóa đơn thành công",
         action: (
           <ToastAction altText="print" className="p-0">
-            <PrintInvoice
-              responseData={responseData.data.invoice}
-              onPrint={() => {}}
-            />
+            <PrintInvoice responseData={responseData.data} onPrint={() => {}} />
           </ToastAction>
         ),
       });
@@ -176,6 +175,7 @@ const OrderScreen = () => {
         isUsePoint: false,
         details: [],
       });
+      router.refresh();
     }
   };
   const [open, setOpen] = useState(false);

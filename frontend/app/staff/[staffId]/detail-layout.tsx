@@ -97,7 +97,7 @@ const EditStaff = ({ params }: { params: { staffId: string } }) => {
     const token = await getApiKey();
     const res = axios
       .patch(
-        `${endPoint}/v1/users/${params.staffId}/reset`,
+        `${endPoint}/users/${params.staffId}/reset`,
         {
           userSenderPass: data.pass,
         },
