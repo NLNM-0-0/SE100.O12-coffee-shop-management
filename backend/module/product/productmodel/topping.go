@@ -24,15 +24,15 @@ var (
 		"Thông tin topping đang thiếu",
 		"ErrToppingProductInfoEmpty",
 	)
-	ErrToppingCostIsNegativeNumber = common.NewCustomError(
-		errors.New("cost is negative number"),
-		"Giá bán của topping đang là số âm",
-		"ErrSizeFoodCostIsNegativeNumber",
-	)
 	ErrToppingPriceIsNegativeNumber = common.NewCustomError(
 		errors.New("price is negative number"),
+		"Giá bán của topping đang là số âm",
+		"ErrToppingPriceIsNegativeNumber",
+	)
+	ErrToppingCostIsNegativeNumber = common.NewCustomError(
+		errors.New("cost is negative number"),
 		"Giá gốc của topping đang là số âm",
-		"ErrSizeFoodPriceIsNegativeNumber",
+		"ErrToppingCostIsNegativeNumber",
 	)
 	ErrToppingIdDuplicate = common.ErrDuplicateKey(
 		errors.New("Topping đã tồn tại"),
