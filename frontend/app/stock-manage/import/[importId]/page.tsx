@@ -1,16 +1,19 @@
 "use client";
 import ConfirmDialog from "@/components/confirm-dialog";
 import Loading from "@/components/loading";
+import NoRole from "@/components/no-role";
 import { ExportImportNoteDetail } from "@/components/stock-manage/excel-import-detail";
 import { ImportDetailTable } from "@/components/stock-manage/import-detail-table";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
+import { useCurrentUser } from "@/hooks/use-user";
 
 import updateStatus from "@/lib/import/changeStatus";
 import getImportNoteDetail from "@/lib/import/getImportDetail";
-import { toVND } from "@/lib/utils";
+import { includesRoles, toVND } from "@/lib/utils";
 import { StatusNote } from "@/types";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { BiBox } from "react-icons/bi";
 import { FaRegFileExcel } from "react-icons/fa";
 import { FiTrash2 } from "react-icons/fi";
@@ -43,9 +46,31 @@ const ImportDetail = ({ params }: { params: { importId: string } }) => {
       router.refresh();
     }
   };
+  const [details, setDetails] = useState<any>();
+  useEffect(() => {
+    // Optionally log the error to an error reporting service
+    if (data) {
+      setDetails(data.details);
+    }
+  }, [data]);
+  const { currentUser } = useCurrentUser();
+  const canUpdate =
+    currentUser &&
+    includesRoles({
+      currentUser: currentUser,
+      allowedFeatures: ["IMP_UP_STATE"],
+    });
   if (isError) return <div>Failed to load</div>;
-  if (isLoading) {
+  else if (!currentUser || isLoading) {
     return <Loading />;
+  } else if (
+    currentUser &&
+    !includesRoles({
+      currentUser: currentUser,
+      allowedFeatures: ["IMP_VIEW"],
+    })
+  ) {
+    return <NoRole></NoRole>;
   } else
     return (
       <div className="flex flex-col xl:mx-[20%] gap-6">
@@ -66,38 +91,46 @@ const ImportDetail = ({ params }: { params: { importId: string } }) => {
                 <FaRegFileExcel className="mr-1 h-5 w-5 text-green-700" />
                 <span>Xuất file</span>
               </Button>
-              <div
-                className={`${
-                  data.status === StatusNote.Inprogress ? "block" : "hidden"
-                }`}
-              >
-                <ConfirmDialog
-                  title={"Xác nhận hoàn thành phiếu nhập ?"}
-                  description="Trạng thái sẽ không được thay đổi khi đã hoàn thành."
-                  handleYes={() => changeStatus(StatusNote.Done)}
-                >
-                  <Button className={`p-2  bg-teal-600 hover:bg-teal-600/90`}>
-                    <LuPackageCheck className="mr-1 h-6 w-6" />
-                    <span>Hoàn thành</span>
-                  </Button>
-                </ConfirmDialog>
-              </div>
-              <ConfirmDialog
-                title="Xác nhận hủy phiếu nhập ?"
-                description="Trạng thái sẽ không được thay đổi khi đã hủy."
-                handleYes={() => changeStatus(StatusNote.Cancel)}
-              >
-                <div
-                  className={`${
-                    data.status === StatusNote.Inprogress ? "block" : "hidden"
-                  }`}
-                >
-                  <Button className="p-2 bg-red-500 hover:bg-red-500/90">
-                    <FiTrash2 className="mr-1 h-5 w-5" />
-                    <span>Hủy</span>
-                  </Button>
-                </div>
-              </ConfirmDialog>
+              {canUpdate ? (
+                <>
+                  <div
+                    className={`${
+                      data.status === StatusNote.Inprogress ? "block" : "hidden"
+                    }`}
+                  >
+                    <ConfirmDialog
+                      title={"Xác nhận hoàn thành phiếu nhập ?"}
+                      description="Trạng thái sẽ không được thay đổi khi đã hoàn thành."
+                      handleYes={() => changeStatus(StatusNote.Done)}
+                    >
+                      <Button
+                        className={`p-2  bg-teal-600 hover:bg-teal-600/90`}
+                      >
+                        <LuPackageCheck className="mr-1 h-6 w-6" />
+                        <span>Hoàn thành</span>
+                      </Button>
+                    </ConfirmDialog>
+                  </div>
+                  <ConfirmDialog
+                    title="Xác nhận hủy phiếu nhập ?"
+                    description="Trạng thái sẽ không được thay đổi khi đã hủy."
+                    handleYes={() => changeStatus(StatusNote.Cancel)}
+                  >
+                    <div
+                      className={`${
+                        data.status === StatusNote.Inprogress
+                          ? "block"
+                          : "hidden"
+                      }`}
+                    >
+                      <Button className="p-2 bg-red-500 hover:bg-red-500/90">
+                        <FiTrash2 className="mr-1 h-5 w-5" />
+                        <span>Hủy</span>
+                      </Button>
+                    </div>
+                  </ConfirmDialog>
+                </>
+              ) : null}
             </div>
           </div>
           <div className="grid grid-cols-2 text-sm">
@@ -117,7 +150,7 @@ const ImportDetail = ({ params }: { params: { importId: string } }) => {
                       <span>
                         {new Date(data.closedAt).toLocaleDateString()}
                       </span>
-                      <span className="font-light">{data.closed.name}</span>
+                      <span className="font-light">{data.closedBy.name}</span>
                     </>
                   ) : (
                     "Chưa đóng phiếu"
@@ -142,7 +175,11 @@ const ImportDetail = ({ params }: { params: { importId: string } }) => {
           </div>
         </div>
         <div className="shadow-sm bg-white flex flex-col gap-6 py-6 md:px-6 px-4">
-          <ImportDetailTable {...data.details} />
+          {details ? (
+            <ImportDetailTable details={details} />
+          ) : (
+            <Loading></Loading>
+          )}
           <div className="flex justify-end space-x-2 pb-4 font-semibold">
             <span>Tổng tiền: </span>
             <span>{toVND(data.totalPrice)}</span>

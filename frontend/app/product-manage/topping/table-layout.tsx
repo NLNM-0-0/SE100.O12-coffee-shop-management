@@ -33,14 +33,6 @@ const TableLayout = () => {
   const { filters, stringToFilter } = getFilterString();
   const page = searchParams.get("page") ?? "1";
 
-  const handleTitleAdded = async (titleId: string) => {
-    mutate(
-      `${endPoint}/v1/booktitles?page=${page ?? 1}&limit=10${
-        stringToFilter ?? ""
-      }`
-    );
-    router.refresh();
-  };
   const { currentUser } = useCurrentUser();
   return (
     <div className="col">
@@ -49,7 +41,7 @@ const TableLayout = () => {
         {currentUser &&
         includesRoles({
           currentUser: currentUser,
-          allowedFeatures: ["TOP_VIEW"],
+          allowedFeatures: ["TOP_CREATE"],
         }) ? (
           <Link
             href="/product-manage/topping/add"

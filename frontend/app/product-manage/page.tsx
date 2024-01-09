@@ -12,4 +12,4 @@ function ProductManagement({
   return <TableLayout />;
 }
 
-export default withAuth(ProductManagement, ["ING_VIEW"]);
+export default withAuth(ProductManagement, ["FOD_VIEW"]);

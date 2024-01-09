@@ -274,12 +274,6 @@ const EditStaff = ({ params }: { params: { staffId: string } }) => {
       currentUser: currentUser,
       allowedFeatures: ["USE_UP_INFO"],
     });
-  const canChangeStatus =
-    currentUser &&
-    includesRoles({
-      currentUser: currentUser,
-      allowedFeatures: ["USE_UP_STATE"],
-    });
   const isAdminRole = currentUser && isAdmin({ currentUser: currentUser });
   if (isLoading) {
     return <Loading />;
@@ -491,7 +485,7 @@ const EditStaff = ({ params }: { params: { staffId: string } }) => {
             </Card>
             <Card className="flex-1">
               <CardContent className="p-6 flex items-end justify-between gap-2">
-                {canChangeStatus ? (
+                {isAdminRole ? (
                   <>
                     <div className="flex-1">
                       <Label>Trạng thái</Label>

@@ -108,16 +108,20 @@ export const columns: ColumnDef<InvoiceDetailProps>[] = [
     size: 4,
   },
 ];
-export function InvoiceDetailTable(details: InvoiceDetailProps[]) {
-  const data = Object.values(details);
-
+export function InvoiceDetailTable({
+  details,
+}: {
+  details: InvoiceDetailProps[];
+}) {
+  // const data = Object.values(details);
+  console.log(details);
   const router = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const table = useReactTable({
-    data,
+    data: details,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,

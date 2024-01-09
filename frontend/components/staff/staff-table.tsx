@@ -55,7 +55,7 @@ import ChangeStatusDialog from "./change-status-dialog";
 import { toast } from "../ui/use-toast";
 import changeStaffStatus from "@/lib/staff/changeStaffStatus";
 import { useCurrentUser } from "@/hooks/use-user";
-import { includesRoles } from "@/lib/utils";
+import { includesRoles, isAdmin } from "@/lib/utils";
 
 function idToName(id: string) {
   if (id === "name") {
@@ -335,12 +335,7 @@ export function StaffTable({
     }
   }, [active]);
   const { currentUser } = useCurrentUser();
-  const canChangeStatus =
-    currentUser &&
-    includesRoles({
-      currentUser: currentUser,
-      allowedFeatures: ["USER_UPDATE_STATE"],
-    });
+  const canChangeStatus = currentUser && isAdmin({ currentUser: currentUser });
   return (
     <div className="w-full flex flex-col overflow-x-auto">
       <div className="flex items-start py-4 gap-2">

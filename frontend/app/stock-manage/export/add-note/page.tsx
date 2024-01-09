@@ -25,6 +25,9 @@ import ConfirmDialog from "@/components/confirm-dialog";
 import IngredientExport from "@/components/stock-manage/ingredient-export";
 import ExportNoteList from "@/components/export-note-list";
 import createExportNote from "@/lib/export/createExportNote";
+import { useCurrentUser } from "@/hooks/use-user";
+import { includesRoles } from "@/lib/utils";
+import NoRole from "@/components/no-role";
 
 export const FormSchema = z.object({
   idNote: z.string().max(12, "Tối đa 12 ký tự"),
@@ -159,9 +162,19 @@ const AddNote = () => {
   };
 
   const { data, isLoading, isError } = getAllIngredient();
-  if (isLoading) {
+  const { currentUser } = useCurrentUser();
+  if (isError) return <div>Failed to load</div>;
+  else if (!currentUser || isLoading) {
     return <Loading />;
-  } else
+  } else if (
+    currentUser &&
+    !includesRoles({
+      currentUser: currentUser,
+      allowedFeatures: ["EXP_CREATE"],
+    })
+  ) {
+    return <NoRole></NoRole>;
+  } else {
     return (
       <div className="col items-center">
         <div className="col xl:w-4/5 w-full px-0">
@@ -253,6 +266,7 @@ const AddNote = () => {
         </div>
       </div>
     );
+  }
 };
 
 export default AddNote;

@@ -88,7 +88,7 @@ const DashboardChartContainer = (props: any) => {
           Xem
         </Button>
       </div>
-      <div className="flex-1 overflow-x-auto min-w-full max-w-[20vw]">
+      <div className="flex-1 overflow-x-auto min-w-full max-w-[20vw] min-h-[28rem]">
         <DashboardChart
           type={realValue}
           price={price}

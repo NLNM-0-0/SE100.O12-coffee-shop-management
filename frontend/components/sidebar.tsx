@@ -3,12 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { HiDotsVertical } from "react-icons/hi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { usePathname } from "next/navigation";
 import { LuChevronDown } from "react-icons/lu";
-import { sidebarItems } from "@/constants";
+import { adminSidebarItems, sidebarItems } from "@/constants";
 import { SidebarItem } from "@/types";
+import { useCurrentUser } from "@/hooks/use-user";
+import { isAdmin } from "@/lib/utils";
 
 export default function Sidebar() {
   const [isCollapse, toggleIsCollapse] = useState(false);
@@ -16,7 +18,15 @@ export default function Sidebar() {
   const toggleSidebarHandler = () => {
     toggleIsCollapse((prev) => !prev);
   };
-
+  const { currentUser } = useCurrentUser();
+  const [items, setItems] = useState<SidebarItem[]>(sidebarItems);
+  useEffect(() => {
+    if (currentUser) {
+      if (isAdmin({ currentUser: currentUser })) {
+        setItems(adminSidebarItems);
+      }
+    }
+  }, [currentUser]);
   return (
     <div className="md:flex hidden z-20">
       <aside
@@ -61,7 +71,7 @@ export default function Sidebar() {
           </div>
 
           <ul className="sidebar__list">
-            {sidebarItems.map((item) => (
+            {items.map((item) => (
               <li className="sidebar__item" key={item.title}>
                 <MenuItem item={item} isCollapse={isCollapse}></MenuItem>
               </li>

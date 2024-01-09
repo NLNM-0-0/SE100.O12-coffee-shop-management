@@ -113,16 +113,18 @@ export const columns: ColumnDef<ImportNoteDetail>[] = [
     size: 4,
   },
 ];
-export function ImportDetailTable(details: ImportNoteDetail[]) {
-  const data = Object.values(details);
-  console.log(data);
+export function ImportDetailTable({
+  details,
+}: {
+  details: ImportNoteDetail[];
+}) {
   const router = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const table = useReactTable({
-    data,
+    data: details,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,

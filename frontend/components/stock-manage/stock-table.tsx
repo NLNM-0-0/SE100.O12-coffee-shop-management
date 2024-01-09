@@ -291,7 +291,6 @@ export function StockTable() {
   };
 
   const { currentUser } = useCurrentUser();
-
   if (isError) return <div>Failed to load</div>;
   else if (isLoading) {
     return <Loading />;
@@ -453,7 +452,7 @@ export function StockTable() {
                         (currentUser &&
                           !includesRoles({
                             currentUser: currentUser,
-                            allowedFeatures: ["ING_VIEW"],
+                            allowedFeatures: ["ING_UP"],
                           })))
                     ) {
                       return null;
@@ -490,7 +489,7 @@ export function StockTable() {
                           currentUser &&
                           includesRoles({
                             currentUser: currentUser,
-                            allowedFeatures: ["ING_VIEW"],
+                            allowedFeatures: ["ING_UP"],
                           }) ? (
                             <div className=" flex justify-end ">
                               <EditIngredient
