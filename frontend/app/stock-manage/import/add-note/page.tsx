@@ -21,6 +21,9 @@ import { useSWRConfig } from "swr";
 import getAllIngredient from "@/lib/getAllIngredient";
 import Loading from "@/components/loading";
 import ConfirmDialog from "@/components/confirm-dialog";
+import { useCurrentUser } from "@/hooks/use-user";
+import { includesRoles } from "@/lib/utils";
+import NoRole from "@/components/no-role";
 
 export const FormSchema = z.object({
   idNote: z.string().max(12, "Tối đa 12 ký tự"),
@@ -183,8 +186,17 @@ const AddNote = () => {
   };
 
   const { data, isLoading, isError } = getAllIngredient();
-  if (isLoading) {
+  const { currentUser } = useCurrentUser();
+  if (!currentUser || isLoading) {
     return <Loading />;
+  } else if (
+    currentUser &&
+    !includesRoles({
+      currentUser: currentUser,
+      allowedFeatures: ["IMP_CREATE"],
+    })
+  ) {
+    return <NoRole></NoRole>;
   } else
     return (
       <div className="col items-center">

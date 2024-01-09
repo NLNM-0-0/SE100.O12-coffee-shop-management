@@ -1,7 +1,11 @@
 import { ExportTable } from "@/components/stock-manage/export-table";
+import { withAuth } from "@/lib/role/withAuth";
+import { Metadata } from "next";
 import Link from "next/link";
 import React from "react";
-
+export const metadata: Metadata = {
+  title: "Danh sách phiếu xuất kho",
+};
 const ImportStock = () => {
   return (
     <div className="col">
@@ -22,4 +26,4 @@ const ImportStock = () => {
   );
 };
 
-export default ImportStock;
+export default withAuth(ImportStock, ["EXP_VIEW"]);

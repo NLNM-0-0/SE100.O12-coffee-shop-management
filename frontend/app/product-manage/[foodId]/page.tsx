@@ -30,6 +30,9 @@ import getFood from "@/lib/food/getFood";
 import Loading from "@/components/loading";
 import SizeUpdate from "@/components/stock-manage/size-ingredient-update";
 import updateFood from "@/lib/food/updateFood";
+import { useCurrentUser } from "@/hooks/use-user";
+import { includesRoles } from "@/lib/utils";
+import NoRole from "@/components/no-role";
 export const FormSchema = z.object({
   id: z.string().max(12, "Tối đa 12 ký tự"),
   name: required,
@@ -216,8 +219,24 @@ const EditProductPage = ({ params }: { params: { foodId: string } }) => {
       handleReset();
     }
   }, [data]);
-  if (isLoading) {
+  const { currentUser } = useCurrentUser();
+  const canEdit =
+    currentUser &&
+    includesRoles({
+      currentUser: currentUser,
+      allowedFeatures: ["FOD_UP_INFO"],
+    });
+  if (isError) return <div>Failed to load</div>;
+  else if (!currentUser || isLoading) {
     return <Loading />;
+  } else if (
+    currentUser &&
+    !includesRoles({
+      currentUser: currentUser,
+      allowedFeatures: ["FOD_VIEW"],
+    })
+  ) {
+    return <NoRole></NoRole>;
   } else
     return (
       <div className="col items-center">
@@ -226,36 +245,38 @@ const EditProductPage = ({ params }: { params: { foodId: string } }) => {
             <h1 className="font-medium text-xxl self-start">
               Chỉnh sửa sản phẩm
             </h1>
-            <div className="flex md:justify-end justify-stretch gap-2">
-              <Button
-                className="px-4 bg-white"
-                disabled={!isDirty}
-                variant={"outline"}
-                type="button"
-                onClick={() => {
-                  if (data) {
-                    handleReset();
-                  }
-                }}
-              >
-                <div className="flex flex-wrap gap-2 items-center">
-                  <FiTrash2 className="text-muted-foreground" />
-                  Hủy
-                </div>
-              </Button>
-              <ConfirmDialog
-                title="Xác nhận tạo mặt hàng"
-                description="Bạn xác nhận muốn tạo mặt hàng ?"
-                handleYes={() => handleSubmit(onFormSubmit, onErrors)()}
-              >
-                <Button className="px-4 pl-2">
+            {canEdit ? (
+              <div className="flex md:justify-end justify-stretch gap-2">
+                <Button
+                  className="px-4 bg-white"
+                  disabled={!isDirty}
+                  variant={"outline"}
+                  type="button"
+                  onClick={() => {
+                    if (data) {
+                      handleReset();
+                    }
+                  }}
+                >
                   <div className="flex flex-wrap gap-2 items-center">
-                    <LuCheck />
-                    Chỉnh sửa
+                    <FiTrash2 className="text-muted-foreground" />
+                    Hủy
                   </div>
                 </Button>
-              </ConfirmDialog>
-            </div>
+                <ConfirmDialog
+                  title="Xác nhận"
+                  description="Bạn xác nhận chỉnh sửa mặt hàng ?"
+                  handleYes={() => handleSubmit(onFormSubmit, onErrors)()}
+                >
+                  <Button className="px-4 pl-2">
+                    <div className="flex flex-wrap gap-2 items-center">
+                      <LuCheck />
+                      Chỉnh sửa
+                    </div>
+                  </Button>
+                </ConfirmDialog>
+              </div>
+            ) : null}
           </div>
           <form>
             <div className="flex flex-col gap-4 xl:flex-row">

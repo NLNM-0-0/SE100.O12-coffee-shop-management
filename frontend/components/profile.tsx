@@ -42,7 +42,7 @@ const Profile = () => {
     if (currentUser) {
       const json = JSON.stringify(currentUser);
       const user = JSON.parse(json);
-      const image = user.data.img;
+      const image = user.data.image;
       if (image) {
         setAvatar(image);
       }

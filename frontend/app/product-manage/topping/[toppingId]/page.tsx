@@ -25,6 +25,9 @@ import getTopping from "@/lib/topping/getTopping";
 import updateTopping from "@/lib/topping/updateTopping";
 import Loading from "@/components/loading";
 import LoadingSpinner from "@/components/loading-spinner";
+import { useCurrentUser } from "@/hooks/use-user";
+import { includesRoles } from "@/lib/utils";
+import NoRole from "@/components/no-role";
 export const FormSchema = z.object({
   id: z.string().max(12, "Tối đa 12 ký tự"),
   name: required,
@@ -134,8 +137,23 @@ const EditToppingPage = ({ params }: { params: { toppingId: string } }) => {
       handleReset();
     }
   }, [data]);
-  if (isLoading) {
+  const { currentUser } = useCurrentUser();
+  const canEdit =
+    currentUser &&
+    includesRoles({
+      currentUser: currentUser,
+      allowedFeatures: ["TOP_UP_INFO"],
+    });
+  if (!currentUser || isLoading) {
     return <Loading />;
+  } else if (
+    currentUser &&
+    !includesRoles({
+      currentUser: currentUser,
+      allowedFeatures: ["TOP_VIEW"],
+    })
+  ) {
+    return <NoRole></NoRole>;
   } else
     return (
       <div className="col items-center">
@@ -145,34 +163,36 @@ const EditToppingPage = ({ params }: { params: { toppingId: string } }) => {
             <h1 className="font-medium text-xxl self-start">
               Chỉnh sửa topping
             </h1>
-            <div className="flex md:justify-end justify-stretch gap-2">
-              <Button
-                className="px-4 bg-white"
-                disabled={!isDirty}
-                variant={"outline"}
-                type="button"
-                onClick={() => {
-                  handleReset();
-                }}
-              >
-                <div className="flex flex-wrap gap-2 items-center">
-                  <FiTrash2 className="text-muted-foreground" />
-                  Hủy
-                </div>
-              </Button>
-              <ConfirmDialog
-                title="Xác nhận tạo mặt hàng"
-                description="Bạn xác nhận muốn tạo mặt hàng ?"
-                handleYes={() => handleSubmit(onFormSubmit, onErrors)()}
-              >
-                <Button className="px-4 pl-2">
+            {canEdit ? (
+              <div className="flex md:justify-end justify-stretch gap-2">
+                <Button
+                  className="px-4 bg-white"
+                  disabled={!isDirty}
+                  variant={"outline"}
+                  type="button"
+                  onClick={() => {
+                    handleReset();
+                  }}
+                >
                   <div className="flex flex-wrap gap-2 items-center">
-                    <LuCheck />
-                    Chỉnh sửa
+                    <FiTrash2 className="text-muted-foreground" />
+                    Hủy
                   </div>
                 </Button>
-              </ConfirmDialog>
-            </div>
+                <ConfirmDialog
+                  title="Xác nhận chỉnh sửa"
+                  description="Bạn xác nhận muốn chỉnh sửa topping ?"
+                  handleYes={() => handleSubmit(onFormSubmit, onErrors)()}
+                >
+                  <Button className="px-4 pl-2">
+                    <div className="flex flex-wrap gap-2 items-center">
+                      <LuCheck />
+                      Chỉnh sửa
+                    </div>
+                  </Button>
+                </ConfirmDialog>
+              </div>
+            ) : null}
           </div>
           <form>
             <div className="flex-1 flex flex-col gap-4">

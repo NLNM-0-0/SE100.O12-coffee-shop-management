@@ -95,14 +95,16 @@ const DashboardComponent = () => {
       ) : (
         <div className="flex flex-col w-full lg:gap-[6] gap-4">
           <DashboardCardHolder cardInfos={cardInfos} />
-          <div className="flex lg:flex-row flex-col w-full lg:gap-[6] gap-4 h-auto">
+          <div className="flex lg:flex-row flex-col w-full lg:gap-[6] gap-4 h-auto basis-2/3">
             <DashboardChartContainer
               price={data?.chartPriceComponents}
               cost={data?.chartCostComponents}
               timeFrom={data?.timeFrom}
               timeTo={data?.timeTo}
             />
-            <DashboardTopFoodContainer foods={data?.topSoldFoods} />
+            <div className="basis-1/3 flex h-full">
+              <DashboardTopFoodContainer foods={data?.topSoldFoods} />
+            </div>
           </div>
         </div>
       )}

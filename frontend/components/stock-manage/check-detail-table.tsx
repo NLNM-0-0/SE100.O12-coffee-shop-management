@@ -122,16 +122,15 @@ export const columns: ColumnDef<CheckNoteDetail>[] = [
     size: 4,
   },
 ];
-export function CheckDetailTable(details: CheckNoteDetail[]) {
-  const data = Object.values(details);
-
+export function CheckDetailTable({ details }: { details: CheckNoteDetail[] }) {
+  console.log(details);
   const router = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const table = useReactTable({
-    data,
+    data: details,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,

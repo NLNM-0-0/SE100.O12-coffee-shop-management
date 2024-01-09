@@ -1,16 +1,13 @@
 "use client";
-import ConfirmDialog from "@/components/confirm-dialog";
 import Loading from "@/components/loading";
+import NoRole from "@/components/no-role";
 import { ExportExportNoteDetail } from "@/components/stock-manage/excel-export-detail";
-import { ExportImportNoteDetail } from "@/components/stock-manage/excel-import-detail";
 import { ExportDetailTable } from "@/components/stock-manage/export-detail-table";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
+import { useCurrentUser } from "@/hooks/use-user";
 import getExportNoteDetail from "@/lib/export/getExportDetail";
 
-import updateStatus from "@/lib/import/changeStatus";
-import getImportNoteDetail from "@/lib/import/getImportDetail";
-import { reasonToString, toVND } from "@/lib/utils";
+import { includesRoles, reasonToString, toVND } from "@/lib/utils";
 import { ExportReason, StatusNote } from "@/types";
 
 import { BiBox } from "react-icons/bi";
@@ -21,7 +18,19 @@ const ExportDetail = ({ params }: { params: { exportId: string } }) => {
   const { data, isLoading, isError, mutate } = getExportNoteDetail({
     idNote: params.exportId,
   });
+  const { currentUser } = useCurrentUser();
   if (isError) return <div>Failed to load</div>;
+  else if (!currentUser || isLoading) {
+    return <Loading />;
+  } else if (
+    currentUser &&
+    !includesRoles({
+      currentUser: currentUser,
+      allowedFeatures: ["EXP_VIEW"],
+    })
+  ) {
+    return <NoRole></NoRole>;
+  }
   if (isLoading) {
     return <Loading />;
   } else
@@ -69,7 +78,7 @@ const ExportDetail = ({ params }: { params: { exportId: string } }) => {
           </div>
         </div>
         <div className="shadow-sm bg-white flex flex-col gap-6 py-6 md:px-6 px-4">
-          <ExportDetailTable {...data.details} />
+          <ExportDetailTable details={data.details} />
         </div>
       </div>
     );

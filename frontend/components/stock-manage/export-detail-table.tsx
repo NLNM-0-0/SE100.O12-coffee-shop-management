@@ -27,6 +27,7 @@ import { useState } from "react";
 import { Input } from "../ui/input";
 import { toVND } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import Loading from "../loading";
 
 export const columns: ColumnDef<ExportNoteDetail>[] = [
   {
@@ -95,16 +96,20 @@ export const columns: ColumnDef<ExportNoteDetail>[] = [
     size: 4,
   },
 ];
-export function ExportDetailTable(details: ExportNoteDetail[]) {
-  const data = Object.values(details);
-  console.log(data);
+export function ExportDetailTable({
+  details,
+}: {
+  details: ExportNoteDetail[];
+}) {
+  // const data = Object.values(details);
+  console.log(details);
   const router = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const table = useReactTable({
-    data,
+    data: details,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -126,53 +131,62 @@ export function ExportDetailTable(details: ExportNoteDetail[]) {
       },
     },
   });
-  return (
-    <div className="rounded-md border overflow-x-auto min-w-full max-w-[10vw]">
-      <Table className="w-max min-w-full">
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow
-              key={headerGroup.id}
-              className="bg-orange-50 hover:bg-orange-50"
-            >
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row, index) => (
+  if (!details) {
+    return <Loading />;
+  } else
+    return (
+      <div className="rounded-md border overflow-x-auto min-w-full max-w-[10vw]">
+        <Table className="w-max min-w-full">
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
+                key={headerGroup.id}
+                className="bg-orange-50 hover:bg-orange-50"
               >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  );
+                })}
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                Không tìm thấy bản ghi
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
-  );
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row, index) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  Không tìm thấy bản ghi
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    );
 }

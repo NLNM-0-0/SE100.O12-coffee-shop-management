@@ -5,7 +5,7 @@ import React, { ReactNode, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { sidebarItems } from "@/constants";
+import { adminSidebarItems, sidebarItems } from "@/constants";
 import { SidebarItem } from "@/types";
 import { motion, useCycle } from "framer-motion";
 import { LuChevronDown } from "react-icons/lu";
@@ -47,8 +47,7 @@ const HeaderMobile = () => {
   useEffect(() => {
     if (currentUser) {
       if (isAdmin({ currentUser: currentUser })) {
-        //TODO
-        // setItems(adminSidebarItems);
+        setItems(adminSidebarItems);
       }
     }
   }, [currentUser]);

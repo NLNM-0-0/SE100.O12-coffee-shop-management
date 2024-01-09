@@ -61,7 +61,7 @@ const CheckDetail = ({ params }: { params: { checkId: string } }) => {
           </div>
         </div>
         <div className="shadow-sm bg-white flex flex-col gap-6 py-6 md:px-6 px-4">
-          <CheckDetailTable {...data.details} />
+          <CheckDetailTable details={data.details} />
         </div>
       </div>
     );

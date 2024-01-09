@@ -110,14 +110,77 @@ export const sidebarItems: SidebarItem[] = [
     submenu: false,
   },
   {
+    title: "Quản lý khách hàng",
+    href: "/customer",
+    icon: GoPerson,
+    submenu: false,
+  },
+  {
+    title: "Thiết lập cửa hàng",
+    href: "/setting",
+    icon: IoSettingsOutline,
+    submenu: false,
+  },
+  {
     title: "Quản lý nhân viên",
     href: "/staff",
     icon: GoPeople,
+    submenu: false,
+  },
+];
+
+export const adminSidebarItems: SidebarItem[] = [
+  {
+    title: "Bán hàng",
+    href: "/order",
+    icon: BsShop,
+    submenu: false,
+  },
+  {
+    title: "Báo cáo",
+    href: "/report/stock",
+    icon: AiOutlineLineChart,
     submenu: true,
     subMenuItems: [
-      { title: "Danh sách nhân viên", href: "/staff" },
-      { title: "Phân quyền nhân viên", href: "/staff/role" },
+      { title: "Báo cáo tồn kho", href: "/report/stock" },
+      { title: "Báo cáo nợ", href: "/report/debt" },
+      { title: "Báo cáo mặt hàng", href: "/report/sale" },
     ],
+  },
+  {
+    title: "Quản lý hóa đơn",
+    href: "/invoice",
+    icon: LuClipboardList,
+    submenu: false,
+  },
+  {
+    title: "Quản lý sản phẩm",
+    href: "/product-manage",
+    icon: LuHome,
+    submenu: true,
+    subMenuItems: [
+      { title: "Mặt hàng", href: "/product-manage" },
+      { title: "Topping", href: "/product-manage/topping" },
+      { title: "Danh mục", href: "/product-manage/category" },
+    ],
+  },
+  {
+    title: "Quản lý kho",
+    href: "/stock-manage",
+    icon: MdOutlineWarehouse,
+    submenu: true,
+    subMenuItems: [
+      { title: "Danh sách tồn kho", href: "/stock-manage" },
+      { title: "Nhập kho", href: "/stock-manage/import" },
+      { title: "Xuất kho", href: "/stock-manage/export" },
+      { title: "Kiểm kho", href: "/stock-manage/check" },
+    ],
+  },
+  {
+    title: "Quản lý nhà cung cấp",
+    href: "/supplier",
+    icon: FaRegHandshake,
+    submenu: false,
   },
   {
     title: "Quản lý khách hàng",
@@ -130,5 +193,15 @@ export const sidebarItems: SidebarItem[] = [
     href: "/setting",
     icon: IoSettingsOutline,
     submenu: false,
+  },
+  {
+    title: "Quản lý nhân viên",
+    href: "/staff",
+    icon: GoPeople,
+    submenu: true,
+    subMenuItems: [
+      { title: "Danh sách nhân viên", href: "/staff" },
+      { title: "Phân quyền nhân viên", href: "/staff/role" },
+    ],
   },
 ];
