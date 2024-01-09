@@ -27,9 +27,7 @@ const ExportNoteList = ({ status, setStatus }: StatusNoteListProps) => {
             aria-expanded={open}
             className="justify-between w-full pl-2"
           >
-            {status
-              ? reasonToString(status as ExportReason)
-              : "Chọn trạng thái"}
+            {status ? reasonToString(status as ExportReason) : "Chọn lý do"}
             <LuChevronsUpDown className="ml-1 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </DropdownMenuTrigger>
