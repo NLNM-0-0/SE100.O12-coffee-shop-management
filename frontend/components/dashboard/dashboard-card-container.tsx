@@ -3,8 +3,8 @@ import DashboardCard from "./dashboard-card";
 const DashboardCardHolder = (props: any) => {
   const { cardInfos } = props;
   return (
-    <div className="flex lg:flex-row flex-col lg:gap-[6] gap-4">
-      <div className="flex flex-row lg:gap-[6] gap-4 flex-1">
+    <div className="flex lg:flex-row flex-col gap-4">
+      <div className="flex flex-row gap-4 flex-1">
         <DashboardCard
           title={cardInfos[0].title}
           icon={cardInfos[0].icon}

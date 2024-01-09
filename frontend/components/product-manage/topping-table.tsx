@@ -39,7 +39,12 @@ import { Input } from "../ui/input";
 import { useRouter, useSearchParams } from "next/navigation";
 import Loading from "../loading";
 import Paging from "../paging";
-import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import {
+  Controller,
+  SubmitHandler,
+  useFieldArray,
+  useForm,
+} from "react-hook-form";
 import { LuFilter } from "react-icons/lu";
 import { Label } from "../ui/label";
 import { AiOutlineClose } from "react-icons/ai";
@@ -50,6 +55,10 @@ import { getFilterString } from "@/app/product-manage/table-layout";
 import { Checkbox } from "../ui/checkbox";
 import getAllTopping from "@/lib/topping/getListTopping";
 import { CaretSortIcon } from "@radix-ui/react-icons";
+import { toast } from "../ui/use-toast";
+import ChangeStatusDialog from "./change-status-dialog";
+import changeToppingStatus from "@/lib/topping/changeToppingStatus";
+import StatusList from "../status-list";
 
 export const columns: ColumnDef<Topping>[] = [
   {
@@ -188,7 +197,7 @@ export function ToppingTable() {
     { type: "search", name: "Từ khoá" },
     // { type: "createdAtFrom", name: "Tạo từ ngày" },
     // { type: "createdAtTo", name: "Tạo đến ngày" },
-    // { type: "isActive", name: "Trạng thái" },
+    { type: "active", name: "Trạng thái" },
   ];
 
   const { register, handleSubmit, reset, control, getValues } =
@@ -233,7 +242,43 @@ export function ToppingTable() {
     router.push(`/product-manage/topping?page=1${filterString}`);
   };
   const { currentUser } = useCurrentUser();
-
+  const [statusToChange, setStatusToChange] = useState(true);
+  const handleChangeStatus = async () => {
+    if (table.getFilteredSelectedRowModel().rows.length < 1) {
+      toast({
+        variant: "destructive",
+        title: "Có lỗi",
+        description: "Chưa chọn mặt hàng",
+      });
+    } else {
+      const toppingIds = table
+        .getFilteredSelectedRowModel()
+        .rows.map((item) => item.original.id);
+      const responseData = await changeToppingStatus({
+        toppingIds: toppingIds,
+        isActive: statusToChange,
+      });
+      if (responseData.hasOwnProperty("errorKey")) {
+        toast({
+          variant: "destructive",
+          title: "Có lỗi",
+          description: responseData.message,
+        });
+      } else {
+        toast({
+          variant: "success",
+          title: "Thành công",
+          description: "Thay đổi trạng thái mặt hàng thành công",
+        });
+        mutate();
+        router.refresh();
+      }
+    }
+  };
+  const displayStatus = {
+    trueText: "Đang bán",
+    falseText: "Ngừng bán",
+  };
   if (isError) return <div>Failed to load</div>;
   else if (isLoading) {
     return <Loading />;
@@ -246,6 +291,18 @@ export function ToppingTable() {
             setExportOption={setExportOption}
             isImport
           /> */}
+          {currentUser &&
+          includesRoles({
+            currentUser: currentUser,
+            allowedFeatures: ["TOP_UP_STATE"],
+          }) ? (
+            <ChangeStatusDialog
+              disabled={table.getFilteredSelectedRowModel().rows.length < 1}
+              status={statusToChange}
+              handleSetStatus={setStatusToChange}
+              handleChangeStatus={handleChangeStatus}
+            />
+          ) : null}
           <div className="flex-1">
             <div className="flex gap-2">
               <Popover
@@ -289,6 +346,22 @@ export function ToppingTable() {
                                 type="text"
                                 required
                               ></Input>
+                            ) : item.type === "active" ? (
+                              <Controller
+                                control={control}
+                                name={`filters.${index}.value`}
+                                render={({ field }) => (
+                                  <div className="flex-1">
+                                    <StatusList
+                                      display={displayStatus}
+                                      status={field.value === "true"}
+                                      setStatus={(value) =>
+                                        field.onChange(value.toString())
+                                      }
+                                    />
+                                  </div>
+                                )}
+                              />
                             ) : null}
                             <Button
                               variant={"ghost"}
@@ -362,6 +435,10 @@ export function ToppingTable() {
                         ? new Date(+item.value * 1000).toLocaleDateString(
                             "vi-VN"
                           )
+                        : item.type === "active"
+                        ? item.value === "true"
+                          ? displayStatus.trueText
+                          : displayStatus.falseText
                         : item.value}
                     </span>
                   </div>
@@ -401,6 +478,9 @@ export function ToppingTable() {
                           key={cell.id}
                           onClick={() => {
                             if (!cell.id.includes("select")) {
+                              router.push(
+                                `/product-manage/topping/${row.original.id}`
+                              );
                             }
                           }}
                         >
