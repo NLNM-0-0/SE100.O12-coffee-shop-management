@@ -20,7 +20,7 @@ const DashboardHeader = (props: any) => {
   return (
     <div className="flex justify-between flex-row">
       <div className="flex-1"></div>
-      <div className="justify-end gap-2 flex xl:max-w-[550px] max-w-[400px] xl:flex-row flex-col ">
+      <div className="justify-end gap-2 flex xl:max-w-[550px] max-w-[400px] flex-row">
         <div className={cn("grid gap-2 flex-1")}>
           <Popover>
             <PopoverTrigger asChild>
