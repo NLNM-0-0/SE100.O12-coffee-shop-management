@@ -20,17 +20,24 @@ import { FiTrash2 } from "react-icons/fi";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import ToppingInsert from "@/components/stock-manage/topping-ingredient-insert";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import getTopping from "@/lib/topping/getTopping";
 import updateTopping from "@/lib/topping/updateTopping";
 import Loading from "@/components/loading";
+import LoadingSpinner from "@/components/loading-spinner";
 export const FormSchema = z.object({
   id: z.string().max(12, "Tối đa 12 ký tự"),
   name: required,
   description: z.string(),
   cookingGuide: z.string(),
-  cost: z.coerce.number().gt(0, "Giá vốn phải lớn hơn 0"),
-  price: z.coerce.number().gt(0, "Giá bán phải lớn hơn 0"),
+  cost: z.coerce
+    .number()
+    .int("Giá bán phải là số nguyên")
+    .gt(0, "Giá bán phải lớn hơn 0"),
+  price: z.coerce
+    .number()
+    .int("Giá bán phải là số nguyên")
+    .gt(0, "Giá bán phải lớn hơn 0"),
   details: z
     .array(
       z.object({
@@ -60,6 +67,7 @@ const EditToppingPage = ({ params }: { params: { toppingId: string } }) => {
     name: "details",
   });
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const { data, isLoading, isError, mutate } = getTopping(params.toppingId);
   const onFormSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (
     data
@@ -77,8 +85,10 @@ const EditToppingPage = ({ params }: { params: { toppingId: string } }) => {
       },
     };
     const response: Promise<any> = updateTopping({ topping: topping });
-    const responseData = await response;
 
+    setLoading(true);
+    const responseData = await response;
+    setLoading(false);
     if (responseData.hasOwnProperty("errorKey")) {
       toast({
         variant: "destructive",
@@ -129,6 +139,7 @@ const EditToppingPage = ({ params }: { params: { toppingId: string } }) => {
   } else
     return (
       <div className="col items-center">
+        {loading && <LoadingSpinner />}
         <div className="col w-full xl:px-16">
           <div className="flex justify-between">
             <h1 className="font-medium text-xxl self-start">

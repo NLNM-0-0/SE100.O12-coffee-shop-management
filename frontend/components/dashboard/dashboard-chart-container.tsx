@@ -42,7 +42,7 @@ const DashboardChartContainer = (props: any) => {
   const [realValue, setRealValue] = React.useState("day");
 
   return (
-    <Card className="p-4 flex-[2] flex flex-col gap-4">
+    <Card className="p-4 flex-[2] w-full flex flex-col gap-4">
       <div className="flex flex-row gap-4">
         <div className="flex-1"></div>
         <Popover open={open} onOpenChange={setOpen}>
@@ -88,13 +88,15 @@ const DashboardChartContainer = (props: any) => {
           Xem
         </Button>
       </div>
-      <DashboardChart
-        type={realValue}
-        price={price}
-        cost={cost}
-        timeFrom={timeFrom}
-        timeTo={timeTo}
-      />
+      <div className="flex-1 overflow-x-auto min-w-full max-w-[20vw]">
+        <DashboardChart
+          type={realValue}
+          price={price}
+          cost={cost}
+          timeFrom={timeFrom}
+          timeTo={timeTo}
+        />
+      </div>
     </Card>
   );
 };

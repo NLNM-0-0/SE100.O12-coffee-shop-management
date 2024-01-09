@@ -175,7 +175,7 @@ export type CheckNoteDetail = {
 };
 export type ShopGeneral = {
   name: string;
-  email: string;
+  email?: string;
   phone: string;
   address: string;
   wifiPass: string;

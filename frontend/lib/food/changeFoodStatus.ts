@@ -2,31 +2,27 @@ import { endPoint } from "@/constants";
 import axios from "axios";
 import { getApiKey } from "../auth/action";
 
-export default async function updateIngredient({
-  idIngre,
-  name,
-  price,
+export default async function changeFoodStatus({
+  foodIds,
+  isActive,
 }: {
-  name: string;
-  idIngre: string;
-  price: number;
+  isActive: boolean;
+  foodIds: string[];
 }) {
-  const url = `${endPoint}/ingredients/${idIngre}`;
+  const url = `${endPoint}/foods/status`;
 
   const data = {
-    name: name,
-    price: price,
+    isActive: isActive,
+    ids: foodIds,
   };
-
   const token = await getApiKey();
-
   const headers = {
     accept: "application/json",
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
     // Add other headers as needed
   };
-
+  console.log(data);
   // Make a POST request with headers
   const res = axios
     .patch(url, data, { headers: headers })

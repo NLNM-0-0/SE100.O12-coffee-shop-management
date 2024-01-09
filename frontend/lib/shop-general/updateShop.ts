@@ -1,22 +1,10 @@
 import { endPoint } from "@/constants";
 import axios from "axios";
 import { getApiKey } from "../auth/action";
+import { ShopGeneral } from "@/types";
 
-export default async function updateIngredient({
-  idIngre,
-  name,
-  price,
-}: {
-  name: string;
-  idIngre: string;
-  price: number;
-}) {
-  const url = `${endPoint}/ingredients/${idIngre}`;
-
-  const data = {
-    name: name,
-    price: price,
-  };
+export default async function updateShop(data: ShopGeneral) {
+  const url = `${endPoint}/shop`;
 
   const token = await getApiKey();
 
