@@ -15,14 +15,15 @@ import * as z from "zod";
 import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { Category, Ingredient } from "@/types";
-import UnitList from "../unit-list";
 import updateIngredient from "@/lib/ingredient/updateIngredient";
 const required = z.string().min(1, "Không để trống trường này");
 
 const FormSchema = z.object({
   name: required,
-  unitTypeId: z.string().min(1, "Không để trống trường này"),
-  price: z.coerce.number().nonnegative("Đơn giá phải lớn hơn hoặc bằng 0"),
+  price: z.coerce
+    .number()
+    .int("Đơn giá phải là số nguyên lớn hơn hoặc bằng 0")
+    .nonnegative("Đơn giá phải là số nguyên lớn hơn hoặc bằng 0"),
 });
 
 const EditIngredient = ({
@@ -50,7 +51,6 @@ const EditIngredient = ({
       idIngre: ingredient.id,
       name: data.name,
       price: data.price,
-      unitTypeId: data.unitTypeId,
     });
     const responseData = await response;
 
@@ -79,7 +79,6 @@ const EditIngredient = ({
         reset({
           name: ingredient.name,
           price: ingredient.price,
-          unitTypeId: ingredient.unitType.id,
         });
         setOpen(open);
       }}
@@ -99,26 +98,6 @@ const EditIngredient = ({
               )}
             </div>
             <div className="flex gap-4">
-              <div className="flex-1">
-                <Label htmlFor="phone">Đơn vị</Label>
-                <Controller
-                  control={control}
-                  name="unitTypeId"
-                  render={({ field }) => (
-                    <UnitList
-                      unit={field.value}
-                      setUnit={(value) => {
-                        field.onChange(value);
-                      }}
-                    ></UnitList>
-                  )}
-                />
-                {errors.unitTypeId && (
-                  <span className="error___message">
-                    Không để trống trường này
-                  </span>
-                )}
-              </div>
               <div className="flex-1">
                 <Label htmlFor="noBanDau">Đơn giá</Label>
                 <Input

@@ -12,11 +12,14 @@ export const getFilterString = () => {
   const searchParams = useSearchParams();
 
   const search = searchParams.get("search") ?? undefined;
-
+  const active = searchParams.get("active") ?? undefined;
   let filters = [{ type: "", value: "" }];
   filters.pop();
   if (search) {
     filters = filters.concat({ type: "search", value: search });
+  }
+  if (active) {
+    filters = filters.concat({ type: "active", value: active });
   }
   let stringToFilter = "";
   filters.forEach((item) => {
@@ -33,14 +36,6 @@ const TableLayout = () => {
   const { filters, stringToFilter } = getFilterString();
   const page = searchParams.get("page") ?? "1";
 
-  const handleTitleAdded = async (titleId: string) => {
-    mutate(
-      `${endPoint}/v1/booktitles?page=${page ?? 1}&limit=10${
-        stringToFilter ?? ""
-      }`
-    );
-    router.refresh();
-  };
   const { currentUser } = useCurrentUser();
   return (
     <div className="col">

@@ -21,9 +21,7 @@ const DashboardComponent = () => {
       { id: string; name: string; amount: number }
     ],
     chartPriceComponents: [] as unknown as [{ time: Date; value: number }],
-    chartCostComponents: [] as unknown as [
-      { time: Date; value: number }
-    ],
+    chartCostComponents: [] as unknown as [{ time: Date; value: number }],
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -95,9 +93,9 @@ const DashboardComponent = () => {
       {isLoading ? (
         <Loading></Loading>
       ) : (
-        <div className="flex flex-col lg:gap-[6] gap-4">
+        <div className="flex flex-col w-full lg:gap-[6] gap-4">
           <DashboardCardHolder cardInfos={cardInfos} />
-          <div className="flex flex-row lg:gap-[6] gap-4 h-auto">
+          <div className="flex lg:flex-row flex-col w-full lg:gap-[6] gap-4 h-auto">
             <DashboardChartContainer
               price={data?.chartPriceComponents}
               cost={data?.chartCostComponents}

@@ -1,14 +1,4 @@
-import {
-  Category,
-  ImportNote,
-  IngredientDetail,
-  IngredientForChoose,
-  MeasureUnit,
-  Product,
-  Role,
-  SidebarItem,
-  StatusNote,
-} from "@/types";
+import { Category, SidebarItem } from "@/types";
 import { LuClipboardList, LuHome } from "react-icons/lu";
 import { MdOutlineWarehouse } from "react-icons/md";
 import { GoPeople, GoPerson } from "react-icons/go";
@@ -16,7 +6,7 @@ import { z } from "zod";
 import { FaRegHandshake } from "react-icons/fa";
 import { AiOutlineLineChart } from "react-icons/ai";
 import { BsShop } from "react-icons/bs";
-
+import { IoSettingsOutline } from "react-icons/io5";
 export const apiKey =
   "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJfaWQiOiJnM1cyMUE3U1IiLCJyb2xlIjoiIn0sImV4cCI6MTcwMzU1NTY5OCwiaWF0IjoxNzAzNDY5Mjk4fQ.zm-7b5WY4b98_RUuwy-9HSyYNMAzqtOnkw-Z0aOwPSI";
 export const endPoint = "http://localhost:8080/v1";
@@ -133,6 +123,12 @@ export const sidebarItems: SidebarItem[] = [
     title: "Quản lý khách hàng",
     href: "/customer",
     icon: GoPerson,
+    submenu: false,
+  },
+  {
+    title: "Thiết lập cửa hàng",
+    href: "/setting",
+    icon: IoSettingsOutline,
     submenu: false,
   },
 ];

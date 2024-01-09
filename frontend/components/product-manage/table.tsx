@@ -39,7 +39,12 @@ import { Input } from "../ui/input";
 import { useRouter, useSearchParams } from "next/navigation";
 import Loading from "../loading";
 import Paging from "../paging";
-import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import {
+  Controller,
+  SubmitHandler,
+  useFieldArray,
+  useForm,
+} from "react-hook-form";
 import { LuFilter } from "react-icons/lu";
 import { Label } from "../ui/label";
 import { AiOutlineClose } from "react-icons/ai";
@@ -49,6 +54,10 @@ import { useCurrentUser } from "@/hooks/use-user";
 import { getFilterString } from "@/app/product-manage/table-layout";
 import getAllFood from "@/lib/food/getListFood";
 import { Checkbox } from "../ui/checkbox";
+import { toast } from "../ui/use-toast";
+import ChangeStatusDialog from "./change-status-dialog";
+import changeFoodStatus from "@/lib/food/changeFoodStatus";
+import StatusList from "../status-list";
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -160,7 +169,7 @@ export function ProductTable() {
     { type: "search", name: "Từ khoá" },
     // { type: "createdAtFrom", name: "Tạo từ ngày" },
     // { type: "createdAtTo", name: "Tạo đến ngày" },
-    // { type: "isActive", name: "Trạng thái" },
+    { type: "active", name: "Trạng thái" },
   ];
 
   const { register, handleSubmit, reset, control, getValues } =
@@ -205,7 +214,43 @@ export function ProductTable() {
     router.push(`/product-manage?page=1${filterString}`);
   };
   const { currentUser } = useCurrentUser();
-
+  const [statusToChange, setStatusToChange] = useState(true);
+  const handleChangeStatus = async () => {
+    if (table.getFilteredSelectedRowModel().rows.length < 1) {
+      toast({
+        variant: "destructive",
+        title: "Có lỗi",
+        description: "Chưa chọn mặt hàng",
+      });
+    } else {
+      const foodIds = table
+        .getFilteredSelectedRowModel()
+        .rows.map((item) => item.original.id);
+      const responseData = await changeFoodStatus({
+        foodIds: foodIds,
+        isActive: statusToChange,
+      });
+      if (responseData.hasOwnProperty("errorKey")) {
+        toast({
+          variant: "destructive",
+          title: "Có lỗi",
+          description: responseData.message,
+        });
+      } else {
+        toast({
+          variant: "success",
+          title: "Thành công",
+          description: "Thay đổi trạng thái mặt hàng thành công",
+        });
+        mutate();
+        router.refresh();
+      }
+    }
+  };
+  const displayStatus = {
+    trueText: "Đang bán",
+    falseText: "Ngừng bán",
+  };
   if (isError) return <div>Failed to load</div>;
   else if (isLoading) {
     return <Loading />;
@@ -220,6 +265,19 @@ export function ProductTable() {
           /> */}
           <div className="flex-1">
             <div className="flex gap-2">
+              {currentUser &&
+              includesRoles({
+                currentUser: currentUser,
+                allowedFeatures: ["FOD_UP_STATE"],
+              }) ? (
+                <ChangeStatusDialog
+                  disabled={table.getFilteredSelectedRowModel().rows.length < 1}
+                  status={statusToChange}
+                  handleSetStatus={setStatusToChange}
+                  handleChangeStatus={handleChangeStatus}
+                />
+              ) : null}
+
               <Popover
                 open={openFilter}
                 onOpenChange={(open) => {
@@ -261,6 +319,22 @@ export function ProductTable() {
                                 type="text"
                                 required
                               ></Input>
+                            ) : item.type === "active" ? (
+                              <Controller
+                                control={control}
+                                name={`filters.${index}.value`}
+                                render={({ field }) => (
+                                  <div className="flex-1">
+                                    <StatusList
+                                      display={displayStatus}
+                                      status={field.value === "true"}
+                                      setStatus={(value) =>
+                                        field.onChange(value.toString())
+                                      }
+                                    />
+                                  </div>
+                                )}
+                              />
                             ) : null}
                             <Button
                               variant={"ghost"}
@@ -334,6 +408,10 @@ export function ProductTable() {
                         ? new Date(+item.value * 1000).toLocaleDateString(
                             "vi-VN"
                           )
+                        : item.type === "active"
+                        ? item.value === "true"
+                          ? displayStatus.trueText
+                          : displayStatus.falseText
                         : item.value}
                     </span>
                   </div>

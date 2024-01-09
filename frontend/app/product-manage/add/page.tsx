@@ -42,7 +42,10 @@ export const FormSchema = z.object({
       z.object({
         name: required,
         cost: z.coerce.number().gt(0, "Giá vốn phải lớn hơn 0"),
-        price: z.coerce.number().gt(0, "Giá bán phải lớn hơn 0"),
+        price: z.coerce
+          .number()
+          .int("Giá vốn phải là số nguyên")
+          .gt(0, "Giá vốn phải lớn hơn 0"),
         recipe: z.object({
           details: z
             .array(

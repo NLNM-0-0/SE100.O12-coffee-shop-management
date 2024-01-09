@@ -27,6 +27,7 @@ ChartJS.register(
 export const options = {
   responsive: true,
   resizeDelay: 0,
+  maintainAspectRatio: false,
   plugins: {
     legend: {
       position: "top" as const,
@@ -80,7 +81,7 @@ const DashboardChart = (props: any) => {
       currentDate <= toLocalDateTime(timeTo)!;
       currentDate.setDate(currentDate.getDate() + 1)
     ) {
-      let dayString = toDateString(currentDate)
+      let dayString = toDateString(currentDate);
       labels.push(dayString);
     }
 
@@ -135,7 +136,10 @@ function groupAndSumByHour(charComponents: CharComponent[]): number[] {
   return Array.from(groupedByHour.values());
 }
 
-function groupAndSumByDate(charComponents: CharComponent[], labels: string[]): number[] {
+function groupAndSumByDate(
+  charComponents: CharComponent[],
+  labels: string[]
+): number[] {
   const groupedByDate = new Map<string, number>();
 
   charComponents.forEach((component) => {
@@ -155,15 +159,23 @@ function groupAndSumByDate(charComponents: CharComponent[], labels: string[]): n
 
   // If you want to ensure there are values for all dates within the range, you can fill the gaps
   const startDate = new Date(
-    Math.min(...charComponents.map((component) => (toLocalDateTime(component.time))!.getTime()))
+    Math.min(
+      ...charComponents.map((component) =>
+        toLocalDateTime(component.time)!.getTime()
+      )
+    )
   );
   const endDate = new Date(
-    Math.max(...charComponents.map((component) => (toLocalDateTime(component.time))!.getTime()))
+    Math.max(
+      ...charComponents.map((component) =>
+        toLocalDateTime(component.time)!.getTime()
+      )
+    )
   );
 
-  const allDates : number[] = [];
+  const allDates: number[] = [];
   labels.forEach((label) => {
-    allDates.push(groupedByDate.get(label)??0)
+    allDates.push(groupedByDate.get(label) ?? 0);
   });
 
   return allDates;
