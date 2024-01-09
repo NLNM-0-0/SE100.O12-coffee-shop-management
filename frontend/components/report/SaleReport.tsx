@@ -6,13 +6,11 @@ import { useState } from "react";
 import { SaleReportTable } from "@/components/report/SaleReportTable";
 import { toast } from "../ui/use-toast";
 import Loading from "../loading";
-import { ExportDebtReport } from "./excel-export-debt-report";
 import { SaleReport, SaleReportDetail } from "@/types";
 import { ExportSaleReport } from "./excel-export-sale-report";
 
 const SaleReport = () => {
   const [data, setData] = useState<SaleReport>();
-  const [total, setTotal] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const onGetSale = async ({

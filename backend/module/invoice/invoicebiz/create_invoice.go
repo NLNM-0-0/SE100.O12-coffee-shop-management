@@ -134,6 +134,7 @@ func (biz *createInvoiceBiz) CreateInvoice(
 		}
 
 	} else {
+		data.AmountReceived = data.TotalPrice
 		if data.IsUsePoint {
 			return invoicemodel.ErrInvoiceNotHaveCustomerToUsePoint
 		}
