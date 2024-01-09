@@ -93,8 +93,8 @@ func (biz *createInvoiceBiz) CreateInvoice(
 		return err
 	}
 
-	if data.CustomerId != nil {
-		customer, errGetCustomer := biz.repo.FindCustomer(ctx, *data.CustomerId)
+	if data.CustomerId != "" {
+		customer, errGetCustomer := biz.repo.FindCustomer(ctx, data.CustomerId)
 		if errGetCustomer != nil {
 			return errGetCustomer
 		}
@@ -129,7 +129,7 @@ func (biz *createInvoiceBiz) CreateInvoice(
 			Amount: &amountPointNeedUpdate,
 		}
 		if err := biz.repo.UpdateCustomerPoint(
-			ctx, *data.CustomerId, customerUpdatePoint); err != nil {
+			ctx, data.CustomerId, customerUpdatePoint); err != nil {
 			return err
 		}
 

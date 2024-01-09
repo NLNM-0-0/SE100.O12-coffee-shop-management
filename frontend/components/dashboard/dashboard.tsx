@@ -14,7 +14,7 @@ const DashboardComponent = () => {
     timeFrom: new Date(),
     timeTo: new Date(),
     totalSale: 0,
-    totalProduct: 0,
+    totalCustomer: 0,
     totalSold: 0,
     totalPoint: 0,
     topSoldFoods: [] as unknown as [
@@ -77,8 +77,8 @@ const DashboardComponent = () => {
       icon: "",
     });
     cardInfos.push({
-      title: "Tổng số sản phẩm",
-      value: data.totalProduct.toString(),
+      title: "Số khách đã mua",
+      value: data.totalCustomer.toString(),
       icon: "",
     });
     cardInfos.push({
