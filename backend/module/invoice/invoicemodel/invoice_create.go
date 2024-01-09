@@ -7,7 +7,7 @@ import (
 
 type InvoiceCreate struct {
 	Id                  string                                   `json:"-" gorm:"column:id;"`
-	CustomerId          *string                                  `json:"customerId" gorm:"column:customerId;"`
+	CustomerId          string                                   `json:"customerId" gorm:"column:customerId;"`
 	TotalPrice          int                                      `json:"-" gorm:"column:totalPrice;"`
 	IsUsePoint          bool                                     `json:"isUsePoint" gorm:"-"`
 	AmountReceived      int                                      `json:"-" gorm:"column:amountReceived"`
@@ -24,7 +24,7 @@ func (*InvoiceCreate) TableName() string {
 }
 
 func (data *InvoiceCreate) Validate() *common.AppError {
-	if !common.ValidateId(data.CustomerId) {
+	if !common.ValidateId(&data.CustomerId) {
 		return ErrInvoiceCustomerIdInvalid
 	}
 	if data.InvoiceDetails == nil || len(data.InvoiceDetails) == 0 {

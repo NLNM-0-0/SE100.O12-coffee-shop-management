@@ -1,8 +1,6 @@
 package shopgeneralbiz
 
 import (
-	"backend/common"
-	"backend/middleware"
 	"backend/module/shopgeneral/shopgeneralmodel"
 	"context"
 )
@@ -13,25 +11,18 @@ type SeeShopGeneralStore interface {
 }
 
 type seeShopGeneralBiz struct {
-	store     SeeShopGeneralStore
-	requester middleware.Requester
+	store SeeShopGeneralStore
 }
 
 func NewSeeShopGeneralBiz(
-	store SeeShopGeneralStore,
-	requester middleware.Requester) *seeShopGeneralBiz {
+	store SeeShopGeneralStore) *seeShopGeneralBiz {
 	return &seeShopGeneralBiz{
-		store:     store,
-		requester: requester,
+		store: store,
 	}
 }
 
 func (biz *seeShopGeneralBiz) SeeShopGeneral(
 	ctx context.Context) (*shopgeneralmodel.ShopGeneral, error) {
-	if biz.requester.GetRoleId() != common.RoleAdminId {
-		return nil, shopgeneralmodel.ErrGeneralShopViewNoPermission
-	}
-
 	general, errGetGeneral := biz.store.FindShopGeneral(ctx)
 	if errGetGeneral != nil {
 		return nil, errGetGeneral

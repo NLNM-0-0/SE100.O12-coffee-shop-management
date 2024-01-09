@@ -152,7 +152,7 @@ CREATE TABLE `InventoryCheckNoteDetail` (
 DROP TABLE IF EXISTS `Invoice`;
 CREATE TABLE `Invoice` (
   `id` varchar(13) NOT NULL,
-  `customerId` varchar(13) NOT NULL,
+  `customerId` varchar(13) NULL,
   `totalPrice` int NOT NULL,
   `amountReceived` int NOT NULL,
   `amountPriceUsePoint` int NOT NULL,

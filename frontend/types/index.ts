@@ -360,7 +360,7 @@ export type Dashboard = {
   timeFrom: Date;
   timeTo: Date;
   totalSale: number;
-  totalProduct: number;
+  totalCustomer: number;
   totalSold: number;
   totalPoint: number;
   topSoldFoods: [{ id: string; name: string; amount: number }];

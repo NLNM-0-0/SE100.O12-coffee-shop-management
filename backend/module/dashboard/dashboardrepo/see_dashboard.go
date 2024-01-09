@@ -61,6 +61,7 @@ func (repo *seeDashboardRepo) SeeDashboard(
 
 	total := 0
 	totalAmount := 0
+	totalCustomer := 0
 	totalPoint := 0
 	mapFoodAmount := make(map[string]int)
 	mapFoodName := make(map[string]string)
@@ -97,6 +98,10 @@ func (repo *seeDashboardRepo) SeeDashboard(
 			total += totalInvoiceDetail
 			totalAmount += detail.Amount
 		}
+
+		if invoice.CustomerId != "" {
+			totalCustomer++
+		}
 	}
 
 	details := make(salereportmodel.Details, 0)
@@ -129,8 +134,8 @@ func (repo *seeDashboardRepo) SeeDashboard(
 	resDashBoard.ChartAmountReceiveComponents = listAmountReceive
 	resDashBoard.ChartSaleComponents = listSale
 	resDashBoard.TotalSale = total
+	resDashBoard.TotalCustomer = totalCustomer
 	resDashBoard.TotalSold = totalAmount
-	resDashBoard.TotalProduct = details.Len()
 	resDashBoard.TotalPoint = totalPoint
 
 	return &resDashBoard, nil
