@@ -278,7 +278,7 @@ export function StaffTable({
         search = `&search=${item.value}`;
       }
     });
-    router.push(`/staff?page=${Number(page)}${active}${search}`);
+    router.push(`/staff?page=1${active}${search}`);
   };
   const [openFilter, setOpenFilter] = useState(false);
   const [status, setStatus] = useState<boolean>();
@@ -368,7 +368,7 @@ export function StaffTable({
                   <LuFilter className="ml-1 h-4 w-4" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-80">
+              <PopoverContent className="w-80 max-h-[32rem] mx-6 overflow-y-auto">
                 <form
                   className="flex flex-col gap-4"
                   onSubmit={handleSubmit(onSubmit)}

@@ -131,7 +131,6 @@ export const columns: ColumnDef<ExportNote>[] = [
     cell: ({ row }) => (
       <div className="leading-6 flex flex-col text-right">
         <span>
-          {" "}
           {new Date(row.original.createdAt).toLocaleDateString("vi-VN")}
         </span>
         <span className="font-light">{row.original.createdBy.name}</span>

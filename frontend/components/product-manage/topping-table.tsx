@@ -230,7 +230,7 @@ export function ToppingTable() {
     data.filters.forEach((item) => {
       filterString = filterString.concat(`&${item.type}=${item.value}`);
     });
-    router.push(`/product-manage/topping?page=${Number(page)}${filterString}`);
+    router.push(`/product-manage/topping?page=1${filterString}`);
   };
   const { currentUser } = useCurrentUser();
 
@@ -261,7 +261,7 @@ export function ToppingTable() {
                     <LuFilter className="ml-1 h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-96">
+                <PopoverContent className="w-96 max-h-[32rem] mx-6 overflow-y-auto">
                   <form
                     className="flex flex-col gap-4"
                     onSubmit={handleSubmit(onSubmit)}

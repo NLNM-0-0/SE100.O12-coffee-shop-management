@@ -102,19 +102,6 @@ const CustomerList = ({
             </Command>
           </DropdownMenuContent>
         </DropdownMenu>
-        {canAdd ? (
-          currentUser &&
-          includesRoles({
-            currentUser: currentUser,
-            allowedFeatures: ["CUS_CREATE"],
-          }) ? (
-            <CreateDialog handleCustomerAdded={handleCustomerAdded}>
-              <Button type="button" size={"icon"} className="px-3">
-                <FaPlus />
-              </Button>
-            </CreateDialog>
-          ) : null
-        ) : null}
         {canRemove ? (
           <Button
             type="button"
@@ -129,6 +116,19 @@ const CustomerList = ({
           >
             <IoPersonRemoveSharp className="h-5 w-5 text-muted-foreground" />
           </Button>
+        ) : null}
+        {canAdd ? (
+          currentUser &&
+          includesRoles({
+            currentUser: currentUser,
+            allowedFeatures: ["CUS_CREATE"],
+          }) ? (
+            <CreateDialog handleCustomerAdded={handleCustomerAdded}>
+              <Button type="button" size={"icon"} className="px-3">
+                <FaPlus />
+              </Button>
+            </CreateDialog>
+          ) : null
         ) : null}
       </div>
     );

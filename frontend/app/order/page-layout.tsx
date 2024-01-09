@@ -20,6 +20,8 @@ import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
 import createInvoice from "@/lib/invoice/createInvoice";
 import Loading from "@/components/loading";
+import { ToastAction } from "@/components/ui/toast";
+import PrintInvoice from "@/components/invoice/print-invoice";
 export type FormValues = {
   customer: {
     customerId: string;
@@ -80,7 +82,7 @@ const OrderScreen = () => {
     isError: isErrorFood,
     mutate: mutateFood,
   } = getAllFoodForSale();
-  const { register, control, setValue, watch, handleSubmit } = form;
+  const { register, control, setValue, watch, handleSubmit, reset } = form;
 
   const { fields, append, remove, update } = useFieldArray({
     control: control,
@@ -114,6 +116,17 @@ const OrderScreen = () => {
         // If the key already exists, add the amount
         unduplicateDetails[existingItemIndex].amount =
           +unduplicateDetails[existingItemIndex].amount + +item.amount;
+        if (
+          unduplicateDetails[existingItemIndex].description &&
+          unduplicateDetails[existingItemIndex].description !== ""
+        ) {
+          if (item.description && item.description !== "") {
+            unduplicateDetails[existingItemIndex].description +=
+              ", " + item.description;
+          }
+        } else {
+          unduplicateDetails[existingItemIndex].description = item.description;
+        }
       } else {
         // If the key does not exist, create a new entry
         unduplicateDetails.push({ ...item });
@@ -149,17 +162,20 @@ const OrderScreen = () => {
         variant: "success",
         title: "Thành công",
         description: "Thêm mới hóa đơn thành công",
-        // action: (
-        //   <ToastAction
-        //     className="hover:bg-green-400/90"
-        //     altText="print"
-        //     onClick={() => router.push(`/invoice/${id}`)}
-        //   >
-        //     In hoá đơn
-        //   </ToastAction>
-        // ),
+        action: (
+          <ToastAction altText="print" className="p-0">
+            <PrintInvoice
+              responseData={responseData.data.invoice}
+              onPrint={() => {}}
+            />
+          </ToastAction>
+        ),
       });
-      // reset();
+      reset({
+        customer: {},
+        isUsePoint: false,
+        details: [],
+      });
     }
   };
   const [open, setOpen] = useState(false);
@@ -179,6 +195,7 @@ const OrderScreen = () => {
         </div>
         <div className="2xl:basis-2/5 xl:basis-1/2 md:basis-3/5  md:block hidden">
           <BillTab
+            reset={reset}
             onPayClick={handleSubmit(onSubmit)}
             fields={fields}
             setValue={setValue}
@@ -250,6 +267,7 @@ const OrderScreen = () => {
                   remove={remove}
                   isSheet
                   foods={foods?.data}
+                  reset={reset}
                 />
               </SheetContent>
             </Sheet>

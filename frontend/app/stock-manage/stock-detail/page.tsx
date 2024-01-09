@@ -2,7 +2,6 @@ import IngredientDetailsTable from "@/components/stock-manage/ingredient-detail-
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ingredientDetails } from "@/constants";
 
 const StockDetail = ({ searchParams }: { searchParams: { id: string } }) => {
   // const ingredient = ingredients.find((item) => item.id === searchParams.id);
