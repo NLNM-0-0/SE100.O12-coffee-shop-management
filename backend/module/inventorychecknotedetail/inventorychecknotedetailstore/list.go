@@ -21,6 +21,7 @@ func (s *sqlStore) ListInventoryCheckNoteDetail(
 		Preload("Ingredient", func(db *gorm.DB) *gorm.DB {
 			return db.Order("Ingredient.name")
 		}).
+		Preload("Ingredient.UnitType").
 		Find(&result).Error; err != nil {
 		return nil, common.ErrDB(err)
 	}
