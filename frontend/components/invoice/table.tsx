@@ -1,8 +1,10 @@
 "use client";
-
-import * as React from "react";
+import { Invoice } from "@/types";
+import { Checkbox } from "../ui/checkbox";
+import { toVND } from "@/lib/utils";
 import { CaretSortIcon, ChevronDownIcon } from "@radix-ui/react-icons";
-import { LuFilter } from "react-icons/lu";
+import { Button } from "../ui/button";
+import Paging from "../paging";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -15,15 +17,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -32,16 +25,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Customer } from "@/types";
-import { useState } from "react";
-import { Input } from "../ui/input";
-// import { ExportSupplierList } from "./excel-export";
-import { Label } from "../ui/label";
-
-import Paging from "../paging";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-// import DialogSupplierExport from "./dialog-supplier-export";
+import { useEffect, useState } from "react";
+import {
+  Controller,
+  SubmitHandler,
+  useFieldArray,
+  useForm,
+} from "react-hook-form";
 import {
   Select,
   SelectContent,
@@ -50,30 +41,47 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { LuFilter } from "react-icons/lu";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
 import { AiOutlineClose } from "react-icons/ai";
-import { toast } from "../ui/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import StaffList from "../staff-list";
+import { RiCopperCoinLine } from "react-icons/ri";
+import { FilterDatePicker } from "../stock-manage/date-picker";
 
-export const columns: ColumnDef<Customer>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
+type FormValues = {
+  filters: {
+    type: string;
+    value: string;
+  }[];
+};
+function idToName(id: string) {
+  if (id === "id") {
+    return "Mã hóa đơn";
+  } else if (id === "createdAt") {
+    return "Ngày tạo";
+  } else if (id === "createdBy") {
+    return "Người tạo";
+  } else if (id === "totalPrice") {
+    return "Tổng tiền";
+  } else if (id === "customer") {
+    return "Khách hàng";
+  } else if (id === "amountPriceUsePoint") {
+    return "Giảm từ điểm tích luỹ";
+  } else if (id === "amountReceived") {
+    return "Thành tiền";
+  } else {
+    return id;
+  }
+}
+export const columns: ColumnDef<Invoice>[] = [
   {
     accessorKey: "id",
     header: () => {
@@ -82,61 +90,40 @@ export const columns: ColumnDef<Customer>[] = [
     cell: ({ row }) => <div>{row.getValue("id")}</div>,
   },
   {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          className="p-2"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          <span className="font-semibold">Tên khách hàng</span>
-
-          <CaretSortIcon className="ml-1 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => <div className="capitalize">{row.getValue("name")}</div>,
-  },
-  {
-    accessorKey: "email",
+    accessorKey: "customer",
+    accessorFn: (row) => row.customer.name,
     header: () => {
-      return <div className="font-semibold">Email</div>;
+      return <div className="font-semibold">Khách hàng</div>;
     },
-    cell: ({ row }) => (
-      <div className="lg:max-w-[16rem] max-w-[4rem] truncate">
-        {row.getValue("email")}
-      </div>
-    ),
+    cell: ({ row }) => {
+      if (row.original.customer) {
+        return (
+          <div className="leading-6 flex flex-col text-left">
+            <span>{row.original.customer.name}</span>
+            <span className="font-light">{row.original.customer.phone}</span>
+          </div>
+        );
+      } else {
+        return <></>;
+      }
+    },
   },
   {
-    accessorKey: "phone",
-    header: () => {
-      return (
-        <div className="font-semibold flex justify-end">Số điện thoại</div>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="text-right">{row.getValue("phone")}</div>
-    ),
-  },
-  {
-    accessorKey: "point",
+    accessorKey: "amountPriceUsePoint",
     header: ({ column }) => (
-      <div className=" flex justify-end">
+      <div className="flex justify-end">
         <Button
-          className="p-1"
           variant={"ghost"}
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="p-1"
         >
-          <span className="font-semibold">Điểm</span>
-
-          <CaretSortIcon className="ml-1 h-4 w-4" />
+          <CaretSortIcon className="h-4 w-4" />
+          <span className="font-semibold">Dùng điểm</span>
         </Button>
       </div>
     ),
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("point"));
+      const amount = row.original.amountPriceUsePoint;
 
       // Format the amount as a dollar amount
       const formatted = new Intl.NumberFormat("vi-VN", {
@@ -144,37 +131,105 @@ export const columns: ColumnDef<Customer>[] = [
         currency: "VND",
       }).format(amount);
 
+      return (
+        <div className="text-right font-medium flex flex-col items-end gap-1">
+          -{formatted}
+          <div className="flex items-center gap-1 text-rose-700">
+            -{row.original.pointUse} <RiCopperCoinLine className="h-5 w-5" />
+          </div>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "totalPrice",
+    header: ({ column }) => (
+      <div className=" flex justify-end">
+        <Button
+          className="p-1"
+          variant={"ghost"}
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          <span className="font-semibold">Tổng đơn</span>
+
+          <CaretSortIcon className="ml-1 h-4 w-4" />
+        </Button>
+      </div>
+    ),
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue("totalPrice"));
+      const formatted = toVND(amount);
       return <div className="text-right font-medium">{formatted}</div>;
     },
   },
+  {
+    accessorKey: "amountReceived",
+    header: ({ column }) => (
+      <div className="flex justify-end">
+        <Button
+          variant={"ghost"}
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="p-1"
+        >
+          <span className="font-semibold">Thành tiền</span>
+
+          <CaretSortIcon className="h-4 w-4" />
+        </Button>
+      </div>
+    ),
+    cell: ({ row }) => {
+      const amount = row.original.amountReceived;
+
+      // Format the amount as a dollar amount
+      const formatted = new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+      }).format(amount);
+
+      return (
+        <div className="text-right font-medium flex flex-col items-end gap-1">
+          {formatted}
+          <div className="flex items-center gap-1 text-green-700">
+            {row.original.pointReceive} <RiCopperCoinLine className="h-5 w-5" />
+          </div>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "createdAt",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-end">
+          <Button
+            className="p-2 justify-end whitespace-normal"
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            <CaretSortIcon className=" h-4 w-4" />
+            <span className="font-semibold">Ngày tạo</span>
+          </Button>
+        </div>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="leading-6 flex flex-col text-right">
+        <span>
+          {new Date(row.original.createdAt).toLocaleDateString("vi-VN")}
+        </span>
+        <span className="font-light">{row.original.createdBy.name}</span>
+      </div>
+    ),
+    sortingFn: "datetime",
+  },
 ];
-
-function idToName(id: string) {
-  if (id === "name") {
-    return "Tên";
-  } else if (id === "email") {
-    return "Email";
-  } else if (id === "phone") {
-    return "Điện thoại";
-  } else if (id === "point") {
-    return "Điểm";
-  }
-  return id;
-}
-
-type FormValues = {
-  filters: {
-    type: string;
-    value: string;
-  }[];
-};
-export function CustomerTable({
+const InvoiceTable = ({
   data,
   totalPage,
 }: {
-  data: Customer[];
+  data: Invoice[];
   totalPage: number;
-}) {
+}) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const page = searchParams.get("page") ?? "1";
@@ -204,42 +259,63 @@ export function CustomerTable({
 
   const [exportOption, setExportOption] = useState("all");
   const handleExport = () => {
-    //TODO
-    // if (exportOption === "all") {
-    //   ExportSupplierList(data, "Suppliers.xlsx");
-    // } else if (table.getFilteredSelectedRowModel().rows.length < 1) {
-    //   toast({
-    //     variant: "destructive",
-    //     title: "Có lỗi",
-    //     description: "Không có nhà cung cấp nào",
-    //   });
-    // } else {
-    //   const values = table
-    //     .getFilteredSelectedRowModel()
-    //     .rows.map((row) => row.original);
-    //   ExportSupplierList(values, "Suppliers.xlsx");
-    // }
+    if (exportOption === "all") {
+      // ExportSupplierList(data, "Suppliers.xlsx");
+    }
+    if (table.getFilteredSelectedRowModel().rows.length < 1) {
+      //TODO: show notification
+    } else {
+      const values = table
+        .getFilteredSelectedRowModel()
+        .rows.map((row) => row.original);
+      // ExportSupplierList(values, "Suppliers.xlsx");
+    }
   };
-
+  const [staff, setStaff] = useState("");
+  const handleSetStaff = (staff: string) => {
+    setStaff(staff);
+    const index = fields.findIndex((item) => item.type === "createdBy");
+    if (index > -1) {
+      update(index, { type: "createdBy", value: staff });
+    } else {
+      append({ type: "createdBy", value: staff });
+    }
+  };
   const [latestFilter, setLatestFilter] = useState("");
   const filterValues = [
     { type: "search", name: "Từ khoá" },
-    { type: "minPoint", name: "Điểm nhỏ nhất" },
-    { type: "maxPoint", name: "Điểm lớn nhất" },
+    { type: "minPrice", name: "Thành tiền nhỏ nhất" },
+    { type: "maxPrice", name: "Thành tiền lớn nhất" },
+    { type: "createdAtFrom", name: "Tạo từ ngày" },
+    { type: "createdAtTo", name: "Tạo đến ngày" },
+    { type: "createdBy", name: "Người tạo" },
   ];
-  const maxPoint = searchParams.get("maxPoint") ?? undefined;
-  const minPoint = searchParams.get("minPoint") ?? undefined;
+  const maxPrice = searchParams.get("maxPrice") ?? undefined;
+  const minPrice = searchParams.get("minPrice") ?? undefined;
   const search = searchParams.get("search") ?? undefined;
+  const createdBy = searchParams.get("createdBy") ?? undefined;
+  const createdAtFrom = searchParams.get("createdAtFrom") ?? undefined;
+  const createdAtTo = searchParams.get("createdAtTo") ?? undefined;
+  "createdAtFrom" ?? undefined;
   let filters = [{ type: "", value: "" }];
   filters.pop();
-  if (maxPoint) {
-    filters = filters.concat({ type: "maxPoint", value: maxPoint });
+  if (maxPrice) {
+    filters = filters.concat({ type: "maxPrice", value: maxPrice });
   }
-  if (minPoint) {
-    filters = filters.concat({ type: "minPoint", value: minPoint });
+  if (minPrice) {
+    filters = filters.concat({ type: "minPrice", value: minPrice });
   }
   if (search) {
     filters = filters.concat({ type: "search", value: search });
+  }
+  if (createdBy) {
+    filters = filters.concat({ type: "createdBy", value: createdBy });
+  }
+  if (createdAtFrom) {
+    filters = filters.concat({ type: "createdAtFrom", value: createdAtFrom });
+  }
+  if (createdAtTo) {
+    filters = filters.concat({ type: "createdAtTo", value: createdAtTo });
   }
   let stringToFilter = "";
   filters.forEach((item) => {
@@ -255,22 +331,17 @@ export function CustomerTable({
     control: control,
     name: "filters",
   });
-
+  useEffect(() => {
+    if (createdBy) {
+      setStaff(createdBy);
+    }
+  }, [createdBy]);
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    let search = "";
-    let minPoint = "";
-    let maxPoint = "";
+    let stringToFilter = "";
     data.filters.forEach((item) => {
-      if (item.type === "minPoint") {
-        minPoint = `&minPoint=${item.value}`;
-      } else if (item.type === "maxPoint") {
-        maxPoint = `&maxPoint=${item.value}`;
-      } else if (item.type === "search") {
-        search = `&search=${item.value}`;
-      }
+      stringToFilter = stringToFilter.concat(`&${item.type}=${item.value}`);
     });
-
-    router.push(`/customer?page=1${minPoint}${maxPoint}${search}`);
+    router.push(`/invoice?page=1${stringToFilter}`);
   };
   const [openFilter, setOpenFilter] = useState(false);
 
@@ -296,14 +367,14 @@ export function CustomerTable({
                   <LuFilter className="ml-1 h-4 w-4" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-80 max-h-[32rem] mx-6 overflow-y-auto">
+              <PopoverContent className="w-96 max-h-[32rem] mx-6 overflow-y-auto">
                 <form
                   className="flex flex-col gap-4"
                   onSubmit={handleSubmit(onSubmit)}
                 >
                   <div className="space-y-2">
                     <p className="text-sm text-muted-foreground">
-                      Hiển thị khách hàng theo
+                      Hiển thị nhà cung cấp theo
                     </p>
                   </div>
                   <div className="flex flex-col gap-4">
@@ -313,14 +384,43 @@ export function CustomerTable({
                       );
                       return (
                         <div className="flex gap-2 items-center" key={item.id}>
-                          <Label className="basis-1/4">{name?.name}</Label>
-                          {item.type === "search" ? (
+                          <Label className="basis-1/3">{name?.name}</Label>
+                          {item.type === "createdBy" ? (
+                            <div className="flex-1">
+                              <StaffList
+                                staff={staff}
+                                setStaff={handleSetStaff}
+                              />
+                            </div>
+                          ) : item.type === "search" ? (
                             <Input
                               {...register(`filters.${index}.value`)}
                               className="flex-1"
                               type="text"
                               required
                             ></Input>
+                          ) : item.type.includes("At") ? (
+                            <Controller
+                              control={control}
+                              name={`filters.${index}.value`}
+                              render={({ field }) => (
+                                <FilterDatePicker
+                                  handleDateSelected={(date) => {
+                                    const unixTimeMilliseconds =
+                                      date?.getTime();
+                                    const unixTimeSeconds = Math.floor(
+                                      unixTimeMilliseconds! / 1000
+                                    );
+                                    if (item.type.includes("To")) {
+                                      field.onChange(unixTimeSeconds + 86399);
+                                    } else {
+                                      field.onChange(unixTimeSeconds);
+                                    }
+                                  }}
+                                  date={new Date(+field.value * 1000)}
+                                />
+                              )}
+                            />
                           ) : (
                             <Input
                               {...register(`filters.${index}.value`)}
@@ -329,10 +429,14 @@ export function CustomerTable({
                               required
                             ></Input>
                           )}
+
                           <Button
                             variant={"ghost"}
                             className={`px-3 `}
                             onClick={() => {
+                              if (item.type === "createdBy") {
+                                setStaff("");
+                              }
                               remove(index);
                             }}
                           >
@@ -350,7 +454,7 @@ export function CustomerTable({
                           append({ type: value, value: "" });
                         }}
                       >
-                        <SelectTrigger className="w-[160px] flex justify-center ml-8 px-2">
+                        <SelectTrigger className="w-[180px] flex justify-center ml-20 px-3">
                           <SelectValue placeholder="Chọn điều kiện lọc" />
                         </SelectTrigger>
                         <SelectContent>
@@ -377,12 +481,12 @@ export function CustomerTable({
             </Popover>
             <div className="flex-1">
               <Input
-                placeholder="Tìm kiếm khách hàng"
+                placeholder="Tìm kiếm hóa đơn"
                 value={
-                  (table.getColumn("name")?.getFilterValue() as string) ?? ""
+                  (table.getColumn("id")?.getFilterValue() as string) ?? ""
                 }
                 onChange={(event) =>
-                  table.getColumn("name")?.setFilterValue(event.target.value)
+                  table.getColumn("id")?.setFilterValue(event.target.value)
                 }
               />
             </div>
@@ -398,7 +502,9 @@ export function CustomerTable({
                   <span>
                     {name?.name}
                     {": "}
-                    {item.value}
+                    {item.type.includes("At")
+                      ? new Date(+item.value * 1000).toLocaleDateString("vi-VN")
+                      : item.value}
                   </span>
                 </div>
               );
@@ -466,7 +572,7 @@ export function CustomerTable({
                       key={cell.id}
                       onClick={() => {
                         if (!cell.id.includes("select")) {
-                          router.push(`/customer/${row.getValue("id")}`);
+                          router.push(`/invoice/${row.getValue("id")}`);
                         }
                       }}
                     >
@@ -492,30 +598,29 @@ export function CustomerTable({
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} trong{" "}
-          {table.getFilteredRowModel().rows.length} dòng được chọn.
-        </div>
+        <div className="flex-1 text-sm text-muted-foreground"></div>
         <Paging
           page={page}
           totalPage={totalPage}
           onNavigateBack={() =>
-            router.push(`/customer?page=${Number(page) - 1}${stringToFilter}`)
+            router.push(`/invoice?page=${Number(page) - 1}${stringToFilter}`)
           }
           onNavigateNext={() =>
-            router.push(`/customer?page=${Number(page) + 1}${stringToFilter}`)
+            router.push(`/invoice?page=${Number(page) + 1}${stringToFilter}`)
           }
           onPageSelect={(selectedPage) =>
-            router.push(`/customer?page=${selectedPage}${stringToFilter}`)
+            router.push(`/invoice?page=${selectedPage}${stringToFilter}`)
           }
           onNavigateFirst={() =>
-            router.push(`/customer?page=${1}${stringToFilter}`)
+            router.push(`/invoice?page=${1}${stringToFilter}`)
           }
           onNavigateLast={() =>
-            router.push(`/customer?page=${totalPage}${stringToFilter}`)
+            router.push(`/invoice?page=${totalPage}${stringToFilter}`)
           }
         />
       </div>
     </div>
   );
-}
+};
+
+export default InvoiceTable;

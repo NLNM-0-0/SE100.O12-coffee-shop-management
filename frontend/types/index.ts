@@ -171,6 +171,24 @@ export type CustomerInvoice = {
   };
   createdAt: Date;
 };
+export type Invoice = {
+  createdAt: Date;
+  createdBy: {
+    id: string;
+    name: string;
+  };
+  id: string;
+  totalPrice: number;
+  customer: {
+    id: string;
+    name: string;
+    phone: string;
+  };
+  amountReceived: number;
+  amountPriceUsePoint: number;
+  pointUse: number;
+  pointReceive: number;
+};
 export enum StatusNote {
   Inprogress = "InProgress",
   Done = "Done",

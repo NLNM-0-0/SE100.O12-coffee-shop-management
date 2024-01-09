@@ -151,3 +151,9 @@ input[type="range"]::-webkit-slider-thumb {
 .scroll___table {
   @apply rounded-md border overflow-x-auto flex-1 min-w-full max-w-[40vw];
 }
+
+@media screen {
+  .printScreen {
+    display: none;
+  }
+}
