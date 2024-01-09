@@ -48,7 +48,7 @@ export const FormSchema = z.object({
             .array(
               z.object({
                 ingredientId: required,
-                amountNeed: z.coerce.number().gt(0, "Số lượng phải dương"),
+                amountNeed: z.coerce.number(),
               })
             )
             .refine((value) => value.length > 0, {
@@ -101,22 +101,25 @@ const InsertProductPage = () => {
     data
   ) => {
     console.log(data);
-    let formData = new FormData();
+    if (image) {
+      let formData = new FormData();
 
-    formData.append("file", image);
-    formData.append("imageType", "Food");
+      formData.append("file", image);
+      formData.append("imageType", "Food");
 
-    const imgRes = await imageUpload(formData);
-    if (imgRes.hasOwnProperty("errorKey")) {
-      toast({
-        variant: "destructive",
-        title: "Có lỗi",
-        description: imgRes.message,
-      });
-      return;
+      const imgRes = await imageUpload(formData);
+      if (imgRes.hasOwnProperty("errorKey")) {
+        toast({
+          variant: "destructive",
+          title: "Có lỗi",
+          description: imgRes.message,
+        });
+        return;
+      }
+
+      data.image = imgRes.data;
     }
 
-    data.image = imgRes.data;
     const food = {
       id: data.id,
       name: data.name,
@@ -376,8 +379,6 @@ const InsertProductPage = () => {
                           <SizeInsert form={form} sizeIndex={index} />
                         </TabsContent>
                       ))}
-                      <TabsContent value="account"></TabsContent>
-                      <TabsContent value="password"></TabsContent>
                     </Tabs>
                   }
                 </CardContent>

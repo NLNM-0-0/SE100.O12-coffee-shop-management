@@ -167,40 +167,42 @@ const EditStaff = ({ params }: { params: { staffId: string } }) => {
   };
   const [image, setImage] = useState<any>();
   const handleImageSelected = async () => {
-    let formData = new FormData();
+    if (image) {
+      let formData = new FormData();
 
-    formData.append("file", image);
-    formData.append("imageType", "Avatar");
+      formData.append("file", image);
+      formData.append("imageType", "Avatar");
 
-    const imgRes = await imageUpload(formData);
-    if (imgRes.hasOwnProperty("errorKey")) {
-      toast({
-        variant: "destructive",
-        title: "Có lỗi",
-        description: imgRes.message,
-      });
-      return;
-    } else {
-      console.log(imgRes.data);
-      const response: Promise<any> = updateStaff({
-        id: params.staffId,
-        image: imgRes.data,
-      });
-      const data = await response;
-      if (data.hasOwnProperty("errorKey")) {
+      const imgRes = await imageUpload(formData);
+      if (imgRes.hasOwnProperty("errorKey")) {
         toast({
           variant: "destructive",
           title: "Có lỗi",
-          description: data.message,
+          description: imgRes.message,
         });
+        return;
       } else {
-        toast({
-          variant: "success",
-          title: "Thành công",
-          description: "Thay đổi ảnh nhân viên thành công",
+        console.log(imgRes.data);
+        const response: Promise<any> = updateStaff({
+          id: params.staffId,
+          image: imgRes.data,
         });
-        mutate();
-        router.refresh();
+        const data = await response;
+        if (data.hasOwnProperty("errorKey")) {
+          toast({
+            variant: "destructive",
+            title: "Có lỗi",
+            description: data.message,
+          });
+        } else {
+          toast({
+            variant: "success",
+            title: "Thành công",
+            description: "Thay đổi ảnh nhân viên thành công",
+          });
+          mutate();
+          router.refresh();
+        }
       }
     }
   };
