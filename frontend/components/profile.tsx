@@ -75,7 +75,7 @@ const Profile = () => {
     const token = await getApiKey();
     const res = axios
       .patch(
-        `${endPoint}/v1/password`,
+        `${endPoint}/password`,
         {
           newPassword: data.newPassword,
           oldPassword: data.oldPassword,

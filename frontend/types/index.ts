@@ -158,6 +158,30 @@ export type ExportNoteDetail = {
   amountExport: number;
   unitTypeName: string;
 };
+export type CheckNoteDetail = {
+  ingredient: {
+    id: string;
+    name: string;
+    unitType: {
+      id: string;
+      name: string;
+      measureType: string;
+      value: number;
+    };
+  };
+  difference: number;
+  final: number;
+  initial: number;
+};
+export type ShopGeneral = {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  wifiPass: string;
+  accumulatePointPercent: number;
+  usePointPercent: number;
+};
 export type CustomerInvoice = {
   id: string;
   totalPrice: number;
@@ -412,4 +436,12 @@ export type TopSoldFood = {
 export type CharComponent = {
   time: Date;
   value: number;
+};
+export type CheckNote = {
+  id: string;
+  createdAt: Date;
+  createdBy: {
+    id: string;
+    name: string;
+  };
 };

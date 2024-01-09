@@ -28,7 +28,7 @@ import { useState } from "react";
 import Paging, { PagingProps } from "../paging";
 import getSupplierImportNote from "@/lib/supplier/getSupplierImportNote";
 import Loading from "../loading";
-import { RiCopperCoinFill, RiCopperCoinLine } from "react-icons/ri";
+import { GiShamrock } from "react-icons/gi";
 // import ExportDialog from "./export-dialog";
 // import { ExportImportNote } from "./export-import-note";
 import { toast } from "../ui/use-toast";
@@ -135,7 +135,7 @@ export const columns: ColumnDef<CustomerInvoice>[] = [
         <div className="text-right font-medium flex flex-col items-end gap-1">
           -{formatted}
           <div className="flex items-center gap-1 text-rose-700">
-            -{row.original.pointUse} <RiCopperCoinLine className="h-5 w-5" />
+            -{row.original.pointUse} <GiShamrock className="h-5 w-5" />
           </div>
         </div>
       );
@@ -169,7 +169,7 @@ export const columns: ColumnDef<CustomerInvoice>[] = [
         <div className="text-right font-medium flex flex-col items-end gap-1">
           {formatted}
           <div className="flex items-center gap-1 text-green-700">
-            {row.original.pointReceive} <RiCopperCoinLine className="h-5 w-5" />
+            {row.original.pointReceive} <GiShamrock className="h-5 w-5" />
           </div>
         </div>
       );

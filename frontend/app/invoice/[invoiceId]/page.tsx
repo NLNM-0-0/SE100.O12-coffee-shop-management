@@ -39,7 +39,7 @@ const InvoiceDetails = async ({
       return (
         <div className="col items-center">
           <div className="col xl:w-4/5 w-full xl:px-0 md:px-8 px-0">
-            <DetailLayout {...responseData.invoice} />
+            <DetailLayout {...responseData} />
           </div>
         </div>
       );
