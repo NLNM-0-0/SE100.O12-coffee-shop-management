@@ -13,6 +13,7 @@ type Invoice struct {
 	CustomerId          string                             `json:"-" gorm:"column:customerId;"`
 	Customer            *SimpleCustomer                    `json:"customer"  gorm:"foreignKey:CustomerId;references:Id"`
 	TotalPrice          int                                `json:"totalPrice" gorm:"column:totalPrice;"`
+	TotalCost           int                                `json:"-" gorm:"column:totalCost;"`
 	AmountReceived      int                                `json:"amountReceived" gorm:"column:amountReceived"`
 	AmountPriceUsePoint int                                `json:"amountPriceUsePoint" gorm:"column:amountPriceUsePoint"`
 	PointUse            int                                `json:"pointUse" gorm:"column:pointUse;"`

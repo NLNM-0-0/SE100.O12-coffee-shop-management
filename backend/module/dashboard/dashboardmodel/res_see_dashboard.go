@@ -6,15 +6,15 @@ import (
 )
 
 type ResSeeDashboard struct {
-	TimeFrom                     time.Time                     `json:"timeFrom" gorm:"-"`
-	TimeTo                       time.Time                     `json:"timeTo" gorm:"-"`
-	TotalSale                    int                           `json:"totalSale" gorm:"-"`
-	TotalSold                    int                           `json:"totalSold" gorm:"-"`
-	TotalCustomer                int                           `json:"totalCustomer" gorm:"-"`
-	TotalPoint                   int                           `json:"totalPoint" gorm:"-"`
-	TopSoldFoods                 []productmodel.FoodWithAmount `json:"topSoldFoods" gorm:"-"`
-	ChartSaleComponents          []ChartComponent              `json:"chartSaleComponents" gorm:"-"`
-	ChartAmountReceiveComponents []ChartComponent              `json:"chartAmountReceiveComponents" gorm:"-"`
+	TimeFrom             time.Time                     `json:"timeFrom" gorm:"-"`
+	TimeTo               time.Time                     `json:"timeTo" gorm:"-"`
+	TotalSale            int                           `json:"totalSale" gorm:"-"`
+	TotalSold            int                           `json:"totalSold" gorm:"-"`
+	TotalCustomer        int                           `json:"totalCustomer" gorm:"-"`
+	TotalPoint           int                           `json:"totalPoint" gorm:"-"`
+	TopSoldFoods         []productmodel.FoodWithAmount `json:"topSoldFoods" gorm:"-"`
+	ChartPriceComponents []ChartComponent              `json:"chartPriceComponents" gorm:"-"`
+	ChartCostComponents  []ChartComponent              `json:"chartCostComponents" gorm:"-"`
 }
 
 type ChartComponent struct {
