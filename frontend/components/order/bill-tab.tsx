@@ -1,9 +1,10 @@
-import { FormValues } from "@/app/order/page";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Control,
+  Controller,
   FieldArrayWithId,
   UseFieldArrayRemove,
+  UseFieldArrayUpdate,
   UseFormRegister,
   UseFormSetValue,
   UseFormWatch,
@@ -18,7 +19,21 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { toVND } from "@/lib/utils";
 import { Label } from "../ui/label";
-
+import { FormValues } from "@/app/order/page-layout";
+import SelectSize from "./select-size";
+import { ProductForSale } from "@/types";
+import { TbChartBubbleFilled } from "react-icons/tb";
+import SelectTopping from "./select-topping";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 const AddUp = ({
   control,
   index,
@@ -27,30 +42,39 @@ const AddUp = ({
   index: number;
 }) => {
   const formValues = useWatch({
-    name: `invoiceDetails.${index}`,
+    name: `details.${index}`,
     control,
   });
-  const addUp = formValues.price * formValues.quantity;
+  const toppingPrice = formValues.toppings.reduce(
+    (acc, item) => acc + +item.price,
+    0
+  );
+
+  const addUp = (+formValues.size.price + toppingPrice) * formValues.amount;
   return <span className="text-sm font-bold">{toVND(addUp)}</span>;
 };
 
 export const Total = ({ control }: { control: Control<FormValues> }) => {
   const formValues = useWatch({
-    name: "invoiceDetails",
+    name: "details",
     control,
   });
   const total = formValues.reduce(
-    (acc, current) => acc + (current.price || 0) * (current.quantity || 0),
+    (acc, current) =>
+      acc +
+      (current.size.price +
+        current.toppings.reduce((acc, item) => acc + +item.price, 0) || 0) *
+        (current.amount || 0),
     0
   );
   const totalQuantity = formValues.reduce(
-    (acc, current) => acc + 1 * (current.quantity || 0),
+    (acc, current) => acc + 1 * (current.amount || 0),
     0
   );
   return (
     <div className="flex gap-2 items-center">
       <span>Tổng tiền</span>
-      <div className="border rounded-lg px-2 py-1">{totalQuantity}</div>
+      <div className="pr-2 py-1">({totalQuantity})</div>
       <h1 className="text-sm">{toVND(total)}</h1>
     </div>
   );
@@ -63,17 +87,35 @@ const BillTab = ({
   watch,
   control,
   remove,
+  update,
+  foods,
+  onPayClick,
   isSheet,
 }: {
-  fields: FieldArrayWithId<FormValues, "invoiceDetails", "id">[];
+  fields: FieldArrayWithId<FormValues, "details", "id">[];
   setValue: UseFormSetValue<FormValues>;
   register: UseFormRegister<FormValues>;
   watch: UseFormWatch<FormValues>;
+  update: UseFieldArrayUpdate<FormValues, "details">;
+  onPayClick: () => void;
   control: Control<FormValues, any>;
   remove: UseFieldArrayRemove;
   isSheet?: boolean;
+  foods: ProductForSale[] | undefined;
 }) => {
-  const invoices = watch("invoiceDetails");
+  const invoices = watch("details");
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    document.addEventListener("keydown", detectKeyDown, true);
+  }, []);
+  const detectKeyDown = (e: any) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === "F7") {
+      setOpen(true);
+    }
+    return () => {
+      document.removeEventListener("keydown", detectKeyDown);
+    };
+  };
   return (
     <Card className="sticky right-0 top-0 h-[86vh] overflow-hidden">
       <CardContent
@@ -101,12 +143,13 @@ const BillTab = ({
                   index === fields.length - 1 ? "" : "border-b"
                 }  xl:px-4 px-2 pb-2 group gap-2`}
               >
-                <span className="text-sm leading-6">{index + 1}</span>
                 <div className="flex flex-col flex-1">
                   {/* Name size price row */}
                   <div className="flex">
                     <div className="flex basis-[35%]">
-                      <h1 className="text-base font-medium">{item.foodName}</h1>
+                      <h1 className="text-base font-medium">
+                        {index + 1}. {item.foodName}
+                      </h1>
                     </div>
 
                     <div className="flex flex-wrap basis-[65%] items-center justify-between xl:gap-3 gap-2">
@@ -115,14 +158,11 @@ const BillTab = ({
                         <Button
                           className="p-[2px] bg-primary hover:bg-primary/90 rounded-full cursor-pointer text-white invisible  group-hover:visible h-5 w-5"
                           onClick={() => {
-                            const quantity = +invoices.at(index)?.quantity!;
+                            const quantity = +invoices.at(index)?.amount!;
                             if (quantity === 1) {
                               //TODO: remove
                             } else {
-                              setValue(
-                                `invoiceDetails.${index}.quantity`,
-                                quantity - 1
-                              );
+                              setValue(`details.${index}.amount`, quantity - 1);
                             }
                           }}
                         >
@@ -131,51 +171,71 @@ const BillTab = ({
                         <Input
                           type="number"
                           className="px-1 w-10 text-center [&::-webkit-inner-spin-button]:appearance-none"
-                          {...register(
-                            `invoiceDetails.${index}.quantity` as const
-                          )}
+                          {...register(`details.${index}.amount` as const)}
                         ></Input>
 
                         <Button
                           className="p-[2px] bg-primary hover:bg-primary/90 rounded-full cursor-pointer text-white invisible group-hover:visible h-5 w-5"
                           onClick={() => {
                             setValue(
-                              `invoiceDetails.${index}.quantity`,
-                              +invoices.at(index)?.quantity! + 1
+                              `details.${index}.amount`,
+                              +invoices.at(index)?.amount! + 1
                             );
                           }}
                         >
                           <HiPlus />
                         </Button>
                       </div>
-                      <span className="font-semibold text-sm text-center">
-                        M
-                      </span>
-                      <span className="text-sm text-right">
-                        {toVND(item.price)}
+                      <SelectSize
+                        sizes={
+                          foods?.find(
+                            (food) => food.id === invoices[index].foodId
+                          )?.sizes
+                        }
+                        selectedId={invoices.at(index)?.size.sizeId!}
+                        onSizeConfirm={(value) => {
+                          const selectedSize = foods
+                            ?.find((food) => food.id === invoices[index].foodId)
+                            ?.sizes.find((size) => size.sizeId === value);
+                          const updatedDetails = invoices;
+
+                          update(index, {
+                            ...updatedDetails[index],
+                            size: {
+                              sizeName: selectedSize?.name!,
+                              sizeId: selectedSize?.sizeId!,
+                              price: selectedSize?.price!,
+                            },
+                          });
+                        }}
+                      >
+                        <Button className="font-semibold text-sm text-center p-0 px-2 h-6 bg-orange-200 hover:bg-orange-200/90 text-primary rounded-full m-auto">
+                          {invoices.at(index)?.size.sizeName}
+                        </Button>
+                      </SelectSize>
+                      <span className="text-sm ml-auto">
+                        {toVND(invoices.at(index)?.size.price!)}
                       </span>
                     </div>
                   </div>
                   {/* topping list */}
-                  <div className="flex flex-col">
-                    <span className="font-medium text-sm">Topping:</span>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground text-sm">
-                        Hat sen
-                      </span>
-                      <span className="text-muted-foreground text-sm">
-                        5.000 d
-                      </span>
+                  {invoices.at(index)?.toppings &&
+                  invoices.at(index)?.toppings.length &&
+                  invoices.at(index)?.toppings.length! > 0 ? (
+                    <div className="flex flex-col">
+                      <span className="font-medium text-sm">Topping:</span>
+                      {invoices[index].toppings.map((item) => (
+                        <div className="flex justify-between" key={item.id}>
+                          <span className="text-muted-foreground text-sm">
+                            {item.name}
+                          </span>
+                          <span className="text-muted-foreground text-sm">
+                            {toVND(+item.price)}
+                          </span>
+                        </div>
+                      ))}
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground text-sm">
-                        Hat sen
-                      </span>
-                      <span className="text-muted-foreground text-sm">
-                        5.000 d
-                      </span>
-                    </div>
-                  </div>
+                  ) : null}
 
                   <div className="flex">
                     <span className="text-sm font-semibold">Tổng</span>
@@ -184,18 +244,60 @@ const BillTab = ({
                     </div>
                   </div>
                   <div className="flex justify-between">
-                    <div className="relative flex-1 items-center">
-                      <span className="w-full">
-                        <input
-                          id={`note${index}`}
-                          className="outline-none border-0 text-sm ml-5 w-4/5"
-                          placeholder="Ghi chú..."
-                        ></input>
-                      </span>
+                    <div className="flex gap-1">
+                      <Controller
+                        control={control}
+                        name={`details.${index}.toppings`}
+                        render={({ field }) => {
+                          return (
+                            <SelectTopping
+                              selectedId=""
+                              checkedTopping={field.value.map(
+                                (item) => item.id
+                              )}
+                              onCheckChanged={(id, name, price) => {
+                                const selectedIndex = invoices[
+                                  index
+                                ].toppings.findIndex((item) => item.id === id);
+                                let updatedToppings = field.value;
+                                if (selectedIndex > -1) {
+                                  updatedToppings.splice(selectedIndex, 1);
+                                  field.onChange(updatedToppings);
+                                } else {
+                                  // appendCate({ idCate: idCate });
+                                  updatedToppings.push({
+                                    id: id,
+                                    name: name,
+                                    price: price,
+                                  });
+                                  field.onChange(updatedToppings);
+                                }
+                              }}
+                            >
+                              <div title="Topping">
+                                <TbChartBubbleFilled className="text-muted-foreground h-6 w-6 cursor-pointer" />
+                              </div>
+                            </SelectTopping>
+                          );
+                        }}
+                      />
 
-                      <Label htmlFor={`note${index}`}>
-                        <FaPen className="text-muted-foreground h-3 absolute top-2 cursor-pointer" />
-                      </Label>
+                      <div className="relative flex-1 items-center">
+                        <span className="w-full">
+                          <input
+                            id={`note${index}`}
+                            className="outline-none border-0 text-sm ml-5 w-4/5"
+                            placeholder="Ghi chú..."
+                            {...register(
+                              `details.${index}.description` as const
+                            )}
+                          ></input>
+                        </span>
+
+                        <Label htmlFor={`note${index}`}>
+                          <FaPen className="text-muted-foreground h-3 absolute top-2 cursor-pointer" />
+                        </Label>
+                      </div>
                     </div>
                     <Button
                       variant={"ghost"}
@@ -210,12 +312,52 @@ const BillTab = ({
             );
           })}
         </div>
-        <div className="flex justify-between items-center shadow-[0_-2px_2px_-2px_rgba(0,0,0,0.2)] bg-white h-20 px-4">
-          <Button>Thanh toán</Button>
+        <div className="flex flex-col gap-4 p-4 items-end shadow-[0_-2px_2px_-2px_rgba(0,0,0,0.2)] bg-white px-6">
           {/* Total */}
           <div className="ml-auto">
             <Total control={control} />
           </div>
+          <RadioGroup defaultValue="all">
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="all" id="r1" />
+              <Label htmlFor="r1" className="font-normal">
+                Thanh toán bằng tiền mặt
+              </Label>
+            </div>
+          </RadioGroup>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button>Thanh toán (Ctrl + F7)</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Xác nhận thanh toán</DialogTitle>
+                <DialogDescription>
+                  Bạn có chắc chắn muốn thanh toán
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <div className="flex gap-5 justify-end">
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    onClick={() => setOpen(false)}
+                  >
+                    Hủy
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      onPayClick();
+                      setOpen(false);
+                    }}
+                  >
+                    Xác nhận
+                  </Button>
+                </div>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </CardContent>
     </Card>

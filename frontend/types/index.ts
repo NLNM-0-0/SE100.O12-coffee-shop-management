@@ -8,6 +8,27 @@ export type Product = {
   image?: string;
   description: string;
 };
+export type ProductForSale = {
+  id: string;
+  name: string;
+  image?: string;
+  categories: {
+    category: {
+      id: string;
+      name: string;
+    };
+  }[];
+  sizes: {
+    sizeId: string;
+    name: string;
+    price: number;
+  }[];
+};
+export type ToppingForSale = {
+  id: string;
+  name: string;
+  price: number;
+};
 export type Topping = {
   id: string;
   name: string;

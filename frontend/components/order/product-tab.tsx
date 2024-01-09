@@ -2,18 +2,30 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Input } from "../ui/input";
-import { categories, products } from "@/constants";
-import { Product } from "@/types";
-import { UseFieldArrayAppend, useFieldArray } from "react-hook-form";
-import { FormValues } from "@/app/order/page";
+import { ProductForSale } from "@/types";
+import {
+  FieldArrayWithId,
+  UseFieldArrayAppend,
+  UseFieldArrayUpdate,
+  useFieldArray,
+} from "react-hook-form";
 import { removeAccents, toVND } from "@/lib/utils";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import { useCallback } from "react";
+import { FormValues } from "@/app/order/page-layout";
+import getAllCategoryList from "@/lib/category/getAllCategoryList";
 const ProductTab = ({
   append,
+  fields,
+  update,
+  foods,
 }: {
-  append: UseFieldArrayAppend<FormValues, "invoiceDetails">;
+  append: UseFieldArrayAppend<FormValues, "details">;
+  fields: FieldArrayWithId<FormValues, "details", "id">[];
+  update: UseFieldArrayUpdate<FormValues, "details">;
+  foods: ProductForSale[] | undefined;
 }) => {
+  const { categories, isLoading, isError, mutate } = getAllCategoryList();
   const [cateList, setCateList] = useState<
     {
       id: string;
@@ -22,18 +34,16 @@ const ProductTab = ({
     }[]
   >();
   const [all, setAll] = useState(true);
-  const [prodList, setProdList] = useState<Array<Product>>(products);
+  const [prodList, setProdList] = useState<Array<ProductForSale>>();
   const handleAllSelected = () => {
     if (!all) {
       setAll((prev) => !prev);
       setCateList(
-        categories?.map((item: any) => {
+        categories?.data.map((item: any) => {
           return { id: item.id, name: item.name, isSelected: false };
         })
       );
-      setProdList(
-        products?.filter((item: Product) => item.status === "active")
-      );
+      setProdList(foods);
     }
   };
 
@@ -59,30 +69,26 @@ const ProductTab = ({
           ?.filter((item: any) => item.isSelected === true)
           .map((value) => value.id)
       );
-      const newProdList = new Array<Product>();
-      products.forEach((prod: Product) => {
-        // for (let element of prod.idCate) {
-        //   if (categorySet.has(element.id)) {
-        //     if (book.quantity > 0) {
-        //       newProdList.push(book);
-        //       break;
-        //     }
-        //   }
-        // }
+      const newProdList = new Array<ProductForSale>();
+      foods?.forEach((prod: ProductForSale) => {
+        for (let element of prod.categories) {
+          if (categorySet.has(element.category.id)) {
+            newProdList.push(prod);
+            break;
+          }
+        }
       });
       setProdList(newProdList);
     }
   };
 
   const [inputValue, setInputValue] = useState<string>("");
-  const [filteredList, setFilteredList] = useState<Array<Product>>(products);
+  const [filteredList, setFilteredList] = useState<Array<ProductForSale>>();
 
   // Search Handler
   const searchHandler = useCallback(() => {
-    const filteredData = products?.filter((prod) => {
-      return removeAccents(prod.name)
-        .toLowerCase()
-        .includes(removeAccents(inputValue).toLowerCase().normalize());
+    const filteredData = prodList?.filter((prod) => {
+      return prod.name.toLowerCase().includes(inputValue.toLowerCase());
     });
     setFilteredList(filteredData);
   }, [prodList, inputValue]);
@@ -99,7 +105,6 @@ const ProductTab = ({
       clearTimeout(timer);
     };
   }, [searchHandler]);
-
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -108,12 +113,26 @@ const ProductTab = ({
   const detectKeyDown = (e: any) => {
     if (e.key === "F2") {
       inputRef.current?.focus();
-      setInputValue("");
     }
     return () => {
       document.removeEventListener("keydown", detectKeyDown);
     };
   };
+  useEffect(() => {
+    if (categories) {
+      setCateList(
+        categories?.data.map((item: any) => {
+          return { id: item.id, name: item.name, isSelected: false };
+        })
+      );
+    }
+  }, [categories]);
+
+  useEffect(() => {
+    if (foods) {
+      setProdList(foods);
+    }
+  }, [foods]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -121,7 +140,7 @@ const ProductTab = ({
         <Input
           ref={inputRef}
           className=" bg-white rounded-xl"
-          placeholder="Tìm kiếm sản phẩm"
+          placeholder="Tìm kiếm sản phẩm (F2)"
           value={inputValue}
           onChange={(e) => {
             setInputValue(e.target.value);
@@ -141,13 +160,16 @@ const ProductTab = ({
         >
           Tất cả
         </div>
-        {categories.map((item, index) => (
+        {cateList?.map((item) => (
           <div
             key={item.id}
-            className={`rounded-xl flex self-start px-3 py-1 border-gray-200 border text-sm  cursor-pointer
-
-            `}
-            // onClick={() => handleCateSelected(index)}
+            className={`rounded-xl flex self-start px-3 py-1 border-gray-200 border text-sm font-medium cursor-pointer
+            ${
+              item.isSelected
+                ? "bg-orange-50 border-primary text-brown "
+                : "bg-white text-muted-foreground"
+            }`}
+            onClick={() => handleCateSelected(item.id)}
           >
             {item.name}
           </div>
@@ -163,18 +185,27 @@ const ProductTab = ({
               key={prod.id}
               className="bg-white shadow-sm rounded-xl  overflow-hidden cursor-pointer hover:shadow-md"
               onClick={() => {
+                const index = fields.findIndex(
+                  (value) => value.foodId === prod.id
+                );
                 append({
                   foodId: prod.id,
+                  amount: 1,
+                  size: {
+                    sizeId: prod.sizes[0].sizeId,
+                    sizeName: prod.sizes[0].name,
+                    price: prod.sizes[0].price,
+                  },
                   foodName: prod.name,
-                  quantity: 1,
-                  price: prod.price,
+                  toppings: [],
+                  description: fields.at(index)?.description ?? "",
                 });
               }}
             >
               <AspectRatio ratio={1 / 1}>
                 <Image
                   className=" object-cover"
-                  src={prod.image!}
+                  src={prod.image ?? "/no-image.jpg"}
                   alt="image"
                   fill
                   sizes="(max-width: 768px) 33vw, 20vw"
@@ -185,7 +216,7 @@ const ProductTab = ({
                   {prod.name}
                 </h1>
                 <h1 className="text-base font-semibold text-primary text-center pb-1">
-                  {toVND(prod.price)}
+                  {toVND(prod.sizes[0].price)}
                 </h1>
               </div>
             </div>

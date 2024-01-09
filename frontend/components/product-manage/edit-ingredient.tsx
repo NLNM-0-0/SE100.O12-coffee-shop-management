@@ -87,7 +87,7 @@ const EditIngredient = ({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-[472px] p-0 bg-white">
         <DialogHeader>
-          <DialogTitle className="p-6 pb-0">Chỉnh sửa thể loại</DialogTitle>
+          <DialogTitle className="p-6 pb-0">Chỉnh sửa nguyên liệu</DialogTitle>
         </DialogHeader>
         <form>
           <div className="p-6 flex flex-col gap-4 border-y-[1px]">
