@@ -152,8 +152,9 @@ CREATE TABLE `InventoryCheckNoteDetail` (
 DROP TABLE IF EXISTS `Invoice`;
 CREATE TABLE `Invoice` (
   `id` varchar(13) NOT NULL,
-  `customerId` varchar(13) NULL,
+  `customerId` varchar(13) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `totalPrice` int NOT NULL,
+  `totalCost` int DEFAULT NULL,
   `amountReceived` int NOT NULL,
   `amountPriceUsePoint` int NOT NULL,
   `pointUse` int NOT NULL,
@@ -163,8 +164,8 @@ CREATE TABLE `Invoice` (
   PRIMARY KEY (`id`),
   KEY `customerId` (`customerId`),
   KEY `createdBy` (`createdBy`),
-  CONSTRAINT `Invoice_ibfk_1` FOREIGN KEY (`customerId`) REFERENCES `Customer` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `Invoice_ibfk_2` FOREIGN KEY (`createdBy`) REFERENCES `MUser` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT `Invoice_ibfk_2` FOREIGN KEY (`createdBy`) REFERENCES `MUser` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `Invoice_ibfk_3` FOREIGN KEY (`customerId`) REFERENCES `Customer` (`id`) ON DELETE SET DEFAULT ON UPDATE SET DEFAULT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS `InvoiceDetail`;
@@ -186,7 +187,7 @@ DROP TABLE IF EXISTS `MUser`;
 CREATE TABLE `MUser` (
   `id` varchar(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `name` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `phone`varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `phone` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `email` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `address` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `password` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -395,19 +396,35 @@ CREATE TABLE `UnitType` (
 INSERT INTO `Category` (`id`, `name`, `description`, `amountProduct`) VALUES
 ('kShzQ1FIR', 'Nếu không đổi tên thì xóa trường này', 'Nếu ko đổi mô tả thì xóa trường này', 0);
 INSERT INTO `Category` (`id`, `name`, `description`, `amountProduct`) VALUES
+('LNQxrPFSg', '21521495', '', 0);
+INSERT INTO `Category` (`id`, `name`, `description`, `amountProduct`) VALUES
 ('nk7XQ1KIR', 'Tên danh mục', 'Mô tả danh mục', 0);
+INSERT INTO `Category` (`id`, `name`, `description`, `amountProduct`) VALUES
+('QJ8y9EFIR', 'cà phê', '', 1),
+('XTWY9PKSR', 'sữa', '', 0);
 
-
+INSERT INTO `CategoryFood` (`foodId`, `categoryId`) VALUES
+('_3My6PKIR', 'QJ8y9EFIR');
 
 
 INSERT INTO `Customer` (`id`, `name`, `email`, `phone`, `point`) VALUES
-('IdCustomer', 'Nếu không sửa tên thì xóa trường này', 'a@gmail.com', '01234567892', 0);
+('_1V3zQFSR', 'quao', 'a@gmail.com', '0987687114', 10);
 INSERT INTO `Customer` (`id`, `name`, `email`, `phone`, `point`) VALUES
-('KH001', 'tên khách hàng', 'a@gmail.com', '01234567893', 0);
+('4SlRmwFSg', 'hi', 'b@gmail.com', '0398750911', 290);
+INSERT INTO `Customer` (`id`, `name`, `email`, `phone`, `point`) VALUES
+('IdCustomer', 'Nếu không sửa tên thì xóa trường này', 'a@gmail.comm', '0987658712', 0);
+INSERT INTO `Customer` (`id`, `name`, `email`, `phone`, `point`) VALUES
+('KH001', 'tên khách hàng', 'a@gmail.com', '01234567893', 0),
+('l-ZYiwFSR', 'hi', 'a@gmail.com', '0901982312', 0);
+
+INSERT INTO `ExportNote` (`id`, `reason`, `createdBy`, `createdAt`) VALUES
+('UEl6HYFIg', 'Damaged', 'g3W21A7SR', '2024-01-07 17:50:03');
 
 
-
-
+INSERT INTO `ExportNoteDetail` (`exportNoteId`, `ingredientId`, `amountExport`, `unitTypeName`) VALUES
+('UEl6HYFIg', '0_LcnYFIR', 2, 'l');
+INSERT INTO `ExportNoteDetail` (`exportNoteId`, `ingredientId`, `amountExport`, `unitTypeName`) VALUES
+('UEl6HYFIg', '8Se57YKSR', 1, 'đơn vị');
 
 
 INSERT INTO `Feature` (`id`, `description`, `groupName`) VALUES
@@ -451,6 +468,34 @@ INSERT INTO `Feature` (`id`, `description`, `groupName`) VALUES
 ('USE_UP_STATE', 'Chỉnh sửa trạng thái người dùng', 'Người dùng'),
 ('USE_VIEW', 'Xem người dùng', 'Người dùng');
 
+INSERT INTO `Food` (`id`, `name`, `description`, `cookingGuide`, `image`, `isActive`) VALUES
+('_3My6PKIR', 'Cà phê sữa đá', 'Cà phê pha với sữa', 'none', 'https://firebasestorage.googleapis.com/v0/b/coffee-shop-web.appspot.com/o/Food%2Fno_orderW_ZseEFIR?alt=media', 1);
+
+
+INSERT INTO `ImportNote` (`id`, `supplierId`, `totalPrice`, `status`, `createdBy`, `closedBy`, `createdAt`, `closedAt`) VALUES
+('-fRh7LFIR', 'SupCake0001', 50000, 'Done', 'g3W21A7SR', 'g3W21A7SR', '2024-01-07 16:47:54', '2024-01-07 17:30:20');
+INSERT INTO `ImportNote` (`id`, `supplierId`, `totalPrice`, `status`, `createdBy`, `closedBy`, `createdAt`, `closedAt`) VALUES
+('-sRhnYKIg', 'SupCake0001', 50000, 'Done', 'g3W21A7SR', 'g3W21A7SR', '2024-01-07 16:47:54', '2024-01-07 17:30:24');
+INSERT INTO `ImportNote` (`id`, `supplierId`, `totalPrice`, `status`, `createdBy`, `closedBy`, `createdAt`, `closedAt`) VALUES
+('8xZUtEFIg', 'SupCake0001', 420, 'InProgress', 'g3W21A7SR', NULL, '2024-01-08 04:32:27', NULL);
+INSERT INTO `ImportNote` (`id`, `supplierId`, `totalPrice`, `status`, `createdBy`, `closedBy`, `createdAt`, `closedAt`) VALUES
+('uI3h7LFSg', 'SupCoffe0001', 3000, 'Done', 'g3W21A7SR', 'g3W21A7SR', '2024-01-07 16:48:24', '2024-01-07 17:30:14');
+
+INSERT INTO `ImportNoteDetail` (`importNoteId`, `ingredientId`, `price`, `amountImport`, `totalUnit`, `unitTypeName`) VALUES
+('-fRh7LFIR', '0_LcnYFIR', 20000, 2.5, 50000, 'l');
+INSERT INTO `ImportNoteDetail` (`importNoteId`, `ingredientId`, `price`, `amountImport`, `totalUnit`, `unitTypeName`) VALUES
+('-sRhnYKIg', '0_LcnYFIR', 20000, 2.5, 50000, 'l');
+INSERT INTO `ImportNoteDetail` (`importNoteId`, `ingredientId`, `price`, `amountImport`, `totalUnit`, `unitTypeName`) VALUES
+('8xZUtEFIg', '0_LcnYFIR', 21, 20, 420, 'ml');
+INSERT INTO `ImportNoteDetail` (`importNoteId`, `ingredientId`, `price`, `amountImport`, `totalUnit`, `unitTypeName`) VALUES
+('uI3h7LFSg', '8Se57YKSR', 2500, 1.2, 3000, 'đơn vị');
+
+INSERT INTO `Ingredient` (`id`, `name`, `amount`, `unitTypeId`, `price`) VALUES
+('0_LcnYFIR', 'Sữa', 88, 'l', 0);
+INSERT INTO `Ingredient` (`id`, `name`, `amount`, `unitTypeId`, `price`) VALUES
+('8Se57YKSR', 'Trứng', 27, 'dv', 2500);
+INSERT INTO `Ingredient` (`id`, `name`, `amount`, `unitTypeId`, `price`) VALUES
+('Ecd5nLKSR', 'Đường', 28, 'kg', 35000);
 
 
 
@@ -460,22 +505,39 @@ INSERT INTO `Feature` (`id`, `description`, `groupName`) VALUES
 
 
 
+INSERT INTO `MUser` (`id`, `name`, `phone`, `email`, `address`, `password`, `salt`, `roleId`, `image`, `isActive`) VALUES
+('g3W21A7SR', 'Nguyễn Văn A', '0919676756', 'admin@gmail.com', 'TPHCM', '5e107317df151f6e8e0015c4f2ee7936', 'mVMxRDAHpAJfyzuiXWRELghNpynUqBKueSboGBcrwHUuzEWsms', 'admin', 'https://firebasestorage.googleapis.com/v0/b/coffee-shop-web.appspot.com/o/Default%2Favatar.jpg?alt=media', 1);
+INSERT INTO `MUser` (`id`, `name`, `phone`, `email`, `address`, `password`, `salt`, `roleId`, `image`, `isActive`) VALUES
+('za1u8m4Sg', 'Nguyễn Văn U', '0966656041', 'user@gmail.com', 'TPHCM', 'cb58ac5a2272517d1960565444bde187', 'QYlnGKRgYBxIXzMnnQSVcglbtjPsAhVlxMRMDaqnaquxwADSur', 'user', 'https://firebasestorage.googleapis.com/v0/b/coffee-shop-web.appspot.com/o/Default%2Favatar.jpg?alt=media', 1);
 
 
+INSERT INTO `Recipe` (`id`) VALUES
+('DUS0dyFIgz');
+INSERT INTO `Recipe` (`id`) VALUES
+('Gg-fvsKIRz');
+INSERT INTO `Recipe` (`id`) VALUES
+('l3GseEFIgm');
+INSERT INTO `Recipe` (`id`) VALUES
+('l3Ms6EKIRM'),
+('lHc0IyKIgz'),
+('lrvAvsKSgz');
 
-
-
-
-
-INSERT INTO `MUser` (`id`, `name`, `phone`, `email`, `address`, `password`, `salt`, `roleId`, `isActive`, `image`) VALUES
-('g3W21A7SR', 'Nguyễn Văn A', '0919676756', 'admin@gmail.com', 'TPHCM', '5e107317df151f6e8e0015c4f2ee7936', 'mVMxRDAHpAJfyzuiXWRELghNpynUqBKueSboGBcrwHUuzEWsms', 'admin', 1, 'https://firebasestorage.googleapis.com/v0/b/coffee-shop-web.appspot.com/o/Default%2Favatar.jpg?alt=media');
-INSERT INTO `MUser` (`id`, `name`, `phone`, `email`, `address`, `password`, `salt`, `roleId`, `isActive`, `image`) VALUES
-('za1u8m4Sg', 'Nguyễn Văn U', '0966656041', 'user@gmail.com', 'TPHCM', 'cb58ac5a2272517d1960565444bde187', 'QYlnGKRgYBxIXzMnnQSVcglbtjPsAhVlxMRMDaqnaquxwADSur', 'user', 1, 'https://firebasestorage.googleapis.com/v0/b/coffee-shop-web.appspot.com/o/Default%2Favatar.jpg?alt=media');
-
-
-
-
-
+INSERT INTO `RecipeDetail` (`recipeId`, `ingredientId`, `amountNeed`) VALUES
+('DUS0dyFIgz', '0_LcnYFIR', 0.9);
+INSERT INTO `RecipeDetail` (`recipeId`, `ingredientId`, `amountNeed`) VALUES
+('DUS0dyFIgz', '8Se57YKSR', 1);
+INSERT INTO `RecipeDetail` (`recipeId`, `ingredientId`, `amountNeed`) VALUES
+('DUS0dyFIgz', 'Ecd5nLKSR', 0.5);
+INSERT INTO `RecipeDetail` (`recipeId`, `ingredientId`, `amountNeed`) VALUES
+('Gg-fvsKIRz', '0_LcnYFIR', 1.2),
+('Gg-fvsKIRz', 'Ecd5nLKSR', 3.4),
+('l3GseEFIgm', '0_LcnYFIR', 0.3),
+('l3Ms6EKIRM', '0_LcnYFIR', 0.5),
+('lHc0IyKIgz', '8Se57YKSR', 0.012),
+('lHc0IyKIgz', 'Ecd5nLKSR', 0.006),
+('lrvAvsKSgz', '0_LcnYFIR', 0.1),
+('lrvAvsKSgz', '8Se57YKSR', 0.2),
+('lrvAvsKSgz', 'Ecd5nLKSR', 0.3);
 
 INSERT INTO `Role` (`id`, `name`) VALUES
 ('admin', 'admin');
@@ -528,14 +590,65 @@ INSERT INTO `ShopGeneral` (`id`, `name`, `email`, `phone`, `address`, `wifiPass`
 ('shop', 'Coffee shop', '', '', '', 'coffeeshop123', 0.001, 1);
 
 
+INSERT INTO `SizeFood` (`foodId`, `sizeId`, `name`, `cost`, `price`, `recipeId`) VALUES
+('_3My6PKIR', 'l3Gs6EKSRz', 'S', 7000, 19000, 'l3GseEFIgm');
+INSERT INTO `SizeFood` (`foodId`, `sizeId`, `name`, `cost`, `price`, `recipeId`) VALUES
+('_3My6PKIR', 'l3MseEKSgZ', 'M', 8000, 24000, 'l3Ms6EKIRM');
+
+
+INSERT INTO `StockChangeHistory` (`id`, `ingredientId`, `amount`, `amountLeft`, `type`, `createdAt`) VALUES
+('-fRh7LFIR', '0_LcnYFIR', 2.5, 2.5, 'Import', '2024-01-07 17:30:20');
+INSERT INTO `StockChangeHistory` (`id`, `ingredientId`, `amount`, `amountLeft`, `type`, `createdAt`) VALUES
+('-sRhnYKIg', '0_LcnYFIR', 2.5, 4.5, 'Import', '2024-01-07 17:30:24');
+INSERT INTO `StockChangeHistory` (`id`, `ingredientId`, `amount`, `amountLeft`, `type`, `createdAt`) VALUES
+('CO3JNQKSR', '0_LcnYFIR', -20, 19.7, 'Sell', '2024-01-09 06:59:26');
+INSERT INTO `StockChangeHistory` (`id`, `ingredientId`, `amount`, `amountLeft`, `type`, `createdAt`) VALUES
+('CoyrdQKIR', '0_LcnYFIR', -100, 96.2, 'Sell', '2024-01-09 07:40:16'),
+('CoyrdQKIR', '8Se57YKSR', -33, 30.988, 'Sell', '2024-01-09 07:40:16'),
+('CoyrdQKIR', 'Ecd5nLKSR', -40, 35.594, 'Sell', '2024-01-09 07:40:16'),
+('Ekn6vQKSR', '0_LcnYFIR', -15, 12.4, 'Sell', '2024-01-09 07:24:07'),
+('Ekn6vQKSR', '8Se57YKSR', -38, 37, 'Sell', '2024-01-09 07:24:07'),
+('Ekn6vQKSR', 'Ecd5nLKSR', -22, 18.1, 'Sell', '2024-01-09 07:24:07'),
+('FqkUOQKSR', '0_LcnYFIR', -3, 0.0999999, 'Sell', '2024-01-09 07:37:43'),
+('FqkUOQKSR', '8Se57YKSR', -34, 33, 'Sell', '2024-01-09 07:37:43'),
+('FqkUOQKSR', 'Ecd5nLKSR', -6, 2.1, 'Sell', '2024-01-09 07:37:43'),
+('hHQWdwFIR', '0_LcnYFIR', -12, 9.4, 'Sell', '2024-01-09 07:26:39'),
+('hHQWdwFIR', '8Se57YKSR', -37, 36, 'Sell', '2024-01-09 07:26:39'),
+('hHQWdwFIR', 'Ecd5nLKSR', -18, 14.1, 'Sell', '2024-01-09 07:26:39'),
+('j24sOQKSR', '0_LcnYFIR', -9, 6.4, 'Sell', '2024-01-09 07:37:15'),
+('j24sOQKSR', '8Se57YKSR', -36, 35, 'Sell', '2024-01-09 07:37:15'),
+('j24sOQKSR', 'Ecd5nLKSR', -14, 10.1, 'Sell', '2024-01-09 07:37:15'),
+('JmQjdQKSg', '0_LcnYFIR', -96, 92.2, 'Sell', '2024-01-09 07:40:51'),
+('JmQjdQKSg', '8Se57YKSR', -31, 28.988, 'Sell', '2024-01-09 07:40:51'),
+('JmQjdQKSg', 'Ecd5nLKSR', -36, 31.594, 'Sell', '2024-01-09 07:40:51'),
+('NJUydwFIR', '0_LcnYFIR', -6, 3.1, 'Sell', '2024-01-09 07:37:34'),
+('NJUydwFIR', '8Se57YKSR', -35, 34, 'Sell', '2024-01-09 07:37:34'),
+('NJUydwFIR', 'Ecd5nLKSR', -10, 6.1, 'Sell', '2024-01-09 07:37:34'),
+('P-6cKQKSR', '0_LcnYFIR', -92, 88.2, 'Sell', '2024-01-09 07:49:09'),
+('P-6cKQKSR', '8Se57YKSR', -29, 26.988, 'Sell', '2024-01-09 07:49:09'),
+('P-6cKQKSR', 'Ecd5nLKSR', -32, 27.594, 'Sell', '2024-01-09 07:49:09'),
+('qRgaHwFIR', '0_LcnYFIR', -20, 17.3, 'Sell', '2024-01-09 07:00:00'),
+('qRgaHwFIR', '8Se57YKSR', -40, 39, 'Sell', '2024-01-09 07:00:00'),
+('qRgaHwFIR', 'Ecd5nLKSR', -30, 26.1, 'Sell', '2024-01-09 07:00:00'),
+('UEl6HYFIg', '0_LcnYFIR', -2, 2, 'Export', '2024-01-07 17:50:03'),
+('UEl6HYFIg', '8Se57YKSR', -1, 0, 'Export', '2024-01-07 17:50:03'),
+('uI3h7LFSg', '8Se57YKSR', 1.2, 1.2, 'Import', '2024-01-07 17:30:14'),
+('WYQjDwFSR', '0_LcnYFIR', -17, 14.6, 'Sell', '2024-01-09 07:23:23'),
+('WYQjDwFSR', '8Se57YKSR', -39, 38, 'Sell', '2024-01-09 07:23:23'),
+('WYQjDwFSR', 'Ecd5nLKSR', -26, 22.1, 'Sell', '2024-01-09 07:23:23');
+
+INSERT INTO `StockReport` (`id`, `timeFrom`, `timeTo`, `createdAt`, `updatedAt`, `deletedAt`, `isActive`) VALUES
+('LRYQ5EFSR', '2023-11-30 17:00:00', '2023-12-31 16:59:59', '2024-01-08 04:15:49', '2024-01-08 04:15:49', NULL, 1);
+
+
 
 
 INSERT INTO `Supplier` (`id`, `name`, `email`, `phone`, `debt`) VALUES
 ('SupCacao0001', 'NCC Cacao', 'cacao@gmail.com', '0905555555', -1248000);
 INSERT INTO `Supplier` (`id`, `name`, `email`, `phone`, `debt`) VALUES
-('SupCake0001', 'NCC Bánh', 'banh@gmail.com', '0943334445', -2035000);
+('SupCake0001', 'NCC Bánh', 'banh@gmail.com', '0943334445', -1935000);
 INSERT INTO `Supplier` (`id`, `name`, `email`, `phone`, `debt`) VALUES
-('SupCoffe0001', 'NCC Cà Phê', 'caphe@gmail.com', '0901234567', -80000);
+('SupCoffe0001', 'NCC Cà Phê', 'caphe@gmail.com', '0901234567', -77000);
 INSERT INTO `Supplier` (`id`, `name`, `email`, `phone`, `debt`) VALUES
 ('SupHoney0001', 'NCC Mật Ong', 'matong@gmail.com', '0927777777', -2000),
 ('SupIceCr0001', 'NCC Kem', 'kem@gmail.com', '0999999999', -60000),
@@ -546,15 +659,29 @@ INSERT INTO `Supplier` (`id`, `name`, `email`, `phone`, `debt`) VALUES
 ('SupTea0001', 'NCC Trà', 'tra@gmail.com', '0922233445', -383000);
 
 INSERT INTO `SupplierDebt` (`id`, `supplierId`, `amount`, `amountLeft`, `type`, `createdAt`, `createdBy`) VALUES
+('-fRh7LFIR', 'SupCake0001', 50000, -1985000, 'Debt', '2024-01-07 17:30:20', 'g3W21A7SR');
+INSERT INTO `SupplierDebt` (`id`, `supplierId`, `amount`, `amountLeft`, `type`, `createdAt`, `createdBy`) VALUES
+('-sRhnYKIg', 'SupCake0001', 50000, -1935000, 'Debt', '2024-01-07 17:30:24', 'g3W21A7SR');
+INSERT INTO `SupplierDebt` (`id`, `supplierId`, `amount`, `amountLeft`, `type`, `createdAt`, `createdBy`) VALUES
 ('PN001', 'SupCake0001', -2035000, -2035000, 'Debt', '2023-12-26 05:16:43', 'g3W21A7SR');
 INSERT INTO `SupplierDebt` (`id`, `supplierId`, `amount`, `amountLeft`, `type`, `createdAt`, `createdBy`) VALUES
-('PN006', 'SupCacao0001', -1198000, -1248000, 'Debt', '2023-12-26 05:17:40', 'g3W21A7SR');
-INSERT INTO `SupplierDebt` (`id`, `supplierId`, `amount`, `amountLeft`, `type`, `createdAt`, `createdBy`) VALUES
-('PN010', 'SupTea0001', -363000, -383000, 'Debt', '2023-12-26 05:17:23', 'g3W21A7SR');
-INSERT INTO `SupplierDebt` (`id`, `supplierId`, `amount`, `amountLeft`, `type`, `createdAt`, `createdBy`) VALUES
-('PN011', 'SupMilk0001', -320000, -325000, 'Debt', '2023-12-26 05:15:59', 'g3W21A7SR');
+('PN006', 'SupCacao0001', -1198000, -1248000, 'Debt', '2023-12-26 05:17:40', 'g3W21A7SR'),
+('PN010', 'SupTea0001', -363000, -383000, 'Debt', '2023-12-26 05:17:23', 'g3W21A7SR'),
+('PN011', 'SupMilk0001', -320000, -325000, 'Debt', '2023-12-26 05:15:59', 'g3W21A7SR'),
+('uI3h7LFSg', 'SupCoffe0001', 3000, -77000, 'Debt', '2024-01-07 17:30:14', 'g3W21A7SR');
 
 
+
+
+
+INSERT INTO `Topping` (`id`, `name`, `description`, `cookingGuide`, `recipeId`, `isActive`, `cost`, `price`) VALUES
+('_rDADyFSR', 'Trân châu trắng', 'Topping trân châu trắng', 'nấu đi nào', 'lrvAvsKSgz', 1, 1000, 5000);
+INSERT INTO `Topping` (`id`, `name`, `description`, `cookingGuide`, `recipeId`, `isActive`, `cost`, `price`) VALUES
+('lHc0IyKSg', 'Trân châu', '', '', 'lHc0IyKIgz', 1, 1000, 4000);
+INSERT INTO `Topping` (`id`, `name`, `description`, `cookingGuide`, `recipeId`, `isActive`, `cost`, `price`) VALUES
+('Mg-BvsKIR', 'Hạt sen', 'hạt sen', 'nấu hạt sen', 'Gg-fvsKIRz', 1, 3000, 6000);
+INSERT INTO `Topping` (`id`, `name`, `description`, `cookingGuide`, `recipeId`, `isActive`, `cost`, `price`) VALUES
+('vUSAdsFIR', 'Pudding', 'Mềm', 'Đánh trứng', 'DUS0dyFIgz', 1, 4000, 10000);
 
 INSERT INTO `UnitType` (`id`, `name`, `value`, `measureType`) VALUES
 ('dv', 'đơn vị', 1, 'Unit');

@@ -365,13 +365,13 @@ export type Dashboard = {
   totalSold: number;
   totalPoint: number;
   topSoldFoods: [{ id: string; name: string; amount: number }];
-  chartSaleComponents: [
+  chartPriceComponents: [
     {
       time: Date;
       value: number;
     }
   ];
-  chartAmountReceiveComponents: [
+  chartCostComponents: [
     {
       time: Date;
       value: number;

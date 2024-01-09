@@ -36,7 +36,7 @@ const typeCharts = [
 ];
 
 const DashboardChartContainer = (props: any) => {
-  const { sale, receive, timeFrom, timeTo } = props;
+  const { price, cost, timeFrom, timeTo } = props;
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("day");
   const [realValue, setRealValue] = React.useState("day");
@@ -90,8 +90,8 @@ const DashboardChartContainer = (props: any) => {
       </div>
       <DashboardChart
         type={realValue}
-        sale={sale}
-        receive={receive}
+        price={price}
+        cost={cost}
         timeFrom={timeFrom}
         timeTo={timeTo}
       />
