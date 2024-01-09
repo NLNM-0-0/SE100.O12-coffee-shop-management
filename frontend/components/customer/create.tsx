@@ -27,7 +27,13 @@ const SupplierSchema = z.object({
   phone: z.string().regex(phoneRegex, "Số điện thoại không hợp lệ"),
 });
 
-const CreateDialog = () => {
+const CreateDialog = ({
+  children,
+  handleCustomerAdded,
+}: {
+  children: React.ReactNode;
+  handleCustomerAdded?: (customerId: string) => void;
+}) => {
   const { currentUser } = useCurrentUser();
   const {
     register,
@@ -58,6 +64,9 @@ const CreateDialog = () => {
         title: "Thành công",
         description: "Thêm khách hàng thành công",
       });
+      if (handleCustomerAdded) {
+        handleCustomerAdded(responseData.data);
+      }
       router.refresh();
     }
   };
@@ -83,11 +92,7 @@ const CreateDialog = () => {
           setOpen(open);
         }}
       >
-        <DialogTrigger asChild>
-          <Button className="lg:px-4 px-2 whitespace-nowrap">
-            Thêm khách hàng
-          </Button>
-        </DialogTrigger>
+        <DialogTrigger asChild>{children}</DialogTrigger>
         <DialogContent className="xl:max-w-[720px] max-w-[472px] p-0 bg-white">
           <DialogHeader>
             <DialogTitle className="p-6 pb-0">Thêm khách hàng</DialogTitle>

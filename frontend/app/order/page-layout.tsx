@@ -21,8 +21,10 @@ import { toast } from "@/components/ui/use-toast";
 import createInvoice from "@/lib/invoice/createInvoice";
 import Loading from "@/components/loading";
 export type FormValues = {
-  customerId: string;
-  customerPoint: number;
+  customer: {
+    customerId: string;
+    customerPoint: number;
+  };
   isUsePoint: boolean;
   details: {
     foodId: string;
@@ -41,11 +43,33 @@ export type FormValues = {
     }[];
   }[];
 };
+interface Size {
+  sizeId: string;
+  sizeName: string;
+  price: number;
+}
+
+interface Topping {
+  id: string;
+  name: string;
+  price: string;
+}
+
+interface FoodDetails {
+  foodId: string;
+  foodName: string;
+  size: Size;
+  amount: number;
+  description: string;
+  toppings: Topping[];
+}
+function sortToppings(toppings: Topping[]): Topping[] {
+  return toppings.slice().sort((a, b) => a.id.localeCompare(b.id));
+}
 const OrderScreen = () => {
   const form = useForm<FormValues>({
     defaultValues: {
-      customerId: "",
-      customerPoint: 0,
+      customer: {},
       isUsePoint: false,
       details: [],
     },
@@ -72,10 +96,33 @@ const OrderScreen = () => {
       });
       return;
     }
+    let unduplicateDetails: FoodDetails[] = [];
+
+    data.details.forEach((item: FoodDetails) => {
+      const key = `${item.foodId}_${item.size.sizeId}_${JSON.stringify(
+        sortToppings(item.toppings)
+      )}`;
+
+      const existingItemIndex = unduplicateDetails.findIndex(
+        (existingItem) =>
+          `${existingItem.foodId}_${existingItem.size.sizeId}_${JSON.stringify(
+            sortToppings(existingItem.toppings)
+          )}` === key
+      );
+
+      if (existingItemIndex !== -1) {
+        // If the key already exists, add the amount
+        unduplicateDetails[existingItemIndex].amount =
+          +unduplicateDetails[existingItemIndex].amount + +item.amount;
+      } else {
+        // If the key does not exist, create a new entry
+        unduplicateDetails.push({ ...item });
+      }
+    });
     const createData = {
-      customerId: "",
-      isUsePoint: false,
-      details: data.details.map((item) => {
+      customerId: data.customer.customerId,
+      isUsePoint: data.isUsePoint,
+      details: unduplicateDetails.map((item) => {
         return {
           foodId: item.foodId,
           sizeId: item.size.sizeId,
@@ -119,7 +166,7 @@ const OrderScreen = () => {
 
   if (isLoadingFood) {
     return <Loading />;
-  } else
+  } else {
     return (
       <div className="flex gap-4 md:pb-0 pb-16 ">
         <div className="2xl:basis-3/5 xl:basis-1/2 md:basis-2/5  flex-1 ">
@@ -210,6 +257,7 @@ const OrderScreen = () => {
         </div>
       </div>
     );
+  }
 };
 
 export default OrderScreen;

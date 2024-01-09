@@ -5,6 +5,7 @@ import { Metadata } from "next";
 import { withAuth } from "@/lib/role/withAuth";
 import TableLayout from "@/components/customer/table-layout";
 import CreateDialog from "@/components/customer/create";
+import { Button } from "@/components/ui/button";
 export const metadata: Metadata = {
   title: "Quản lý nhà cung cấp",
 };
@@ -18,7 +19,11 @@ function CustomerManage({
       <div className="flex flex-row justify-between ">
         <h1>Danh sách khách hàng</h1>
         <div className="flex gap-4">
-          <CreateDialog />
+          <CreateDialog>
+            <Button className="lg:px-4 px-2 whitespace-nowrap">
+              Thêm khách hàng
+            </Button>
+          </CreateDialog>
         </div>
       </div>
 

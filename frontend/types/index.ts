@@ -106,7 +106,8 @@ export type Role = {
 };
 export type RoleFunction = {
   id: string;
-  name: string;
+  description: string;
+  groupName: string;
 };
 
 export type ImportNote = {
