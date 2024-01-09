@@ -1,5 +1,5 @@
 "use client";
-import getDashboard from "@/lib/dashboard/getReport";
+import getDashboard from "@/lib/dashboard/getDashboard";
 import { CardDashboardInfo, Dashboard } from "@/types";
 import { useState } from "react";
 import { toast } from "../ui/use-toast";
@@ -20,8 +20,8 @@ const DashboardComponent = () => {
     topSoldFoods: [] as unknown as [
       { id: string; name: string; amount: number }
     ],
-    chartSaleComponents: [] as unknown as [{ time: Date; value: number }],
-    chartAmountReceiveComponents: [] as unknown as [
+    chartPriceComponents: [] as unknown as [{ time: Date; value: number }],
+    chartCostComponents: [] as unknown as [
       { time: Date; value: number }
     ],
   });
@@ -99,8 +99,8 @@ const DashboardComponent = () => {
           <DashboardCardHolder cardInfos={cardInfos} />
           <div className="flex flex-row lg:gap-[6] gap-4 h-auto">
             <DashboardChartContainer
-              sale={data?.chartSaleComponents}
-              receive={data?.chartAmountReceiveComponents}
+              price={data?.chartPriceComponents}
+              cost={data?.chartCostComponents}
               timeFrom={data?.timeFrom}
               timeTo={data?.timeTo}
             />

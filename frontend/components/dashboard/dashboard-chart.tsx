@@ -38,11 +38,11 @@ export const options = {
 };
 
 const DashboardChart = (props: any) => {
-  const { type, sale, receive, timeFrom, timeTo } = props;
+  const { type, price, cost, timeFrom, timeTo } = props;
 
   let labels: string[] = [];
-  let saleAmount: number[] = [];
-  let receiveAmount: number[] = [];
+  let priceAmount: number[] = [];
+  let costAmount: number[] = [];
 
   if (type == "day") {
     labels = [
@@ -72,8 +72,8 @@ const DashboardChart = (props: any) => {
       "23h",
     ];
 
-    saleAmount = groupAndSumByHour(sale);
-    receiveAmount = groupAndSumByHour(receive);
+    priceAmount = groupAndSumByHour(price);
+    costAmount = groupAndSumByHour(cost);
   } else if (type == "month") {
     for (
       let currentDate = toLocalDateTime(timeFrom)!;
@@ -84,12 +84,12 @@ const DashboardChart = (props: any) => {
       labels.push(dayString);
     }
 
-    saleAmount = groupAndSumByDate(sale, labels);
-    receiveAmount = groupAndSumByDate(receive, labels);
+    priceAmount = groupAndSumByDate(price, labels);
+    costAmount = groupAndSumByDate(cost, labels);
   } else if (type == "month-day") {
     labels = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
-    saleAmount = groupAndSumByDayOfWeek(sale);
-    receiveAmount = groupAndSumByDayOfWeek(receive);
+    priceAmount = groupAndSumByDayOfWeek(price);
+    costAmount = groupAndSumByDayOfWeek(cost);
   }
 
   const data = {
@@ -97,13 +97,13 @@ const DashboardChart = (props: any) => {
     datasets: [
       {
         label: "Doanh thu bán được",
-        data: saleAmount,
+        data: priceAmount,
         borderColor: "rgb(255, 99, 132)",
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
       {
-        label: "Số tiền nhận",
-        data: receiveAmount,
+        label: "Số tiền vốn",
+        data: costAmount,
         borderColor: "rgb(53, 162, 235)",
         backgroundColor: "rgba(53, 162, 235, 0.5)",
       },
