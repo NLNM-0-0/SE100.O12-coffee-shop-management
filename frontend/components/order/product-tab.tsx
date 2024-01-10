@@ -180,6 +180,9 @@ const ProductTab = ({
       {/* Product list */}
       <div className="grid 2xl:grid-cols-5 xl:grid-cols-4 lgr:grid-cols-3 md:grid-cols-2 sm:grid-cols-4 grid-cols-3 gap-4">
         {filteredList?.map((prod) => {
+          const smallestSize = prod.sizes.reduce((minSize, currentSize) => {
+            return currentSize.price < minSize.price ? currentSize : minSize;
+          }, prod.sizes[0]);
           return (
             <div
               key={prod.id}
@@ -188,13 +191,14 @@ const ProductTab = ({
                 const index = fields.findIndex(
                   (value) => value.foodId === prod.id
                 );
+
                 append({
                   foodId: prod.id,
                   amount: 1,
                   size: {
-                    sizeId: prod.sizes[0].sizeId,
-                    sizeName: prod.sizes[0].name,
-                    price: prod.sizes[0].price,
+                    sizeId: smallestSize.sizeId,
+                    sizeName: smallestSize.name,
+                    price: smallestSize.price,
                   },
                   foodName: prod.name,
                   toppings: [],
@@ -216,7 +220,7 @@ const ProductTab = ({
                   {prod.name}
                 </h1>
                 <h1 className="text-base font-semibold text-primary text-center pb-1">
-                  {toVND(prod.sizes[0].price)}
+                  {toVND(smallestSize.price)}
                 </h1>
               </div>
             </div>
