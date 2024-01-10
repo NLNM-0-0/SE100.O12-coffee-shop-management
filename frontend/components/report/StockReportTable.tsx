@@ -186,7 +186,7 @@ export const columns: ColumnDef<StockReportDetail>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="p-1"
         >
-          <span className="font-semibold">Nợ cuối</span>
+          <span className="font-semibold">Tồn cuối</span>
 
           <CaretSortIcon className="h-4 w-4" />
         </Button>

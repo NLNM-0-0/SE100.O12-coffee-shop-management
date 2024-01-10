@@ -1,6 +1,7 @@
 package invoicerepo
 
 import (
+	"backend/common"
 	"backend/module/customer/customermodel"
 	"backend/module/ingredient/ingredientmodel"
 	"backend/module/invoice/invoicemodel"
@@ -10,7 +11,6 @@ import (
 	"backend/module/sizefood/sizefoodmodel"
 	"backend/module/stockchangehistory/stockchangehistorymodel"
 	"context"
-	"fmt"
 )
 
 type InvoiceStore interface {
@@ -373,12 +373,12 @@ func (repo *createInvoiceRepo) HandleIngredientTotalAmount(
 			return errGetIngredient
 		}
 
-		amountLeft := ingredient.Amount - value
+		amountLeft := common.RoundToDecimal(ingredient.Amount-value, 3)
 		if amountLeft < 0 {
 			return invoicemodel.ErrInvoiceIngredientIsNotEnough
 		}
 
-		ingredientUpdate := ingredientmodel.IngredientUpdateAmount{Amount: -value}
+		ingredientUpdate := ingredientmodel.IngredientUpdateAmount{Amount: -common.RoundToDecimal(value, 3)}
 		if err := repo.ingredientStore.UpdateAmountIngredient(
 			ctx, key, &ingredientUpdate,
 		); err != nil {
@@ -389,12 +389,11 @@ func (repo *createInvoiceRepo) HandleIngredientTotalAmount(
 		stockChangeHistory := stockchangehistorymodel.StockChangeHistory{
 			Id:           invoiceId,
 			IngredientId: ingredient.Id,
-			Amount:       -ingredient.Amount,
+			Amount:       -common.RoundToDecimal(value, 3),
 			AmountLeft:   amountLeft,
 			Type:         &typeChange,
 		}
 		history = append(history, stockChangeHistory)
-		fmt.Println(history)
 	}
 
 	if err := repo.stockChangeHistoryStore.CreateLisStockChangeHistory(
