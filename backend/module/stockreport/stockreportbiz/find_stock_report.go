@@ -165,7 +165,7 @@ func (biz *findStockReportBiz) FindStockReport(
 		}
 
 		if initial == 0 {
-			initial = final - importAmount - sellAmount - modifyAmount
+			initial = final - importAmount - exportAmount - sellAmount - modifyAmount
 		}
 
 		if initial != 0 || sellAmount != 0 ||
@@ -191,12 +191,12 @@ func (biz *findStockReportBiz) FindStockReport(
 					UnitTypeId: ingredient.UnitTypeId,
 					UnitType:   ingredient.UnitType,
 				},
-				Initial: initial,
-				Sell:    sellAmount,
-				Import:  importAmount,
-				Export:  exportAmount,
-				Modify:  modifyAmount,
-				Final:   final,
+				Initial: common.RoundToDecimal(initial, 3),
+				Sell:    common.RoundToDecimal(sellAmount, 3),
+				Import:  common.RoundToDecimal(importAmount, 3),
+				Export:  common.RoundToDecimal(exportAmount, 3),
+				Modify:  common.RoundToDecimal(modifyAmount, 3),
+				Final:   common.RoundToDecimal(final, 3),
 			}
 			allDetails = append(allDetails, detail)
 		}
