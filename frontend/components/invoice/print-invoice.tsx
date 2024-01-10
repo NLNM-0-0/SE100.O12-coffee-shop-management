@@ -98,7 +98,7 @@ const PrintInvoice = ({
               </div>
             </div>
             <div className="flex flex-col gap-4">
-              <InvoiceDetailTable {...details} />
+              <InvoiceDetailTable details={details} />
               <div className="flex flex-col gap-2">
                 <div className="grid grid-cols-2  space-x-2 font-semibold">
                   <span className="min-w-[6rem]">Tổng tiền: </span>

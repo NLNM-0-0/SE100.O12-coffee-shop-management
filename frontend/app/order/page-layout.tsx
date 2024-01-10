@@ -23,6 +23,8 @@ import Loading from "@/components/loading";
 import { ToastAction } from "@/components/ui/toast";
 import PrintInvoice from "@/components/invoice/print-invoice";
 import { useRouter } from "next/navigation";
+import { endPoint } from "@/constants";
+import { useSWRConfig } from "swr";
 export type FormValues = {
   customer: {
     customerId: string;
@@ -71,6 +73,7 @@ function sortToppings(toppings: Topping[]): Topping[] {
 }
 const OrderScreen = () => {
   const router = useRouter();
+  const { mutate } = useSWRConfig();
   const form = useForm<FormValues>({
     defaultValues: {
       customer: {},
@@ -175,6 +178,7 @@ const OrderScreen = () => {
         isUsePoint: false,
         details: [],
       });
+      mutate(`${endPoint}/customers/all`);
       router.refresh();
     }
   };
