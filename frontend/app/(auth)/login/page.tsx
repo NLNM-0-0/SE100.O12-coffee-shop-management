@@ -1,27 +1,36 @@
-"use server"
-import styles from './login.module.css'
-import Image from 'next/image';
-import LoginForm from '@/components/login/loginForm';
+import Image from "next/image";
+import LoginForm from "@/components/login/login-form";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Đăng nhập",
+};
 const Login = async () => {
-    return (
-        <div className={styles.container}>
-            <div className={styles.leftColumn}>
-                <Image src='/login-background.png' alt='' fill className={styles.image} />
-            </div>
-
-            <div className={styles.rightColumn}>
-                <div className={styles.rightHeader}>
-                    <h1 className={styles.title}>Đăng nhập vào tài khoản</h1>
-                    <h5 className={styles.description}>Xem những gì đang xảy ra với doanh nghiệp của bạn</h5>
-                </div>
-
-                <div className={styles.formContainer}>
-                    <LoginForm />
-                </div>
-            </div>
+  return (
+    <div className="bg-auth-background bg-right bg-cover bg-no-repeat flex flex-1 flex-col p-8">
+      <div className="flex flex-row align-middle">
+        <Image
+          src="/android-chrome-192x192.png"
+          alt="logo"
+          width={50}
+          height={50}
+        ></Image>
+        <p className={`text-lg ml-2 font-semibold self-center`}>Coffee shop</p>
+      </div>
+      <div className="flex flex-1 flex-col justify-center">
+        <div className="flex flex-row self-center gap-36">
+          <Image
+            src="/login-background.png"
+            alt="login-background"
+            width={500}
+            height={500}
+            className="lg:block hidden"
+          />
+          <LoginForm />
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default Login;

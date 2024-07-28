@@ -25,7 +25,7 @@ import {
 import { useState } from "react";
 import { toVND } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { InvoiceDetailProps } from "@/app/invoice/[invoiceId]/page";
+import { InvoiceDetailProps } from "@/app/(normal)/invoice/[invoiceId]/page";
 
 export const columns: ColumnDef<InvoiceDetailProps>[] = [
   {

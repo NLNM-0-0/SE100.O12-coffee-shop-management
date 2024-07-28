@@ -30,7 +30,7 @@ func Login(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		md5 := hasher.NewMd5Hash()
 
-		business := userbiz.NewLoginBiz(repo, 60*60*24*60, 60*60*24*90, tokenProvider, md5)
+		business := userbiz.NewLoginBiz(repo, 60*60*24*15, 60*60*24*60, tokenProvider, md5)
 		account, err := business.Login(c.Request.Context(), &data)
 
 		if err != nil {

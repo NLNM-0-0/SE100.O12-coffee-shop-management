@@ -51,7 +51,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import Image from "next/image";
 import { includesRoles } from "@/lib/utils";
 import { useCurrentUser } from "@/hooks/use-user";
-import { getFilterString } from "@/app/product-manage/table-layout";
+import { getFilterString } from "@/app/(normal)/product-manage/table-layout";
 import getAllFood from "@/lib/food/getListFood";
 import { Checkbox } from "../ui/checkbox";
 import { toast } from "../ui/use-toast";

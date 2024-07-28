@@ -10,7 +10,7 @@ import { AutoComplete } from "../autocomplete";
 import { Ingredient } from "@/types";
 import getAllIngredient from "@/lib/getAllIngredient";
 import Loading from "../loading";
-import { FormSchema } from "@/app/product-manage/[foodId]/page";
+import { FormSchema } from "@/app/(normal)/product-manage/[foodId]/page";
 const SizeUpdate = ({
   form,
   sizeIndex,

@@ -17,7 +17,7 @@ import { toVND } from "@/lib/utils";
 import { toast } from "../ui/use-toast";
 import Loading from "../loading";
 import { getApiKey } from "@/lib/auth/action";
-import { FormSchema } from "@/app/stock-manage/check/add/page";
+import { FormSchema } from "@/app/(normal)/stock-manage/check/add/page";
 import { AutoComplete } from "../autocomplete";
 import getAllFoodForSale from "@/lib/food/getAllFoodForSale";
 import getAllIngredient from "@/lib/getAllIngredient";

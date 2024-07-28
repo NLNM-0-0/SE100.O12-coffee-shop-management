@@ -14,7 +14,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { CiBoxes } from "react-icons/ci";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 import { z } from "zod";
-import { FormSchema } from "@/app/stock-manage/import/add-note/page";
+import { FormSchema } from "@/app/(normal)/stock-manage/import/add-note/page";
 import { AutoComplete } from "../autocomplete";
 import { Ingredient } from "@/types";
 import { toVND } from "@/lib/utils";

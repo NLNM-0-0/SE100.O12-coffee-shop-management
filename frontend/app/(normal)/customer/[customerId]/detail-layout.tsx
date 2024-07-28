@@ -80,8 +80,7 @@ const CustomerDetail = ({ params }: { params: { customerId: string } }) => {
           </Card>
 
           <Card>
-            <CardContent className="p-6 flex flex-col   gap-4">
-              {/* TODO: invoice table */}
+            <CardContent className="p-6 flex flex-col gap-4">
               <InvoiceTable customerId={params.customerId} />
             </CardContent>
           </Card>

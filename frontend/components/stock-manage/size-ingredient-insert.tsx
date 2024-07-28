@@ -20,7 +20,7 @@ import { toVND } from "@/lib/utils";
 import getAllIngredient from "@/lib/getAllIngredient";
 import Loading from "../loading";
 import UnitListType from "./unit-list-type";
-import { FormSchema } from "@/app/product-manage/add/detail-layout";
+import { FormSchema } from "@/app/(normal)/product-manage/add/detail-layout";
 const SizeInsert = ({
   form,
   sizeIndex,

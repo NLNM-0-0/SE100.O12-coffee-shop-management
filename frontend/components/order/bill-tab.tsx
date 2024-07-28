@@ -20,7 +20,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { toVND } from "@/lib/utils";
 import { Label } from "../ui/label";
-import { FormValues } from "@/app/order/page-layout";
+import { FormValues } from "@/app/(normal)/order/page-layout";
 import SelectSize from "./select-size";
 import { ProductForSale } from "@/types";
 import { TbChartBubbleFilled } from "react-icons/tb";

@@ -15,7 +15,6 @@ const Invoice = ({
     <div className="col">
       <div className="flex flex-row justify-between ">
         <h1>Danh sách hóa đơn</h1>
-        {/* <CreateDialog /> */}
       </div>
 
       <div className="my-3 p-3 sha bg-white shadow-[0_1px_3px_0_rgba(0,0,0,0.2)]">

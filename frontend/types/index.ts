@@ -1,5 +1,4 @@
 import { IconType } from "react-icons";
-import { string } from "zod";
 
 export type Product = {
   id: string;

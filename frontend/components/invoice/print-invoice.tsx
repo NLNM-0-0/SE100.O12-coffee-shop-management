@@ -8,7 +8,7 @@ import Image from "next/image";
 import { useRef } from "react";
 import ReactToPrint, { useReactToPrint } from "react-to-print";
 import { FaPrint } from "react-icons/fa";
-import { InvoiceDetailProps } from "@/app/invoice/[invoiceId]/page";
+import { InvoiceDetailProps } from "@/app/(normal)/invoice/[invoiceId]/page";
 import { ShopGeneral } from "@/types";
 const PrintInvoice = ({
   onPrint,

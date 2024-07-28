@@ -12,7 +12,7 @@ import {
 import { removeAccents, toVND } from "@/lib/utils";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 import { useCallback } from "react";
-import { FormValues } from "@/app/order/page-layout";
+import { FormValues } from "@/app/(normal)/order/page-layout";
 import getAllCategoryList from "@/lib/category/getAllCategoryList";
 const ProductTab = ({
   append,

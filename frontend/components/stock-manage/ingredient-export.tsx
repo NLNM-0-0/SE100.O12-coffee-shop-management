@@ -20,7 +20,7 @@ import { toVND } from "@/lib/utils";
 import getAllIngredient from "@/lib/getAllIngredient";
 import Loading from "../loading";
 import UnitListType from "./unit-list-type";
-import { FormSchema } from "@/app/stock-manage/export/add-note/page";
+import { FormSchema } from "@/app/(normal)/stock-manage/export/add-note/page";
 
 const IngredientExport = ({
   form,

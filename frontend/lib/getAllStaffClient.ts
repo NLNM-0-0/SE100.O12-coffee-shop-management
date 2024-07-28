@@ -1,4 +1,4 @@
-import { apiKey, endPoint } from "@/constants";
+import { endPoint } from "@/constants";
 import { Staff } from "@/types";
 import useSWR from "swr";
 import { getApiKey } from "./auth/action";

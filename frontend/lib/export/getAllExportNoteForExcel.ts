@@ -1,4 +1,4 @@
-import { apiKey, endPoint } from "@/constants";
+import { endPoint } from "@/constants";
 import { getApiKey } from "../auth/action";
 
 export default async function getAllExportNoteForExcel({
