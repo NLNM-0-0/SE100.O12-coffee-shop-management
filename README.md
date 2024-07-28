@@ -17,6 +17,11 @@ npm start
 docker-compose up
 ```
 
+> [!IMPORTANT]
+> *Tài khoản admin*:
+> - *email*: admin@gmail.com
+> - *password*: app123
+
 ## Contributors
 
 | ID                                           | Fullname                                               | Github                                                    |
